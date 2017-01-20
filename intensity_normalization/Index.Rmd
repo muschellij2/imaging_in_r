@@ -5,15 +5,20 @@ date: "January 20, 2017"
 output: ioslides_presentation
 ---
 
-## R Markdown
+## Intensity normalization
 
-This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+- Conventional MRI intensites (T1-w, T2-w, PD, FLAIR) are acquired in arbitrary units, making the images not comparable across scanners and visits. 
+- Intensity normalization brings the intensities to a common scale.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
+## Goals of this tutorial
+
+- Visualize the intensities using boxplots and densities
+- Apply the WhiteStripe intensity normalization 
+- Apply the RAVEL intensity normalization
 
 ## Loading the necessary R packages
 
-Loading packages and KIRBY21 data for T1-w, T2-w and FLAIR images:
+We first load the packages containing KIRBY21 data for T1-w, T2-w and FLAIR images:
 ```{r, warning=FALSE, message=FALSE}
 library(kirby21.t1)
 library(kirby21.t2)
