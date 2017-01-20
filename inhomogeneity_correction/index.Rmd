@@ -2,10 +2,11 @@
 title: "Inhomogeneity Correction"
 author: "John Muschelli"
 date: "1/20/2017"
-output: 
-  ioslides_presentation: 
-      widescreen: yes
-bibliography: ../refs.bib      
+output:
+  beamer_presentation: default
+  ioslides_presentation:
+    widescreen: yes
+bibliography: ../refs.bib
 ---
 
 ```{r setup, include=FALSE, message = FALSE}
@@ -32,12 +33,11 @@ library(kirby21.t1)
 library(neurobase)
 t1_fname = get_t1_filenames(visit = 1, id = 505)
 t1 = readnii(t1_fname)
-ortho2(t1)
 ```
 
 ## Kirby21 Data
 
-We see the head and the neck are images in this T1 (also the orientation is not RPI):
+We see the head and the neck are images in this T1 (orientation is not RPI):
 
 ```{r}
 ortho2(t1)
@@ -105,6 +105,7 @@ q = quantile(ratio[ ratio != 0], probs = seq(0, 1, by = 0.1), na.rm = TRUE)
 q = unique(q)
 # get a diverging gradient palette
 fcol = scales::div_gradient_pal(low = "blue", mid = "yellow", high = "red") 
+colors =  scales::alpha(fcol(seq(0,1, length = length(q) - 1)), 0.5)
 ```
 
 ## Visualizing Bias Field Correction
@@ -112,9 +113,7 @@ fcol = scales::div_gradient_pal(low = "blue", mid = "yellow", high = "red")
 Now we put those breaks into `ortho2` to plot it:
 
 ```{r better_ratio_plot}
-ortho2(t1, ratio, 
-       col.y = scales::alpha(fcol(seq(0,1, length = length(q) - 1)), 0.5), 
-       ybreaks = q, ycolorbar = TRUE)
+ortho2(t1, ratio, col.y = colors, ybreaks = q, ycolorbar = TRUE)
 ```
 
 
@@ -130,6 +129,7 @@ hist(ratio, breaks = 200)
 ## Visualizing Bias Field Correction
 
 Removing these, we can see what the distribution of ratios look like:
+
 ```{r ratio_hist_plot_no1}
 hist(ratio[ratio != 1], breaks = 200)
 ```
@@ -137,7 +137,7 @@ hist(ratio[ratio != 1], breaks = 200)
 
 ## Visualizing Bias Field Correction
 
-Let's look at this distrbution by areas of the brain.  Here we make a `data.frame` of the indices with the values and cut the z-dimension into the bottom, middle and top:
+Here we make a `data.frame` of the indices with the values and cut the z-dimension into the bottom, middle and top:
 
 ```{r make_df}
 df = which(ratio != 1, arr.ind = TRUE)
@@ -154,7 +154,6 @@ head(df)
 
 Let's plot these with a density plot for each different location:
 ```{r ratio_hist_plot_slices}
-library(ggplot2)
 g = ggplot(df, aes(x = value, colour = location)) + geom_line(stat = "density")
 print(g)
 ```
@@ -167,7 +166,6 @@ print(g)
 - You may also want to run corrections after skull stripping on the brain only
     - we will do this in the brain extraction lecture
     - correction before skull-stripping may be necessary and can improve after correction
-
 
 
 ```{r saving_out, echo = FALSE}
