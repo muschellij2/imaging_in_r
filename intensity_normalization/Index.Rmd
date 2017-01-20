@@ -1,0 +1,128 @@
+---
+title: "Intensity Normalization"
+author: "Jean-Philippe Fortin"
+date: "January 20, 2017"
+output: ioslides_presentation
+---
+
+## R Markdown
+
+This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
+
+## Loading the necessary R packages
+
+Loading packages and KIRBY21 data for T1-w, T2-w and FLAIR images:
+```{r, warning=FALSE, message=FALSE}
+library(kirby21.t1)
+library(kirby21.t2)
+library(kirby21.flair)
+library(oro.nifti)
+library(neurobase)
+```
+We then obtain the paths of the NIfTI files
+```{r, warning=FALSE, message=FALSE}
+t1.files <- get_t1_filenames()
+t2.files <- get_t2_filenames()
+flair.files <- get_flair_filenames()
+```
+
+## Description of the dataset
+
+For the moment, we will work with the T1-w images. The dataset contains 3 subjects with 2 visits each
+```{r, warning=FALSE, message=FALSE}
+t1.files 
+```
+
+## Reading the images into R:
+
+We read the images into a list in R using the readNIfTI function:
+```{r, warning=FALSE, message=FALSE}
+images <- lapply(t1.files, readNIfTI)
+images[[1]]
+library(fslr)
+library(extrantsr)
+library(WhiteStripe)
+images2   <- lapply(images, fslbet)
+segs      <- lapply(images2, otropos)
+probs <- lapply(segs, function(x){x[[1]]})
+images_ws <- lapply(images2, function(x){
+  a <- dim(x)[3]
+  indices <- whitestripe(x, type="T1", stripped=TRUE, slices=1:a)$whitestripe.ind
+  whitestripe_norm(x, indices)
+})
+```
+
+new <- list()
+for (i in 1:6){
+  x <- images_ws[[i]]
+  x <- x[probs[[i]]==3]
+  new[[i]] <- boxplot(x, outline=FALSE, plot=FALSE)$stats
+}
+new <- do.call(cbind, new)
+old <- list()
+for (i in 1:6){
+  x <- images2[[i]]
+  x <- x[probs[[i]]==3]
+  old[[i]] <- boxplot(x, outline=FALSE, plot=FALSE)$stats
+}
+old <- do.call(cbind, old)
+par(mfrow=c(1,2))
+boxplot(old)
+boxplot(new)
+
+
+
+
+
+temp <- lapply(images, function(x){
+  x <- x[x!=0]
+  boxplot(x, plot=FALSE, outline=FALSE)$stats
+})
+temp <- do.call(cbind,temp)
+library(WhiteStripe)
+a <- lapply(images2, whitestripe, type="T1" )
+b <- list()
+for (i in 1:6){
+  b[[i]] <- whitestripe_norm(images2[[i]], a[[i]]$whitestripe.ind)
+  print(i)
+}
+temp2 <- lapply(b, function(x){
+  x <- x[x!=0]
+  boxplot(x, plot=FALSE, outline=FALSE)$stats
+})
+temp2 <- do.call(cbind,temp2)
+
+boxplot(temp)
+boxplot(temp2)
+
+masks <- lapply(images2, function(x){
+  x!=0
+})
+
+temp2 <- lapply(1:6, function(i){
+  x <- b[[i]]
+  x <- x[masks[[i]]]
+  boxplot(x, plot=FALSE, outline=FALSE)$stats
+})
+temp2 <- do.call(cbind,temp2)
+
+
+install_github("neuroconductor/extrantsr")
+
+
+temp <- lapply(images2, function(x){
+  x <- x[x!=0]
+  boxplot(x, plot=FALSE, outline=FALSE)$stats
+})
+temp <- do.call(cbind,temp)
+boxplot(temp)
+boxplot(temp2)
+
+## Slide with Plot
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
