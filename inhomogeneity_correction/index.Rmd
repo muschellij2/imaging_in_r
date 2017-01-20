@@ -1,0 +1,16 @@
+---
+title: "Inhomogeneity Correction"
+author: "John Muschelli"
+date: "1/20/2017"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Inhomogeneity correction
+
+- Scans can have nonuniform intensities throughout the brain
+- low frequency
+- Called bias, bias field, or  inhomogeneity
