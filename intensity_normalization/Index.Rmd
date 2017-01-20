@@ -46,18 +46,36 @@ We read the images into a list in R using the readNIfTI function:
 ```{r, warning=FALSE, message=FALSE}
 images <- lapply(t1.files, readNIfTI)
 images[[1]]
+```
+
+## Skull-stripping:
+
+We read the images into a list in R using the readNIfTI function:
+```{r, warning=FALSE, message=FALSE}
 library(fslr)
+images_ss <- lapply(images, fslbet)
+```
+and obtaining segmentations:
+```{r, warning=FALSE, message=FALSE}
 library(extrantsr)
+segs  <- lapply(images_ss, otropos)
+segs  <- lapply(segs, function(x){x[[1]]})
+```
+
+
+
+## Performing WhiteStripe:
+We read the images into a list in R using the readNIfTI function:
+```{r, warning=FALSE, message=FALSE}
 library(WhiteStripe)
-images2   <- lapply(images, fslbet)
-segs      <- lapply(images2, otropos)
-probs <- lapply(segs, function(x){x[[1]]})
-images_ws <- lapply(images2, function(x){
-  a <- dim(x)[3]
-  indices <- whitestripe(x, type="T1", stripped=TRUE, slices=1:a)$whitestripe.ind
+images_ws <- lapply(images_ss, function(x){
+  indices <- whitestripe(x, type="T1", stripped=TRUE, slices=1:dim(x)[3])$whitestripe.ind
   whitestripe_norm(x, indices)
 })
 ```
+
+
+
 
 new <- list()
 for (i in 1:6){
