@@ -2,7 +2,9 @@
 title: "Inhomogeneity Correction"
 author: "John Muschelli"
 date: "1/20/2017"
-output: ioslides_presentation
+output: 
+  ioslides_presentation: 
+      widescreen: yes
 bibliography: ../refs.bib      
 ---
 
@@ -18,8 +20,8 @@ library(scales)
 ## Inhomogeneity correction
 
 - Scans can have nonuniform intensities throughout the brain
-- low frequency
-- Called bias, bias field, or inhomogeneity
+- Usually low frequency - smooth over the brain (assumed)
+- Referred to as bias, bias field, or inhomogeneity
 
 ## Kirby21 Data
 
@@ -33,10 +35,14 @@ t1 = readnii(t1_fname)
 ortho2(t1)
 ```
 
-## Histograms of slices
+## Kirby21 Data
 
+We see the head and the neck are images in this T1 (also the orientation is not RPI):
 
-Improved N3 Bias Correction
+```{r}
+ortho2(t1)
+```
+
 
 ## N4 Inhomogeneity Correction
 
@@ -57,8 +63,6 @@ The data is log-transformed and assuming a noise-free scenario, we have:
 $$
 log(v(x)) = log(u(x)) + log( f(x) )
 $$
-
-## N4 Inhomogeneity Correction
 
 - N4 uses a B-spline approximation of the bias field
 - It iterates until a convergence criteria is met
@@ -93,22 +97,30 @@ ortho2(t1, ratio)
 
 ## Visualizing Bias Field Correction
 
+Here we would like to change the colors to something more descriptive.  Here we will use a diverging palette and map colors to the quantiles of the ratio image:
 
-```{r better_ratio_plot}
+```{r making_scales}
 library(scales)
-q = quantile(ratio[ ratio != 0], probs = seq(0, 1, by=0.1), na.rm = TRUE)
+q = quantile(ratio[ ratio != 0], probs = seq(0, 1, by = 0.1), na.rm = TRUE)
 q = unique(q)
 # get a diverging gradient palette
-fcol = scales::div_gradient_pal(low="blue",mid="yellow",high ="red") 
+fcol = scales::div_gradient_pal(low = "blue", mid = "yellow", high = "red") 
+```
+
+## Visualizing Bias Field Correction
+
+Now we put those breaks into `ortho2` to plot it:
+
+```{r better_ratio_plot}
 ortho2(t1, ratio, 
        col.y = scales::alpha(fcol(seq(0,1, length = length(q) - 1)), 0.5), 
        ybreaks = q, ycolorbar = TRUE)
 ```
 
 
-## Visualizing Bias Field Correction
+## Histogram of Ratio Values
 
-Here we see the majority of voxels have a ratio of $1$.  This is due to the fact `n4BiasFieldCorrection` does some implicit masking behind the scenes using `ANTsR::getMask`.
+The majority of voxels have a ratio of $1$ because `n4BiasFieldCorrection` does some implicit masking using `ANTsR::getMask`.
 
 ```{r ratio_hist_plot}
 hist(ratio, breaks = 200)
@@ -125,22 +137,43 @@ hist(ratio[ratio != 1], breaks = 200)
 
 ## Visualizing Bias Field Correction
 
-Let's look at this distrbution by areas of the brain:
+Let's look at this distrbution by areas of the brain.  Here we make a `data.frame` of the indices with the values and cut the z-dimension into the bottom, middle and top:
 
-```{r ratio_hist_plot_slices}
+```{r make_df}
 df = which(ratio != 1, arr.ind = TRUE)
 df = cbind(df, value = ratio[df])
 df = data.frame(df, stringsAsFactors = FALSE)
-df$location = cut(df$dim3, 
-                  breaks = c(0, 86, 172, 256),
+df$location = cut(df$dim3, breaks = c(0, 86, 172, 256),
                   labels = c("bottom", "middle", "top"))
+```
+```{r, echo = FALSE}
+head(df)
+```
+
+## Visualizing Bias Field Correction
+
+Let's plot these with a density plot for each different location:
+```{r ratio_hist_plot_slices}
 library(ggplot2)
-g = ggplot(df, aes(x = value, colour = location)) + 
-  geom_line(stat = "density")
+g = ggplot(df, aes(x = value, colour = location)) + geom_line(stat = "density")
 print(g)
 ```
 
-## Better
+## Conclusions
 
+- Inhomogeneity correction is one of the first steps of most structural MRI pipelines
+- Inhomogeneity can cause problems for other methods/segmentation
+- Corrections try to make tissues of the same class to have similar intensities
+- You may also want to run corrections after skull stripping on the brain only
+    - we will do this in the brain extraction lecture
+    - correction before skull-stripping may be necessary and can improve after correction
+
+
+
+```{r saving_out, echo = FALSE}
+writenii(bc_img, filename = "../output/")
+```
+
+## References
 
 
