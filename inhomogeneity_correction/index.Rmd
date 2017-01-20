@@ -171,7 +171,7 @@ print(g)
 
 
 ```{r saving_out, echo = FALSE}
-writenii(bc_img, filename = "../output/505-01-T1_N4.nii.gz")
+writenii(bc_t1, filename = "../output/505-01-T1_N4.nii.gz")
 ```
 
 ## References
