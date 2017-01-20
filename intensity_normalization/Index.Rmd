@@ -6,18 +6,22 @@ output: ioslides_presentation
 ---
 
 ## Intensity normalization
-
 - Conventional MRI intensites (T1-w, T2-w, PD, FLAIR) are acquired in arbitrary units, making the images not comparable across scanners and visits. 
 - Intensity normalization brings the intensities to a common scale.
 
-## Goals of this tutorial
 
+
+
+## Goals of this tutorial
 - Visualize the intensities using boxplots and densities
 - Apply the WhiteStripe intensity normalization 
 - Apply the RAVEL intensity normalization
 
-## Loading the necessary R packages
 
+
+
+
+## Loading the necessary R packages
 We first load the packages containing KIRBY21 data for T1-w, T2-w and FLAIR images:
 ```{r, warning=FALSE, message=FALSE}
 library(kirby21.t1)
@@ -33,23 +37,33 @@ t2.files <- get_t2_filenames()
 flair.files <- get_flair_filenames()
 ```
 
-## Description of the dataset
 
+
+
+
+## Description of the dataset
 For the moment, we will work with the T1-w images. The dataset contains 3 subjects with 2 visits each
 ```{r, warning=FALSE, message=FALSE}
 t1.files 
 ```
 
-## Reading the images into R:
 
+
+
+
+## Reading the images into R:
 We read the images into a list in R using the readNIfTI function:
 ```{r, warning=FALSE, message=FALSE}
 images <- lapply(t1.files, readNIfTI)
 images[[1]]
 ```
 
-## Skull-stripping:
 
+
+
+
+
+## Skull-stripping
 We read the images into a list in R using the readNIfTI function:
 ```{r, warning=FALSE, message=FALSE}
 library(fslr)
@@ -64,6 +78,22 @@ segs  <- lapply(segs, function(x){x[[1]]})
 
 
 
+## Visualization of the densities in the white matter (WM)
+```{r, warning=FALSE, message=FALSE}
+boxplots <- lapply(1:6, function(i){
+  x <- images_ss[[i]]
+  x <- x[segs[[i]]==3]
+  boxplot(x, outline=FALSE, plot=FALSE)$stats
+})
+boxplots <- do.call(cbind, boxplots)
+```
+
+## Visualization of the densities in the white matter (WM)
+```{r, warning=FALSE, message=FALSE}
+boxplot(boxplots)
+```
+
+
 ## Performing WhiteStripe:
 We read the images into a list in R using the readNIfTI function:
 ```{r, warning=FALSE, message=FALSE}
@@ -74,78 +104,55 @@ images_ws <- lapply(images_ss, function(x){
 })
 ```
 
-
-
-
-new <- list()
-for (i in 1:6){
+## Intensities in the WM after WhiteStripe:
+```{r, warning=FALSE, message=FALSE}
+boxplots_ws <- lapply(1:6, function(i){
   x <- images_ws[[i]]
-  x <- x[probs[[i]]==3]
-  new[[i]] <- boxplot(x, outline=FALSE, plot=FALSE)$stats
-}
-new <- do.call(cbind, new)
-old <- list()
-for (i in 1:6){
-  x <- images2[[i]]
-  x <- x[probs[[i]]==3]
-  old[[i]] <- boxplot(x, outline=FALSE, plot=FALSE)$stats
-}
-old <- do.call(cbind, old)
-par(mfrow=c(1,2))
-boxplot(old)
-boxplot(new)
-
-
-
-
-
-temp <- lapply(images, function(x){
-  x <- x[x!=0]
-  boxplot(x, plot=FALSE, outline=FALSE)$stats
+  x <- x[segs[[i]]==3]
+  boxplot(x, outline=FALSE, plot=FALSE)$stats
 })
-temp <- do.call(cbind,temp)
-library(WhiteStripe)
-a <- lapply(images2, whitestripe, type="T1" )
-b <- list()
-for (i in 1:6){
-  b[[i]] <- whitestripe_norm(images2[[i]], a[[i]]$whitestripe.ind)
-  print(i)
-}
-temp2 <- lapply(b, function(x){
-  x <- x[x!=0]
-  boxplot(x, plot=FALSE, outline=FALSE)$stats
-})
-temp2 <- do.call(cbind,temp2)
-
-boxplot(temp)
-boxplot(temp2)
-
-masks <- lapply(images2, function(x){
-  x!=0
-})
-
-temp2 <- lapply(1:6, function(i){
-  x <- b[[i]]
-  x <- x[masks[[i]]]
-  boxplot(x, plot=FALSE, outline=FALSE)$stats
-})
-temp2 <- do.call(cbind,temp2)
-
-
-install_github("neuroconductor/extrantsr")
-
-
-temp <- lapply(images2, function(x){
-  x <- x[x!=0]
-  boxplot(x, plot=FALSE, outline=FALSE)$stats
-})
-temp <- do.call(cbind,temp)
-boxplot(temp)
-boxplot(temp2)
-
-## Slide with Plot
-
-```{r, echo=FALSE}
-plot(cars)
+boxplots_ws <- do.call(cbind, boxplots_ws)
 ```
+
+## Intensities in the WM after WhiteStripe:
+```{r, warning=FALSE, message=FALSE}
+boxplot(boxplots_ws)
+```
+
+## Intensities in the GM after WhiteStripe:
+```{r, warning=FALSE, message=FALSE}
+boxplots_ws <- lapply(1:6, function(i){
+  x <- images_ws[[i]]
+  x <- x[segs[[i]]==3]
+  boxplot(x, outline=FALSE, plot=FALSE)$stats
+})
+boxplots_ws <- do.call(cbind, boxplots_ws)
+```
+
+## Intensities in the GM after WhiteStripe:
+```{r, warning=FALSE, message=FALSE}
+boxplot(boxplots_ws)
+abline(h=median(boxplots_ws[3,]))
+```
+
+
+## Intensity normalization with RAVEL
+
+- WhiteStripe is great, it normalized the WM intensities across samples
+- Grey matter (GM) and cerebrospinal fluid (CSF) intensites are still not comparable
+- RAVEL extends WhiteStripe to make intensites comparable across subjects for all tissues
+
+## RAVEL methodology
+
+## Creating a control region mask
+
+## Performing RAVEL normalization
+
+
+
+
+
+
+
+
 
