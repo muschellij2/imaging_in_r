@@ -3,14 +3,148 @@ title: "Inhomogeneity Correction"
 author: "John Muschelli"
 date: "1/20/2017"
 output: ioslides_presentation
+bibliography: ../refs.bib      
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+```{r setup, include=FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(kirby21.t1)
+library(neurobase)
+library(extrantsr)
+library(scales)
 ```
 
 ## Inhomogeneity correction
 
 - Scans can have nonuniform intensities throughout the brain
 - low frequency
-- Called bias, bias field, or  inhomogeneity
+- Called bias, bias field, or inhomogeneity
+
+## Kirby21 Data
+
+Let's read in the T1 image from the kirby21 data set:
+
+```{r}
+library(kirby21.t1)
+library(neurobase)
+t1_fname = get_t1_filenames(visit = 1, id = 505)
+t1 = readnii(t1_fname)
+ortho2(t1)
+```
+
+## Histograms of slices
+
+
+Improved N3 Bias Correction
+
+## N4 Inhomogeneity Correction
+
+We will use N4: Improved N3 Bias Correction [@tustison_n4itk_2010].  
+
+The model assumed in the N4 is:
+$$
+v(x) = u(x)f(x) + n(x)
+$$
+
+where $v$ is the given image, $u$ is the uncorrupted image, $f$ is the bias field, and $n$ is the noise (assumed to be independent and Gaussian) and $x$ is a location in the image.
+
+
+## N4 Inhomogeneity Correction
+
+The data is log-transformed and assuming a noise-free scenario, we have:
+
+$$
+log(v(x)) = log(u(x)) + log( f(x) )
+$$
+
+## N4 Inhomogeneity Correction
+
+- N4 uses a B-spline approximation of the bias field
+- It iterates until a convergence criteria is met
+    - when the updated bias field is the same as the last iteration
+- It outputs the data back in the original units (not log-transformed)
+
+## Bias Field Correction
+
+Here we will use the `bias_correct` function in `extrantsr`, which calls `n4BiasFieldCorrection` from `ANTsR`.  
+
+You can pass in the image:
+```{r, message = FALSE}
+library(extrantsr)
+bc_t1 = bias_correct(file = t1, correction = "N4")
+```
+
+or the filename:
+
+```{r, eval = FALSE}
+bc_t1 = bias_correct(file = t1_fname, correction = "N4")
+```
+
+
+## Visualizing Bias Field Correction
+
+We can try visualize the bias field.  Here we take the ratio of the images and overlay it on the original image:
+
+```{r ratio_plot}
+ratio = t1 / bc_t1
+ortho2(t1, ratio)
+```
+
+## Visualizing Bias Field Correction
+
+
+```{r better_ratio_plot}
+library(scales)
+q = quantile(ratio[ ratio != 0], probs = seq(0, 1, by=0.1), na.rm = TRUE)
+q = unique(q)
+# get a diverging gradient palette
+fcol = scales::div_gradient_pal(low="blue",mid="yellow",high ="red") 
+ortho2(t1, ratio, 
+       col.y = scales::alpha(fcol(seq(0,1, length = length(q) - 1)), 0.5), 
+       ybreaks = q, ycolorbar = TRUE)
+```
+
+```{r ratio_plot}
+ratio = t1 / bc_t1
+ortho2(t1, ratio)
+```
+
+## Visualizing Bias Field Correction
+
+Here we see the majority of voxels have a ratio of $1$.  This is due to the fact `n4BiasFieldCorrection` does some implicit masking behind the scenes using `ANTsR::getMask`.
+
+```{r ratio_hist_plot}
+hist(ratio, breaks = 200)
+```
+
+
+## Visualizing Bias Field Correction
+
+Removing these, we can see what the distribution of ratios look like:
+```{r ratio_hist_plot_no1}
+hist(ratio[ratio != 1], breaks = 200)
+```
+
+
+## Visualizing Bias Field Correction
+
+Let's look at this distrbution by areas of the brain:
+
+```{r ratio_hist_plot_slices}
+df = which(ratio != 1, arr.ind = TRUE)
+df = cbind(df, value = ratio[df])
+df = data.frame(df, stringsAsFactors = FALSE)
+df$location = cut(df$dim3, 
+                  breaks = c(0, 86, 172, 256),
+                  labels = c("bottom", "middle", "top"))
+library(ggplot2)
+g = ggplot(df, aes(x = value, colour = location)) + 
+  geom_line(stat = "density")
+print(g)
+```
+
+## Better
+
+
+
