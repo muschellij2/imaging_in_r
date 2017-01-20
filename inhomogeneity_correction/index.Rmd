@@ -25,7 +25,7 @@ library(scales)
 
 ## Kirby21 Data
 
-Let's read in the T1 image from the kirby21 data set:
+Let's read in the T1 image from a kirby21 data set for visit 1:
 
 ```{r}
 library(kirby21.t1)
@@ -171,7 +171,7 @@ print(g)
 
 
 ```{r saving_out, echo = FALSE}
-writenii(bc_img, filename = "../output/")
+writenii(bc_img, filename = "../output/505-01-T1_N4.nii.gz")
 ```
 
 ## References
