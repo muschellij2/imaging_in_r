@@ -3,9 +3,9 @@ title: "Inhomogeneity Correction"
 author: "John Muschelli"
 date: "1/20/2017"
 output:
-  beamer_presentation: default
   ioslides_presentation:
     widescreen: yes
+  beamer_presentation: default
 bibliography: ../refs.bib
 ---
 
@@ -91,8 +91,7 @@ bc_t1 = bias_correct(file = t1_fname, correction = "N4")
 We can try visualize the bias field.  Here we take the ratio of the images and overlay it on the original image:
 
 ```{r ratio_plot}
-ratio = t1 / bc_t1
-ortho2(t1, ratio)
+ratio = t1 / bc_t1; ortho2(t1, ratio)
 ```
 
 ## Visualizing Bias Field Correction
@@ -154,8 +153,7 @@ head(df)
 
 Let's plot these with a density plot for each different location:
 ```{r ratio_hist_plot_slices}
-g = ggplot(df, aes(x = value, colour = location)) + geom_line(stat = "density")
-print(g)
+ggplot(df, aes(x = value, colour = location)) + geom_line(stat = "density")
 ```
 
 ## Conclusions
