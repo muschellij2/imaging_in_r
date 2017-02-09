@@ -1,0 +1,191 @@
+---
+title: "Inhomogeneity Correction in MS"
+author: "John Muschelli"
+output:
+  ioslides_presentation:
+    widescreen: yes
+  beamer_presentation: default
+bibliography: ../refs.bib
+---
+
+```{r setup, include=FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(ms.lesion)
+library(neurobase)
+library(extrantsr)
+library(scales)
+```
+
+## Inhomogeneity correction
+
+- Scans can have nonuniform intensities throughout the brain
+- Usually low frequency - smooth over the brain (assumed)
+- Referred to as bias, bias field, or inhomogeneity
+
+## MS Lesion 
+
+Let's read in the T1 image from a MS lesion data set:
+
+```{r}
+library(ms.lesion)
+library(neurobase)
+files = get_image_filenames_list_by_subject()$training01
+t1_fname = files["MPRAGE"]
+t1 = readnii(t1_fname)
+```
+
+## Bright Data
+
+We see areas of brightness, but we also see that an artifact
+
+```{r}
+ortho2(t1)
+```
+
+
+## Image Data
+
+Let's dampen this artifact and replot the data: 
+
+```{r}
+ortho2(robust_window(t1))
+```
+
+
+## N4 Inhomogeneity Correction
+
+We will use N4: Improved N3 Bias Correction [@tustison_n4itk_2010].  
+
+The model assumed in the N4 is:
+$$
+v(x) = u(x)f(x) + n(x)
+$$
+
+where $v$ is the given image, $u$ is the uncorrupted image, $f$ is the bias field, and $n$ is the noise (assumed to be independent and Gaussian) and $x$ is a location in the image.
+
+
+## N4 Inhomogeneity Correction
+
+The data is log-transformed and assuming a noise-free scenario, we have:
+
+$$
+log(v(x)) = log(u(x)) + log( f(x) )
+$$
+
+- N4 uses a B-spline approximation of the bias field
+- It iterates until a convergence criteria is met
+    - when the updated bias field is the same as the last iteration
+- It outputs the data back in the original units (not log-transformed)
+
+## Bias Field Correction
+
+Here we will use the `bias_correct` function in `extrantsr`, which calls `n4BiasFieldCorrection` from `ANTsR`.  
+
+You can pass in the image:
+```{r, message = FALSE}
+library(extrantsr)
+bc_t1 = bias_correct(file = t1, correction = "N4")
+```
+
+or the filename:
+
+```{r, eval = FALSE}
+bc_t1 = bias_correct(file = t1_fname, correction = "N4")
+```
+
+
+## Visualizing Bias Field Correction
+
+Here we take the ratio of the images and overlay it on the original image:
+
+```{r ratio_plot}
+ratio = t1 / bc_t1; ortho2(t1, ratio)
+```
+
+## Visualizing Bias Field Correction
+
+Here we would like to change the colors to something more descriptive.  Here we will use a diverging palette and map colors to the quantiles of the ratio image:
+
+```{r making_scales}
+library(scales)
+q = quantile(ratio[ ratio != 0], probs = seq(0, 1, by = 0.1), na.rm = TRUE)
+q = unique(q)
+# get a diverging gradient palette
+fcol = scales::div_gradient_pal(low = "blue", mid = "yellow", high = "red") 
+colors =  scales::alpha(fcol(seq(0,1, length = length(q) - 1)), 0.5)
+```
+
+## Visualizing Bias Field Correction
+
+Now we put those breaks into `ortho2` to plot it:
+
+```{r better_ratio_plot}
+ortho2(t1, ratio, col.y = colors, ybreaks = q, ycolorbar = TRUE)
+```
+
+
+## Histogram of Ratio Values
+
+The majority of voxels have a ratio of $1$ because `n4BiasFieldCorrection` does some implicit masking using `ANTsR::getMask`.
+
+```{r ratio_hist_plot, echo = FALSE}
+hist(ratio, breaks = 200)
+```
+
+<!-- ## Getting a Mask -->
+
+<!-- If we wanted, we can get that mask using `oMask`: -->
+
+<!-- ```{r ratio_hist_plot} -->
+<!-- mask = oMask(t1) -->
+<!-- ``` -->
+
+## Visualizing Bias Field Correction
+
+Removing these, we can see what the distribution of ratios look like:
+
+```{r ratio_hist_plot_no1}
+hist(ratio[ratio < 0.999 | ratio > 1.0001], breaks = 200)
+```
+
+
+## Visualizing Bias Field Correction
+
+Here we make a `data.frame` of the indices with the values and cut the z-dimension into the bottom, middle and top:
+
+```{r make_df}
+df = which(ratio < 0.999 | ratio > 1.0001, arr.ind = TRUE)
+df = cbind(df, value = ratio[df])
+df = data.frame(df, stringsAsFactors = FALSE)
+df$location = cut(df$dim3, breaks = c(0, 38, 76, 115),
+                  labels = c("bottom", "middle", "top"))
+```
+```{r, echo = FALSE}
+head(df)
+```
+
+## Visualizing Bias Field Correction
+
+Let's plot these with a density plot for each different location:
+```{r ratio_hist_plot_slices}
+ggplot(df, aes(x = value, colour = location)) + geom_line(stat = "density")
+```
+
+## Conclusions
+
+- Inhomogeneity correction is one of the first steps of most structural MRI pipelines
+- Inhomogeneity can cause problems for other methods/segmentation
+- Corrections try to make tissues of the same class to have similar intensities
+- You may also want to run corrections after skull stripping on the brain only
+    - we will do this in the brain extraction lecture
+    - correction before skull-stripping may be necessary and can improve after correction
+
+
+```{r saving_out, echo = FALSE}
+writenii(bc_t1, filename = "../output/training01_01_mprage_n4.nii.gz")
+```
+
+## References
+
+
