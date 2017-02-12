@@ -1,0 +1,79 @@
+---
+title: "Image Segmentation"
+author: "Kristin Linn"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    keep_md: true
+    theme: cosmo
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: false
+    number_sections: true      
+bibliography: ../refs.bib      
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE, comment = "",
+                      cache.path = "index_cache/html/")
+```
+
+## Overview 
+In this tutorial we will discuss segmentation of the brain into tissue classes and automatic MS lesion segmentation using OASIS. 
+
+## Loading Data
+
+```{r}
+library(ms.lesion)
+library(neurobase)
+library(fslr)
+library(oasis)
+files = get_image_filenames_list_by_subject()$training01
+imgs = lapply(files, readnii)
+t1 = imgs[[which(files=="MPRAGE")]]
+```
+
+
+## Tissue Segmentation using FSL FAST
+
+The fslr function fast calls fast from FSL (CITE).  The -N option tells FSL to not perform inhomogeneity correction. 
+
+```{r}
+t1file = files[[which(files=="MPRAGE")]]
+t1fast = fast(t1, outfile = paste0(nii.stub(t1file), "_FAST"), opts='-N')
+```
+
+### Results
+
+FAST assumes three tissue classes and produces an image with the three labels, ordered by increasing within-class mean intensities. In a T1 image, this results in 1: CSF, 2: Gray Matter, 3: White Matter.  Here is the resulting white matter segmentation:
+
+```{r}
+ortho2(t1, t1fast == 3, col.y=alpha("red", 0.5), text="White Matter")
+```
+
+Gray Matter:
+
+```{r}
+ortho2(t1, t1fast == 2, col.y=alpha("red", 0.5), text="Gray Matter")
+```
+
+CSF: 
+
+```{r}
+ortho2(t1, t1fast == 1, col.y=alpha("red", 0.5), text="CSF")
+```
+
+
+## Tissue Segmentation using ANTsR, extrantsr
+
+- Uses Atropos (CITE)
+
+```{r}
+t1seg = otropos(a=t1, x=mask)
+```
+
+### Results
+
+
+
