@@ -29,6 +29,7 @@ library(ms.lesion)
 library(neurobase)
 library(fslr)
 library(oasis)
+library(scales)
 files = get_image_filenames_list_by_subject()$training01
 imgs = lapply(files, readnii)
 t1 = imgs[[which(files=="MPRAGE")]]
