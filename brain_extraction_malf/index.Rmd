@@ -1,22 +1,15 @@
 ---
 title: "Brain Extraction/Segmentation with MALF"
 author: "John Muschelli"
-date: "`r Sys.Date()`"
-output: 
-  html_document:
-    keep_md: true
-    theme: cosmo
-    toc: true
-    toc_depth: 3
-    toc_float:
-      collapsed: false
-    number_sections: true      
-bibliography: ../refs.bib      
+output:
+  ioslides_presentation:
+    widescreen: yes
+  beamer_presentation: default
+bibliography: ../refs.bib
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, cache = TRUE, comment = "",
-                      cache.path = "index_cache/html/")
+knitr::opts_chunk$set(echo = TRUE, comment = "")
 ```
 
 ## Overview 
@@ -33,7 +26,7 @@ t1_fname = files["MPRAGE"]
 t1 = readnii(t1_fname)
 ```
 
-# T1 image
+## T1 image
 
 Again, let's take a look at the T1-weighted image.  
 
@@ -41,26 +34,27 @@ Again, let's take a look at the T1-weighted image.
 ortho2(robust_window(t1))
 ```
 
-# Bias Correction 
+## Bias Correction 
 
 Before doing skull-stripping/brain extraction, we would do bias correction:
 
-```{r bc_show}
+```{r bc_show, eval = FALSE}
 library(extrantsr)
 bc_img = bias_correct(file = t1, correction = "N4")
 ```
 
-```{r bc_show_run}
+```{r bc_show_run, echo = FALSE}
 bc_fname = "../output/training01_01_mprage_n4.nii.gz"
 bc_img = readnii(bc_fname)
+bc_img = robust_window(bc_img)
 ```
 
 
-# Attempt 1: Brain Extraction of T1 image using BET
+## Attempt 1: Brain Extraction of T1 image using BET
 
 Here we will use FSL's Brain Extraction Tool (BET) to extract the brain tissue from the rest of the image.  
 
-```{r t1_naive_ss, cache = FALSE, echo = TRUE, eval = FALSE, message = FALSE}
+```{r t1_naive_ss, echo = TRUE, eval = FALSE}
 library(mass.templates)
 library(extrantsr)
 timgs = mass_images(n_templates = 5)
@@ -71,22 +65,28 @@ ss = malf(infile = bc_img,
           )
 ```
 
-```{r t1_naive_ss_run, cache = FALSE, echo = TRUE, eval = FALSE, message = FALSE}
+```{r t1_naive_ss_run, echo = FALSE, message = FALSE}
 library(mass.templates)
 library(extrantsr)
 timgs = mass_images(n_templates = 5)
 outfile = "../output/training01_01_mprage_mask.nii.gz"
 if (!file.exists(outfile)) {
-  ss = malf(infile = t1_fname, 
+  ss = malf(infile = bc_fname, 
             template.images = timgs$images, 
             template.structs = timgs$masks,
             keep_images = FALSE,
-            verbose = FALSE          
+            verbose = FALSE,
+            outfile = outfile
             )
-  writenii(ss, filename = outfile)
 } else {
   ss = readnii(outfile)
 }
+```
+
+## Attempt 1: Brain Extraction of T1 image using BET
+
+```{r display_malf_result}
+ortho2(bc_img, ss > 0, col.y = scales::alpha("red", 0.5))
 ```
 
 
