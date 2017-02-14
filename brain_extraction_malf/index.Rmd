@@ -1,5 +1,5 @@
 ---
-title: "Brain Extraction/Segmentation"
+title: "Brain Extraction/Segmentation with MALF"
 author: "John Muschelli"
 date: "`r Sys.Date()`"
 output: 
@@ -28,7 +28,7 @@ In this tutorial we will discuss performing brain segmentation using the brain e
 ```{r}
 library(ms.lesion)
 library(neurobase)
-files = get_image_filenames_list_by_subject()$training02
+files = get_image_filenames_list_by_subject()$training01
 t1_fname = files["MPRAGE"]
 t1 = readnii(t1_fname)
 ```
@@ -41,41 +41,52 @@ Again, let's take a look at the T1-weighted image.
 ortho2(robust_window(t1))
 ```
 
+# Bias Correction 
+
+Before doing skull-stripping/brain extraction, we would do bias correction:
+
+```{r bc_show}
+library(extrantsr)
+bc_img = bias_correct(file = t1, correction = "N4")
+```
+
+```{r bc_show_run}
+bc_fname = "../output/training01_01_mprage_n4.nii.gz"
+bc_img = readnii(bc_fname)
+```
+
 
 # Attempt 1: Brain Extraction of T1 image using BET
 
 Here we will use FSL's Brain Extraction Tool (BET) to extract the brain tissue from the rest of the image.  
 
-```{r t1_naive_ss, cache = FALSE, echo = FALSE, message = FALSE}
-library(fslr)
-ss = fslbet(infile = t1_fname)
-```
-
-```{r t1_naive_plot_ss}
-ortho2(robust_window(ss))
-```
-
-# Attempt 2: Brain Extraction of N4 Corrected
-
-```{r bc_bet, message = FALSE}
+```{r t1_naive_ss, cache = FALSE, echo = TRUE, eval = FALSE, message = FALSE}
+library(mass.templates)
 library(extrantsr)
-bc_img = bias_correct(t1, correction = "N4")
-bc_bet = fslbet(bc_img)
+timgs = mass_images(n_templates = 5)
+ss = malf(infile = bc_img, 
+          template.images = timgs$images, 
+          template.structs = timgs$masks,
+          keep_images = FALSE
+          )
 ```
 
-
-# Attempt 2: Brain Extraction of N4 Corrected
-
-```{r t1_naive_plot}
-ortho2(robust_window(t1), bc_bet > 0, col.y = scales::alpha("red", 0.5))
-```
-
-# Attempt 3: Brain Extraction of N4 Corrected
-
-```{r bc_bet, message = FALSE}
-rb_t1 = robust_window(t1, probs = c(0, 0.99))
-bc_img2 = bias_correct(rb_t1, correction = "N4")
-bc_bet2 = fslbet(bc_img2)
+```{r t1_naive_ss_run, cache = FALSE, echo = TRUE, eval = FALSE, message = FALSE}
+library(mass.templates)
+library(extrantsr)
+timgs = mass_images(n_templates = 5)
+outfile = "../output/training01_01_mprage_mask.nii.gz"
+if (!file.exists(outfile)) {
+  ss = malf(infile = t1_fname, 
+            template.images = timgs$images, 
+            template.structs = timgs$masks,
+            keep_images = FALSE,
+            verbose = FALSE          
+            )
+  writenii(ss, filename = outfile)
+} else {
+  ss = readnii(outfile)
+}
 ```
 
 

@@ -1,23 +1,8 @@
----
-title: "Brain Extraction/Segmentation"
-author: "John Muschelli"
-date: "`r Sys.Date()`"
-output: 
-  html_document:
-    keep_md: true
-    theme: cosmo
-    toc: true
-    toc_depth: 3
-    toc_float:
-      collapsed: false
-    number_sections: true      
-bibliography: ../refs.bib      
----
+# Brain Extraction/Segmentation
+John Muschelli  
+`r Sys.Date()`  
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, cache = TRUE, comment = "",
-                      cache.path = "index_cache/html/")
-```
+
 
 ## Overview 
 In this tutorial we will discuss performing brain segmentation using the brain extraction tool (BET) in `fsl` and a robust version using a wrapper function in `extrantsr`, `fslbet_robust`. 
@@ -25,10 +10,22 @@ In this tutorial we will discuss performing brain segmentation using the brain e
 
 ## Loading Data
 
-```{r}
+
+```r
 library(ms.lesion)
 library(neurobase)
-files = get_image_filenames_list_by_subject()$training02
+```
+
+```
+Loading required package: oro.nifti
+```
+
+```
+oro.nifti 0.7.2
+```
+
+```r
+files = get_image_filenames_list_by_subject()$training01
 t1_fname = files["MPRAGE"]
 t1 = readnii(t1_fname)
 ```
@@ -37,46 +34,56 @@ t1 = readnii(t1_fname)
 
 Again, let's take a look at the T1-weighted image.  
 
-```{r t1_plot}
+
+```r
 ortho2(robust_window(t1))
 ```
+
+![](index_files/figure-html/t1_plot-1.png)<!-- -->
 
 
 # Attempt 1: Brain Extraction of T1 image using BET
 
 Here we will use FSL's Brain Extraction Tool (BET) to extract the brain tissue from the rest of the image.  
 
-```{r t1_naive_ss, cache = FALSE, echo = FALSE, message = FALSE}
-library(fslr)
-ss = fslbet(infile = t1_fname)
+
+```
+Warning in get.fsl(): Setting fsl.path to /usr/local/fsl
 ```
 
-```{r t1_naive_plot_ss}
+```
+Warning in get.fsloutput(): Can't find FSLOUTPUTTYPE, setting to NIFTI_GZ
+```
+
+
+```r
 ortho2(robust_window(ss))
 ```
 
+![](index_files/figure-html/t1_naive_plot_ss-1.png)<!-- -->
+
 # Attempt 2: Brain Extraction of N4 Corrected
 
-```{r bc_bet, message = FALSE}
+
+```r
 library(extrantsr)
 bc_img = bias_correct(t1, correction = "N4")
 bc_bet = fslbet(bc_img)
 ```
 
 
+
 # Attempt 2: Brain Extraction of N4 Corrected
 
-```{r t1_naive_plot}
+
+
+```r
 ortho2(robust_window(t1), bc_bet > 0, col.y = scales::alpha("red", 0.5))
 ```
 
-# Attempt 3: Brain Extraction of N4 Corrected
+![](index_files/figure-html/t1_naive_plot-1.png)<!-- -->
 
-```{r bc_bet, message = FALSE}
-rb_t1 = robust_window(t1, probs = c(0, 0.99))
-bc_img2 = bias_correct(rb_t1, correction = "N4")
-bc_bet2 = fslbet(bc_img2)
-```
+
 
 
 We see that naively, BET does not perform well for this image.
