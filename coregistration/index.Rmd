@@ -36,7 +36,6 @@ t1 = readnii(t1_fname)
 
 # Register to the T1 image
 
-
 ```{r, eval = FALSE}
 res = within_visit_registration(
   fixed = files["MPRAGE"],
@@ -46,9 +45,10 @@ res = within_visit_registration(
 )
 output_imgs = lapply(res, function(x) x$outfile)
 names(output_imgs) = c("T2", "FLAIR", "PD")
+out = c(MPRAGE = list(t1), output_imgs)
 ```
 
-```{r, eval = FALSE, echo = FALSE}
+```{r, eval = TRUE, echo = FALSE}
 mods = c("T2", "FLAIR", "PD")
 outfiles = file.path("..", "output", basename(files[mods]))
 names(outfiles) = mods
@@ -65,6 +65,18 @@ if (!all(file.exists(outfiles))) {
   output_imgs = check_nifti(outfiles)
 }
 out = c(MPRAGE = list(t1), output_imgs)
+mask = out$MPRAGE > quantile( out$MPRAGE[ out$MPRAGE > 0], probs = 0.25)
+dd = dropEmptyImageDimensions(mask, 
+                               other.imgs = out)
+out = dd$other.imgs
+out = lapply(out, zscore_img, mask = dd$outimg)
+out = lapply(out, window_img, window = c(-2, 2))
+```
+
+## Output of registration
+
+```{r multi_overlay }
+multi_overlay(out)
 ```
 
 
