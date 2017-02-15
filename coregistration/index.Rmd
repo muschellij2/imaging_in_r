@@ -2,15 +2,10 @@
 title: "Co-registration"
 author: "John Muschelli"
 date: "`r Sys.Date()`"
-output: 
-  html_document:
-    keep_md: true
-    theme: cosmo
-    toc: true
-    toc_depth: 3
-    toc_float:
-      collapsed: false
-    number_sections: true      
+output:
+  ioslides_presentation:
+    widescreen: yes
+  beamer_presentation: default    
 bibliography: ../refs.bib      
 ---
 
@@ -34,7 +29,7 @@ t1_fname = files["MPRAGE"]
 t1 = readnii(t1_fname)
 ```
 
-# Register to the T1 image
+## Register to the T1 image
 
 ```{r, eval = FALSE}
 res = within_visit_registration(
@@ -48,7 +43,7 @@ names(output_imgs) = c("T2", "FLAIR", "PD")
 out = c(MPRAGE = list(t1), output_imgs)
 ```
 
-```{r, eval = TRUE, echo = FALSE}
+```{r registration, eval = TRUE, echo = FALSE}
 mods = c("T2", "FLAIR", "PD")
 outfiles = file.path("..", "output", basename(files[mods]))
 names(outfiles) = mods
@@ -64,19 +59,30 @@ if (!all(file.exists(outfiles))) {
 } else {
   output_imgs = check_nifti(outfiles)
 }
-out = c(MPRAGE = list(t1), output_imgs)
-mask = out$MPRAGE > quantile( out$MPRAGE[ out$MPRAGE > 0], probs = 0.25)
+xout = c(MPRAGE = list(t1), output_imgs)
+mask = xout$MPRAGE > quantile( xout$MPRAGE[ xout$MPRAGE > 0], probs = 0.25)
 dd = dropEmptyImageDimensions(mask, 
-                               other.imgs = out)
-out = dd$other.imgs
-out = lapply(out, zscore_img, mask = dd$outimg)
-out = lapply(out, window_img, window = c(-2, 2))
+                               other.imgs = xout)
+xout = dd$other.imgs
+out = lapply(xout, zscore_img, mask = dd$outimg)
+out = lapply(out, window_img, window = c(-4, 4))
 ```
 
 ## Output of registration
 
-```{r multi_overlay }
+```{r multi_overlay}
 multi_overlay(out)
+```
+
+
+## Output of Registration
+
+```{r reg_plot_ortho2_show, eval = FALSE}
+double_ortho(out$MPRAGE, out$T2 )
+```
+
+```{r reg_plot_ortho2_run, echo = FALSE}
+double_ortho(robust_window(xout$MPRAGE), robust_window(xout$T2 ))
 ```
 
 
@@ -121,9 +127,10 @@ $$\left[\begin{array}{ccc} \cos\beta\cos\gamma& \cos\alpha\sin\gamma + \sin\alph
 - $3$ associated with the translation vector: $t=(t_x, t_y, t_z)$
 - $3$ associated with the rotation parameters: $\theta=(\alpha, \beta,\gamma)$. 
 
-## \includegraphics{rollpitchyaw.pdf}
-\small Image taken from [http://cnl.web.arizona.edu/imageprops.htm](http://cnl.web.arizona.edu/imageprops.htm)
-\normalsize
+## ![](rollpitchyaw.png)
+<div style="font-size: 8pt">
+Image taken from [http://cnl.web.arizona.edu/imageprops.htm](http://cnl.web.arizona.edu/imageprops.htm)
+</div>
 
 - Pitch - Think of nodding ("yes")
 - Yaw - Think of shaking head ("no") (SMH)
@@ -133,13 +140,12 @@ $$\left[\begin{array}{ccc} \cos\beta\cos\gamma& \cos\alpha\sin\gamma + \sin\alph
 - z – jump up/down 
 
 
-
 ## Overall Framework
-\includegraphics{Reg_Figure_Option1_short.pdf}
+![](Reg_Figure_Option1_short.png)
 
 ## Within-visit co-registration of sequences
 First, we will register scans within a visit to the T1 of that visit:
-\includegraphics{Reg_Figure_Option1_short_within.pdf}
+![](Reg_Figure_Option1_short_within.png)
 
 ## Co-registration/Registration within the same subject
 - Requires fewer degrees of freedom
@@ -154,19 +160,6 @@ First, we will register scans within a visit to the T1 of that visit:
 ## Reading in the T1 scan from visit 1
 We will use the data from the Kirby21 dataset.  Here we read in the T1 (denoted by MPRAGE) scan from visit 1:
 
-```{r reg_read_t1, echo=TRUE, message=FALSE}
-library(oro.nifti)
-library(extrantsr)
-library(fslr)
-kirbydir = path.expand("~/Neurohacking_data/kirby21")
-mridir = file.path(kirbydir, "visit_1", "113")
-t1 = file.path(mridir, "113-01-MPRAGE.nii.gz")
-t1 = readNIfTI(t1, reorient = FALSE)
-```
-
-```{r window_t1, echo=FALSE, message=FALSE, results='hide'}
-t1 = robust_window(t1)
-```
 
 ## FLIRT: FSL's Linear Registration Tool
 
@@ -174,96 +167,10 @@ t1 = robust_window(t1)
 
 - Here we will register the scan with the skull on.
 
-## Using FLIRT: Kirby21 Co-registration of T2w to T1
-- We will use the `fslr` function `flirt` to register the T2 (`infile`) to the T1 (`reffile`), which calls the FSL function `flirt`
-
-```{r flirt_reg_t2}
-t2 = file.path(mridir, "113-01-T2w.nii.gz")
-flirt_reg_t2 = file.path(mridir, 
-            "FLIRT_113-01-T2w_regToT1.nii.gz")
-flirt_reg_t2_img = flirt(infile = t2, reffile = t1, 
-                         dof = 6, 
-                         outfile = flirt_reg_t2,
-                         verbose = FALSE)
-```
-
-
-## Results: The T2w image is tilted and the eye in the axial slice (bottom left) is out of sync 
-  
-```{r reg_plot_t2_flirt}
-double_ortho(t1,  flirt_reg_t2_img)
-```
-
-## ANTsR: Kirby21 Co-registration of T2w to T1
-
-- We will use the `extrantsr` function `ants_regwrite` to register the T2 (`filename`) to the T1 (`template.file`), which calls `ANTsR::antsRegistration`.
-
-- Here we will register the scan with the skull on.
-
-```{r reg_t2}
-t2 = file.path(mridir, "113-01-T2w.nii.gz")
-reg_t2 = file.path(mridir, "113-01-T2w_regToT1.nii.gz")
-reg_t2_img = ants_regwrite(filename = t2, 
-                           template.file = t1, 
-                           outfile = reg_t2, 
-                           typeofTransform = "Rigid",
-                           verbose = FALSE)
-```
-
-
-
-## Kirby21 Co-registration of FLAIR
-
-- Here we perform the same operation on the FLAIR image:
-
-```{r reg_flair}
-flair = file.path(mridir, "113-01-FLAIR.nii.gz")
-reg_flair = file.path(mridir, 
-                      "113-01-FLAIR_regToT1.nii.gz")
-reg_flair_img = ants_regwrite(filename = flair, 
-                           template.file = t1, 
-                           outfile = reg_flair, 
-                           typeofTransform = "Rigid",
-                           verbose = FALSE)
-```
-
-```{r robust_flair_t2, results='hide', echo = FALSE}
-reg_flair_img = robust_window(reg_flair_img)
-reg_t2_img = robust_window(reg_t2_img)
-```
-## T2 Results
-
-```{r reg_plot_t2}
-double_ortho(t1, reg_t2_img)
-```
-
-## T2 Results: Overlay
-
-```{r reg_plot_t2_overlay}
-library(scales)
-ortho2(t1, reg_t2_img, 
-       col.y = alpha(hotmetal(), 0.25))
-```
-
-
-## FLAIR Results
-
-```{r reg_plot_flair}
-double_ortho(t1, reg_flair_img)
-```
-
-## FLAIR Results: Overlay
-
-```{r reg_plot_flair_overlay}
-ortho2(t1, reg_flair_img, 
-       col.y = alpha(hotmetal(), 0.25))
-```
 
 ## Coregistration within a visit results
 
 - Overall, there seems to be good overlap after registration with `ANTsR`
-    - It is somewhat surprising `flirt` did not perform well
-    - This may be due to non-brain tissue affecting the registation
 - Although we ran the registration on the raw data, it is usually beneficial to do inhomogeneity correction before registration.
 
 ## Wrapper function to perform preprocessing
@@ -272,150 +179,20 @@ The `extrantsr` function `preprocess_mri_within` will do the following steps:
 1.  Inhomogeneity correction
 2.  Registration of the files to the first filename
 
-```{r preprocess}
-files = c("113-01-MPRAGE.nii.gz", 
-          "113-01-T2w.nii.gz", 
-          "113-01-FLAIR.nii.gz")
-files = file.path(mridir, files)
-outfiles = c("113-01-MPRAGE_processed.nii.gz", 
-             "113-01-T2w_processed.nii.gz", 
-             "113-01-FLAIR_processed.nii.gz")
-outfiles = file.path(mridir, outfiles)
-preprocess_mri_within(files = files, retimg = FALSE, 
-                      outfiles = outfiles, 
-                      correction = "N4", 
-                      skull_strip = FALSE)
-```
 
 ## Applying a Brain mask to all registered images
 Now that the images are in the same space as the T1, if we skull-strip the T1 image, we can apply this mask to those images to extract brain tissues.
 
 ```{r bet_t1}
-brain = fslbet_robust(img = outfiles[1],
-                      correct = FALSE, 
-                      verbose = FALSE)
-mask = brain > 0
-masked_imgs = lapply(outfiles, 
-                     fslmask, 
-                     mask = mask,
-                     verbose = FALSE)
+mask = readnii("../output/training01_01_mprage_mask.nii.gz")
+sub_mask = applyEmptyImageDimensions(mask, inds = dd$inds)
+masked_imgs = lapply(xout, mask_img, sub_mask)
 ```
 
 ## Result 
 
 ```{r mimgs_2}
 orthographic(masked_imgs[[2]])
-```
-
-
-## Across-visit co-registration of T1 images
-- If we perform the same operation in the visit 2 data using `preprocess_mri_within`, we have visit 1 in the visit 1 T1 space and visit 2 in the visit 2 T1 space 
-
-- We will register the follow-up/visit 2 T1 scan to the visit 1/baseline scan
-
-\includegraphics{Reg_Figure_Option1_short_across.pdf}
-
-```{r preprocess2, echo=FALSE, results='hide'}
-mridir2 = file.path(kirbydir, "visit_2", "113")
-files2 = c("113-02-MPRAGE.nii.gz", 
-           "113-02-T2w.nii.gz",
-           "113-02-FLAIR.nii.gz")
-files2 = file.path(mridir2, files2)
-outfiles2 = paste0(nii.stub(files2), "_processed.nii.gz")
-preprocess_mri_within(files = files2, retimg = FALSE, 
-                      outfiles = outfiles2, 
-                      correction = "N4", 
-                      skull_strip = FALSE)
-```
-
-```{r bet_t1_visit_2, echo=FALSE, results='hide'}
-brain2 = fslbet_robust(outfiles2[1],
-                       correct = FALSE, verbose = FALSE)
-mask2 = brain2 > 0
-masked_imgs2 = lapply(outfiles2, 
-                      fslmask, 
-                      mask = mask2,
-                      verbose = FALSE)
-```
-
-## Result 
-
-```{r mimgs_2_2}
-orthographic(masked_imgs2[[3]])
-```
-
-## Registration across visits
-We will take the skull-stripped T1 from visit 2, register it to the skull-stripped T1 from visit 1, and use this transformation to put the skull-stripped T2 and skull-stripped FLAIR from visit 2 into the T1 space from visit 1.
-
-```{r apply_trans}
-visit2_files = file.path(mridir2, 
-            c("113-02-MPRAGE_processed.nii.gz", 
-              "113-02-T2w_processed.nii.gz", 
-              "113-02-FLAIR_processed.nii.gz"))
-outfiles2 = sub(".nii.gz", "_reg.nii.gz", visit2_files)
-ants_regwrite(filename = masked_imgs2[[1]],
-              retimg = FALSE,
-              outfile = outfiles2[1], 
-              template.file = masked_imgs[[1]], 
-              other.files = masked_imgs2[2:3], 
-              other.outfiles = outfiles2[2:3], 
-              typeofTransform = "Rigid", 
-              verbose = FALSE)
-```
-
-
-## T1 images across visits: Side by side
-
-```{r plot_across_visits}
-ss_t1 = masked_imgs[[1]]
-visit_2_t1 = readNIfTI(outfiles2[1], reorient=FALSE)
-double_ortho(ss_t1, visit_2_t1)
-```
-
-## T1 images across visits: Overlay
-
-```{r plot_across_visits_overlay}
-ortho2(ss_t1, visit_2_t1, 
-       col.y = alpha(hotmetal(), 0.25))
-```
-
-
-
-## Registration across visits - skull on 
-We will take the T1 from visit 2, register it to the T1 from visit 1, and use this transformation to put the skull-stripped T2 and skull-stripped FLAIR from visit 2 into the T1 space from visit 1.
-
-```{r apply_trans_skull}
-visit2_files_skull = file.path(mridir2, 
-            c("113-02-MPRAGE_processed.nii.gz", 
-              "113-02-T2w_processed.nii.gz", 
-              "113-02-FLAIR_processed.nii.gz"))
-outfiles2_skull = sub(".nii.gz", "_reg_withskull.nii.gz", 
-                visit2_files_skull)
-ants_regwrite(filename = visit2_files_skull[1],
-              retimg = FALSE,
-              outfile = outfiles2_skull[1], 
-              template.file = outfiles[1], 
-              other.files = visit2_files_skull[2:3], 
-              other.outfiles = outfiles2_skull[2:3], 
-              typeofTransform = "Rigid", 
-              verbose = FALSE)
-```
-
-
-## T1 images across visits: Side by side
-
-```{r plot_across_visits_skull}
-t1_skull = readNIfTI(outfiles[1], reorient=FALSE)
-visit_2_t1_skull = readNIfTI(outfiles2_skull[1], 
-                             reorient=FALSE)
-double_ortho(t1_skull, visit_2_t1_skull)
-```
-
-## T1 images across visits: Overlay
-
-```{r plot_across_visits_overlay_skull}
-ortho2(t1_skull, visit_2_t1_skull, 
-       col.y = alpha(hotmetal(), 0.25))
 ```
 
 ## Overview
