@@ -127,7 +127,7 @@ $$\left[\begin{array}{ccc} \cos\beta\cos\gamma& \cos\alpha\sin\gamma + \sin\alph
 - $3$ associated with the translation vector: $t=(t_x, t_y, t_z)$
 - $3$ associated with the rotation parameters: $\theta=(\alpha, \beta,\gamma)$. 
 
-## <img src="rollpitchyaw.png" style="width: 100%; display: block; margin: auto;">
+## <img src="rollpitchyaw.png" style="width: 50%; display: block; margin: auto;">
 <div style="font-size: 8pt">
 Image taken from [http://cnl.web.arizona.edu/imageprops.htm](http://cnl.web.arizona.edu/imageprops.htm)
 </div>
