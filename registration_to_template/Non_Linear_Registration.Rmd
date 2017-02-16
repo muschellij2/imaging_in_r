@@ -17,6 +17,53 @@ opts_chunk$set(message = FALSE, echo = TRUE, cache = TRUE, comment = "",
                warning = FALSE)
 ```
 
+
+```{r}
+rm(list= ls())
+library(ms.lesion)
+library(extrantsr)
+library(EveTemplate)
+library(neurobase)
+
+all.exists = function(...){
+  all(file.exists(...))
+}
+
+eve_brain = getEvePath("Brain")
+
+files = get_image_filenames_list_by_subject(
+    type = "coregistered")
+
+isubj = 1
+for (isubj in seq_along(files)) {
+    print(isubj)
+    fnames = files[[isubj]]
+    id = names(files)[isubj]
+    outdir = file.path("template",
+        id)
+    dir.create(outdir)
+    outfiles = file.path(outdir, 
+        basename(fnames))
+    if (!all.exists(outfiles)) {
+        reg = registration(
+            filename = fnames["MPRAGE"],
+            template.file = eve_brain,
+            interpolator = "Linear",
+            typeofTransform = "SyN",
+            other.files = fnames,
+            other.outfiles = outfiles)
+    }
+    o = check_nifti(outfiles)
+    o = lapply(o, function(x){
+        x[x < 0] = 0
+        x
+    })
+    mapply(function(x, fname){
+        writenii(x, fname)
+    }, o, outfiles)
+}
+```
+
 ## Types of Registration
 - Rigid-body registration (linear) - 6 degrees of freedom (dof)
     - Co-registration (within the same person)
