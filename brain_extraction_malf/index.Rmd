@@ -1,5 +1,5 @@
 ---
-title: "Brain Extraction/Segmentation with MALF"
+title: "Brain Extraction/Segmentation"
 author: "John Muschelli"
 output:
   ioslides_presentation:
@@ -12,11 +12,12 @@ bibliography: ../refs.bib
 knitr::opts_chunk$set(echo = TRUE, comment = "")
 ```
 
-## Overview 
-In this tutorial we will discuss performing brain segmentation using the brain extraction tool (BET) in `fsl` and a robust version using a wrapper function in `extrantsr`, `fslbet_robust`. 
+## Brain Extraction 3 Different Attempts
+
+In this tutorial we will discuss performing brain segmentation using the brain extraction tool (BET) [@smith_fast_2002] in `FSL` [@jenkinson_fsl_2012], a robust version using a wrapper function in `extrantsr`, `fslbet_robust`, and a multi-atlas approach. 
 
 
-## Loading Data
+## Loading Data from `ms.lesion`
 
 ```{r}
 library(ms.lesion)
@@ -24,17 +25,64 @@ library(neurobase)
 files = get_image_filenames_list_by_subject()$training01
 t1_fname = files["MPRAGE"]
 t1 = readnii(t1_fname)
+red0.5 = scales::alpha("red", 0.5)
 ```
 
-## T1 image
-
-Again, let's take a look at the T1-weighted image.  
+## T1 image: high intensity values
 
 ```{r t1_plot}
+ortho2(t1)
+```
+
+
+## T1 image has long tails
+
+```{r t1_plot_hist}
+hist(t1[ t1 > 0], breaks = 200)
+```
+
+## Winsorized - may need to remove/dampen tails
+
+```{r t1_plot_robust}
 ortho2(robust_window(t1))
 ```
 
-## Bias Correction 
+## Attempt 1: Brain Extraction of T1 image using BET
+
+Here we will use FSL's Brain Extraction Tool (BET) to extract the brain tissue from the rest of the image (general overview):
+
+- 2nd and 98th percentiles are calculated.  (98th - 2nd) * 10% + 2nd value used to threshold out background
+- From non-thresholded voxels - calculate center of gravity (COG)
+- Calculate radius of brain and median intensity of all points within "spherical brain"
+- Perform region growing and iterating to get brain surface
+- Smooth surface
+- Use median intensity to shrink surface to the "real" surface
+
+
+## Attempt 1: Brain Extraction of T1 image using BET
+
+`fslr::fslbet` - takes in a filename/nifti
+
+  - additional options can be passed to FSL command in using `opts`
+
+```{r t1_naive_ss, cache = FALSE, echo = FALSE, message = FALSE}
+library(fslr)
+ss = fslbet(infile = t1_fname)
+```
+
+## FSL BET Results - Missing Brain Tissues (Posterior)
+
+```{r t1_naive_plot_ss}
+ortho2(robust_window(ss))
+```
+
+## FSL BET Results not Satisfactory
+
+```{r t1_ss_plot}
+ortho2(t1, ss > 0, col.y = red0.5)
+```
+
+## Bias Correct before BET (recommended) 
 
 Before doing skull-stripping/brain extraction, we would do bias correction:
 
@@ -49,85 +97,169 @@ bc_img = readnii(bc_fname)
 bc_img = robust_window(bc_img)
 ```
 
+## BET on N4 Corrected Image Unsatisfactory
 
-## Attempt 1: Brain Extraction of T1 image using BET
-
-Here we will use FSL's Brain Extraction Tool (BET) to extract the brain tissue from the rest of the image.  
-
-```{r t1_naive_ss, echo = TRUE, eval = FALSE}
-library(mass.templates)
-library(extrantsr)
-timgs = mass_images(n_templates = 5)
-ss = malf(infile = bc_img, 
-          template.images = timgs$images, 
-          template.structs = timgs$masks,
-          keep_images = FALSE
-          )
+```{r bc_bet, message = FALSE}
+bc_bet = fslbet(bc_img); ortho2(bc_img, bc_bet > 0, col.y = red0.5)
 ```
 
-```{r t1_naive_ss_run, echo = FALSE, message = FALSE}
-library(mass.templates)
+## Attempt 3: Brain Extraction of T1 image using MALF
+
+Multi-Atlas Fusion:
+
+- Register templates to an image using the T1 for that subject
+- Apply transformation to the label/mask
+- Average each voxel over all templates
+  - there are "smarter" (e.g. weighted) ways
+  
+- `malf.templates` package has templates provided by by Neuromorphometrics, Inc. (http://Neuromorphometrics.com/) form MICCAI 2012 Challenge on Multi-atlas Labelling [@bennett2012miccai]
+
+
+## MALF - use `extrantsr::malf`
+
+- Requires `template.images` (T1-weighted images in this case) and `template.structs` (labels/structures/masks, brain masks here)
+- Performs non-linear registration (discussed later) using `SyN` [@avants_symmetric_2008]
+
+
+```{r t1_malf_ss, echo = TRUE, eval = FALSE}
+library(malf.templates)
+library(extrantsr)
+timgs = mass_images(n_templates = 5)
+ss = extrantsr::malf(
+  infile = bc_img, 
+  template.images = timgs$images, 
+  template.structs = timgs$masks,
+  keep_images = FALSE
+)
+```
+
+```{r t1_malf_ss_run, echo = FALSE, message = FALSE}
+library(malf.templates)
 library(extrantsr)
 timgs = mass_images(n_templates = 5)
 outfile = "../output/training01_01_mprage_mask.nii.gz"
 if (!file.exists(outfile)) {
-  ss = malf(infile = bc_fname, 
-            template.images = timgs$images, 
-            template.structs = timgs$masks,
-            keep_images = FALSE,
-            verbose = FALSE,
-            outfile = outfile
-            )
+  ss = malf(
+    infile = bc_fname, 
+    template.images = timgs$images, 
+    template.structs = timgs$masks,
+    keep_images = FALSE,
+    verbose = FALSE,
+    outfile = outfile
+  )
 } else {
   ss = readnii(outfile)
 }
 ```
 
-## Attempt 1: Brain Extraction of T1 image using BET
+
+## MALF performs well
 
 ```{r display_malf_result}
-ortho2(bc_img, ss > 0, col.y = scales::alpha("red", 0.5))
+ortho2(bc_img, ss > 0, col.y = red0.5)
 ```
 
 
-We see that naively, BET does not perform well for this image.
+## Processed Results Available in `ms.lesion`
 
-<!-- # Brain Extraction of T1 image using BET -->
+In the `ms.lesion` package, we have the brain masks for each subject located in the `coregistered` folder.  You can access this data using the `type = "coregistered"`
 
-<!-- Here we will use FSL's Brain Extraction Tool (BET) to extract the brain tissue from the rest of the image.  We use the modification of BET in `extrantsr`, which is called through `fslbet_robust`.  In `fslbet_robust`, the image is corrected using the N4 inhomogeneity correction.  The neck of the T1 image is then removed and then BET is run, the center of gravity (COG) is estimated, and BET is run with this new COG.  We used a procedure where the neck is removed in 2 registration steps, which is more robust than just the one (which is the default). -->
+```{r, echo = TRUE, eval = FALSE}
+files = get_image_filenames_list_by_subject(type = "coregistered")$training01
+files["Brain_Mask"]
+```
+```{r, echo = FALSE}
+files = get_image_filenames_list_by_subject(type = "coregistered")$training01
+files = files["Brain_Mask"]
+dd = strsplit(files, "/")$Brain_Mask
+ind = which(dd == "library")
+dd = dd[seq(ind, length(dd))]
+dd = paste(dd, collapse = "/")
+print(dd)
+```
 
-<!-- ```{r t1_ss, cache = FALSE} -->
-<!-- outfile = nii.stub(t1_fname, bn = TRUE) -->
-<!-- outfile = paste0(outfile, "_SS.nii.gz") -->
-<!-- if (!file.exists(outfile)) { -->
-<!--   ss = extrantsr::fslbet_robust(t1_fname,  -->
-<!--     remover = "double_remove_neck", -->
-<!--     outfile = outfile) -->
-<!-- } else { -->
-<!--   ss = readnii(outfile) -->
-<!-- } -->
-<!-- ``` -->
 
-<!-- Let's look at the skull-stripped image. -->
-<!-- ```{r t1_ss_plot, cache = TRUE} -->
-<!-- ortho2(ss) -->
-<!-- ``` -->
 
-<!-- Here we see the skull-stripped image.  But did we drop out "brain areas"? -->
+## Kirby21 - Remove Neck
 
-<!-- ```{r t1_ss_plot2, cache = TRUE} -->
-<!-- alpha = function(col, alpha = 1) { -->
-<!--   cols = t(col2rgb(col, alpha = FALSE)/255) -->
-<!--   rgb(cols, alpha = alpha) -->
-<!-- }       -->
-<!-- ortho2(t1_fname, ss > 0, col.y = alpha("red", 0.5)) -->
-<!-- ``` -->
+To illustrate another common problem with brain extraction, we will look at a subject from the kirby21 dataset [@landman2011multi].
 
-<!-- We can again use `dropEmptyImageDimensions` to remove extraneous slices, which helps with reducing storage of the image on disk, zooming in while plotting, and may aid registration.   -->
+```{r}
+library(kirby21.t1)
+t1_fname = get_t1_filenames()[1]
+t1 = readnii(t1_fname)
+```
 
-<!-- ```{r t1_ss_red, cache = FALSE} -->
-<!-- ss_red = dropEmptyImageDimensions(ss) -->
-<!-- ortho2(ss_red) -->
-<!-- ``` -->
 
-<!-- Again, we can see the zoomed-in view of the image now. -->
+## T1 image has the neck!
+
+```{r kirby21_t1_plot}
+ortho2(robust_window(t1))
+```
+
+
+## Neck messes up BET 
+
+```{r kirby21_t1_naive_ss, cache = FALSE, message = FALSE}
+ss = fslbet(infile = t1_fname); ortho2(robust_window(ss))
+```
+
+
+## Recommend to Bias Correct first: not fixed
+
+```{r kirby21_bc_bet, message = FALSE}
+bc_img = bias_correct(t1, correction = "N4"); bc_bet = fslbet(bc_img)
+ortho2(robust_window(t1), bc_bet > 0, col.y = red0.5)
+```
+
+## BET with neck removal
+
+We use the modification of BET in `extrantsr`, which is called through `fslbet_robust`.  `fslbet_robust`:
+
+- bias correct image
+- remove neck (`double_remove_neck` performs 2 registration steps, more robust than one (which is the default).)
+- run BET
+- estimate center of gravity (COG)
+- run BET again with new COG
+
+## `fslbet_robust` syntax
+
+```{r, eval = FALSE}
+ss = extrantsr::fslbet_robust(
+  t1, 
+  remover = "double_remove_neck",
+  correct = TRUE,
+  correction = "N4",
+  recog = TRUE)
+```
+
+
+## BET with neck removal - works well!
+
+```{r t1_ss, cache = FALSE, echo = FALSE}
+outfile = nii.stub(t1_fname, bn = TRUE)
+outfile = file.path("..", "output", paste0(outfile, "_SS.nii.gz"))
+if (!file.exists(outfile)) {
+  ss = extrantsr::fslbet_robust(t1_fname,
+    remover = "double_remove_neck",
+    outfile = outfile)
+} else {
+  ss = readnii(outfile)
+}
+```
+
+```{r kirby21_t1_ss_plot, cache = TRUE}
+ortho2(ss)
+```
+
+## Conclusions 
+
+- Brain extraction allows you to analyze the brain only
+  - Important for tissue segmentation/registration
+- BET can work well (look at your data!)
+  - Should bias correct first 
+  - May need to remove neck
+  - High values may affect results - may need to remove/Winsorize them
+
+
+## References {.smaller}
