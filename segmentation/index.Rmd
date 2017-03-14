@@ -15,8 +15,10 @@ bibliography: ../refs.bib
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, cache = TRUE, comment = "",
-                      cache.path = "index_cache/html/")
+knitr::opts_chunk$set(
+  message = FALSE, echo = TRUE, 
+  cache = TRUE, comment = "", 
+  warning = FALSE)
 ```
 
 ## Overview 
@@ -30,39 +32,59 @@ library(neurobase)
 library(fslr)
 library(oasis)
 library(scales)
-files = get_image_filenames_list_by_subject()$training01
-imgs = lapply(files, readnii)
-t1 = imgs[[which(files=="MPRAGE")]]
+files = get_image_filenames_list_by_subject(
+  type = "coregistered")$training01
+t1file = files["MPRAGE"]
+maskfile = files["Brain_Mask"]
+mask = readnii(maskfile)
+t1 = readnii(t1file)
 ```
 
 
 ## Tissue Segmentation using FSL FAST
 
-The fslr function fast calls fast from FSL (CITE).  The -N option tells FSL to not perform inhomogeneity correction. 
+The fslr function fast calls fast from FSL [@fast].  The `--nobias` option tells FSL to not perform inhomogeneity correction. 
 
-```{r}
-t1file = files[[which(files=="MPRAGE")]]
-t1fast = fast(t1, outfile = paste0(nii.stub(t1file), "_FAST"), opts='-N')
+```{r fast_show, eval = FALSE}
+t1file = files["MPRAGE"]
+t1fast = fast(t1, outfile = paste0(nii.stub(t1file), "_FAST"), opts = "--nobias")
+```
+
+```{r fast_run, echo = FALSE}
+t1fast = readnii(files["FAST"])
+```
+
+```{r, eval = FALSE}
+separate = lapply(1:3, function(x){
+  t1fast == x
+})
+L = c(MPRAGE = list(t1), separate)
+L$MPRAGE = robust_window(L$MPRAGE)
+r = range(L$MPRAGE)
+L$MPRAGE = (L$MPRAGE - r[1])/(r[2] - r[1])
+multi_overlay(L, z = 60)
 ```
 
 ### Results
 
-FAST assumes three tissue classes and produces an image with the three labels, ordered by increasing within-class mean intensities. In a T1 image, this results in 1: CSF, 2: Gray Matter, 3: White Matter.  Here is the resulting white matter segmentation:
+FAST assumes three tissue classes and produces an image with the three labels, ordered by increasing within-class mean intensities. In a T1 image, this results in 1: CSF, 2: Gray Matter, 3: White Matter.  
+
+## White Matter
 
 ```{r}
-ortho2(t1, t1fast == 3, col.y=alpha("red", 0.5), text="White Matter")
+ortho2(t1, t1fast == 3, col.y = alpha("red", 0.5), text = "White Matter")
 ```
 
-Gray Matter:
+## Gray Matter
 
 ```{r}
-ortho2(t1, t1fast == 2, col.y=alpha("red", 0.5), text="Gray Matter")
+ortho2(t1, t1fast == 2, col.y = alpha("red", 0.5), text="Gray Matter")
 ```
 
-CSF: 
+## CSF
 
 ```{r}
-ortho2(t1, t1fast == 1, col.y=alpha("red", 0.5), text="CSF")
+ortho2(t1, t1fast == 1, col.y = alpha("red", 0.5), text="CSF")
 ```
 
 
@@ -70,8 +92,13 @@ ortho2(t1, t1fast == 1, col.y=alpha("red", 0.5), text="CSF")
 
 - Uses Atropos (CITE)
 
-```{r}
-t1seg = otropos(a=t1, x=mask)
+```{r otropos_show, eval = FALSE}
+t1_otropos = otropos(a = t1, x = mask)
+t1seg = t1_otropos$segmentation
+```
+
+```{r otropos_show, echo = FALSE}
+t1seg = readnii(files["Tissue_Classes"])
 ```
 
 ### Results
