@@ -18,52 +18,6 @@ opts_chunk$set(message = FALSE, echo = TRUE, cache = TRUE, comment = "",
 ```
 
 
-```{r}
-rm(list= ls())
-library(ms.lesion)
-library(extrantsr)
-library(EveTemplate)
-library(neurobase)
-
-all.exists = function(...){
-  all(file.exists(...))
-}
-
-eve_brain = getEvePath("Brain")
-
-files = get_image_filenames_list_by_subject(
-    type = "coregistered")
-
-isubj = 1
-for (isubj in seq_along(files)) {
-    print(isubj)
-    fnames = files[[isubj]]
-    id = names(files)[isubj]
-    outdir = file.path("template",
-        id)
-    dir.create(outdir)
-    outfiles = file.path(outdir, 
-        basename(fnames))
-    if (!all.exists(outfiles)) {
-        reg = registration(
-            filename = fnames["MPRAGE"],
-            template.file = eve_brain,
-            interpolator = "Linear",
-            typeofTransform = "SyN",
-            other.files = fnames,
-            other.outfiles = outfiles)
-    }
-    o = check_nifti(outfiles)
-    o = lapply(o, function(x){
-        x[x < 0] = 0
-        x
-    })
-    mapply(function(x, fname){
-        writenii(x, fname)
-    }, o, outfiles)
-}
-```
-
 ## Types of Registration
 - Rigid-body registration (linear) - 6 degrees of freedom (dof)
     - Co-registration (within the same person)
@@ -122,333 +76,205 @@ r_{3,1}& r_{3,2} & r_{3,3} \\
   - Usually achieves better local agreement
   - Can change the volume of structures differentially
 
-## Reading in the T1 scan from BRAINIX
-We will use the data from the BRAINIX dataset.  Here we read in the T1:
+## Reading in the T1 brain
+We will read in the brain-extracted, co-registered T1:
 
-```{r reg_read_t1, echo=TRUE, message=FALSE}
-library(oro.nifti)
-library(extrantsr)
-library(fslr)
-library(scales)
-neurodir = path.expand("~/Neurohacking_data")
-mridir = file.path(neurodir, "BRAINIX", "NIfTI")
-t1 = file.path(mridir, "T1.nii.gz")
-t1 = readNIfTI(t1, reorient = FALSE)
+```{r read_t1}
+library(neurobase)
+library(ms.lesion)
+files = get_image_filenames_list_by_subject(
+    type = "coregistered")$training01
+t1_fname = files["MPRAGE"]
+t1 = readnii(t1_fname)
 ```
 
-```{r window_t1, echo=FALSE, message=FALSE, results='hide'}
-t1 = robust_window(t1)
-```
+## Confirm it's just the brain
 
-## A region of interest (ROI) of a tumor from the FLAIR
-
-```{r disp_roi}
-flair = file.path(mridir, "FLAIR.nii.gz")
-roi = file.path(mridir, "ROI.nii.gz")
-```
-```{r plot_roi, echo=FALSE}
-library(scales)
-flair_img = robust_window(readNIfTI(flair, reorient = FALSE))
-roi_img = readNIfTI(roi, reorient = FALSE)
-ortho2(flair_img, roi_img, col.y=alpha("red", 0.5), xyz=xyz(roi_img))
-```
-
-```{r img_for_figure, results='hide', echo = FALSE}
-t1_plot_img = dropEmptyImageDimensions(t1)
-t1_plot_img = robust_window(t1_plot_img)
-plot_imgs = dropEmptyImageDimensions(flair_img, other.imgs = roi_img)
-flair_plot_img = plot_imgs$outimg
-roi_plot_img = plot_imgs$other.imgs
-```
-
-```{r flair_for_figure, echo=FALSE, include=FALSE, fig.height=5, fig.width=4}
-image(flair_plot_img, z = 11, plot.type = "single")
-title(main = c("", "", "FLAIR Image"), outer= TRUE, col.main="white", cex.main=3)
-```
-```{r roi_for_figure, echo=FALSE, include=FALSE, fig.height=5, fig.width=4}
-image(roi_plot_img, z = 11, plot.type = "single")
-title(main = c("", "", "Tumor ROI"), outer= TRUE, col.main="white", cex.main=3)
-```
-```{r t1_for_figure, echo=FALSE, include=FALSE, fig.height=5, fig.width=4}
-image(t1_plot_img, z = 11, plot.type = "single")
-title(main = c("", "", "T1 Image"), outer= TRUE, col.main="white", cex.main=3)
+```{r ortho_t1}
+ortho2(t1)
 ```
 
 
-## We will register the FLAIR to the T1 and apply the transform to the ROI.
+## Affine register the T1 to Eve Brain and apply transform to other images
 
-```{r reg_flair}
-reg_flair = file.path(mridir, 
-                      "FLAIR_regToT1.nii.gz")
-reg_roi = file.path(mridir, 
-                    "ROI_regToT1.nii.gz")
-reg_flair_img = ants_regwrite(filename = flair, 
-                              template.file = t1, 
-                              outfile = reg_flair, 
-                              typeofTransform = "Rigid",
-                              other.files = roi,
-                              other.outfiles = reg_roi,
-                              verbose = FALSE)
-reg_roi_img = readNIfTI(reg_roi, reorient = FALSE)
+Using `extrantsr::registration` with an affine transformation and a linear interpolation:
+
+```{r aff_reg_eve, eval = FALSE}
+library(extrantsr); library(EveTemplate);
+eve_brain_fname = getEvePath(what = "Brain")
+eve_brain = readnii(eve_brain_fname)
+mods = c("T2", "FLAIR", "PD")
+other_files = files[mods]
+outfile = "T1_to_Eve.nii.gz"
+other_outfiles = paste0(mods, "_to_Eve.nii.gz")
+names(other_outfiles) = mods
+reg = registration(filename = files["MPRAGE"], 
+  outfile = outfile, template.file = eve_brain,
+  interpolator = "Linear", typeofTransform = "Affine",
+  other.files = other_files, other.outfiles = other_outfiles)
+out_imgs = check_nifti(c(MPRAGE = outfile, other_outfiles))
 ```
 
-```{r window_falir, echo=FALSE}
-reg_flair_img = robust_window(reg_flair_img)
+```{r aff_reg_eve_run, eval = TRUE, echo = FALSE}
+library(extrantsr); library(EveTemplate);
+eve_brain_fname = getEvePath(what = "Brain")
+eve_brain = readnii(eve_brain_fname)
+outfiles = get_image_filenames_list_by_subject(
+  type = "affine")
+mods = c("MPRAGE", "T2", "FLAIR", "PD")
+outfiles = outfiles$training01[mods]
+out_imgs = check_nifti(outfiles)
 ```
 
-## FLAIR Registration Results
+## Affine Registration Results
+
+```{r aff_reg_plot_t1}
+double_ortho(eve_brain, out_imgs$MPRAGE)
+```
+
+
+## Registration Results: FLAIR
+
+```{r aff_reg_plot_flair}
+double_ortho(eve_brain, out_imgs$FLAIR)
+```
+
+
+
+## Non-Linear Registration: T1 to Eve
+
+
+We can do a non-linear transformation (SyN) with the same code, but change `typeofTransform = "SyN"`.  SyN performs an affine registration before the non-linear component:
+
+```{r reg_eve, eval = FALSE}
+library(extrantsr); library(EveTemplate);
+eve_brain_fname = getEvePath(what = "Brain")
+eve_brain = readnii(eve_brain_fname)
+mods = c("T2", "FLAIR", "PD")
+other_files = files[mods]
+outfile = "T1_to_Eve.nii.gz"
+other_outfiles = paste0(mods, "_to_Eve.nii.gz")
+names(other_outfiles) = mods
+reg = registration(filename = files["MPRAGE"], 
+  outfile = outfile, template.file = eve_brain,
+  interpolator = "Linear", typeofTransform = "SyN",
+  other.files = other_files, other.outfiles = other_outfiles)
+syn_out_imgs = check_nifti(c(MPRAGE = outfile, other_outfiles))
+```
+
+```{r reg_eve_run, eval = TRUE, echo = FALSE}
+library(extrantsr); library(EveTemplate);
+outfiles = get_image_filenames_list_by_subject(type = "template")
+mods = c("MPRAGE", "T2", "FLAIR", "PD")
+outfiles = outfiles$training01[mods]
+syn_out_imgs = check_nifti(outfiles)
+```
+
+## SyN Registration Results
+
+```{r reg_plot_t1}
+double_ortho(eve_brain, syn_out_imgs$MPRAGE)
+```
+
+## SyN Registration Results: FLAIR
 
 ```{r reg_plot_flair}
-double_ortho(t1, 
-             reg_flair_img)
+double_ortho(eve_brain, syn_out_imgs$FLAIR)
 ```
 
-## FLAIR Registration Results: ROI Overlay
+## Affine vs. SyN Registration Results: FLAIR
 
-```{r reg_plot_flair_overlay}
-ortho2(reg_flair_img, reg_roi_img,
-       col.y = alpha("red", 0.2), 
-       xyz=xyz(reg_roi_img))
+```{r reg_compare_plot}
+double_ortho(out_imgs$MPRAGE, syn_out_imgs$MPRAGE)
 ```
 
-## Registered ROI Overlaid on T1
-
-```{r reg_plot_roi_overlay}
-ortho2(t1, reg_roi_img, col.y = alpha("red", 0.2), 
-       xyz=xyz(reg_roi_img))
-```
-
-
-## Skull-Stripping T1 image
-We are going to register the T1 image to the MNI template.  We want to match brain structures well, without any outside brain areas affecting the registration, so we will skull strip the T1.  We N4-correct the T1 (`extrantsr::bias_correct`) and skull-strip the image using `extrantsr::fslbet_robust`.
-
-```{r bet_t1}
-n4_t1 = bias_correct(t1, correction = "N4")
-brain = fslbet_robust(img = n4_t1,
-                      correct = FALSE, 
-                      verbose = FALSE)
-```
-
-
-## Affine Registration of T1 to the template
-We are going to register the T1 image to the MNI template.  We want to match brain structures well, without any outside brain areas affecting the registration, so we will skull strip the T1.
-
-Here we do an affine registration:
-\small
-```{r affine_t1}
-template.file = file.path(neurodir, "Template", 
-                          "JHU_MNI_SS_T1_brain.nii.gz")
-aff_t1_outfile = file.path(mridir, 
-                           "T1_AffinetoEve.nii.gz")
-aff_roi_outfile = file.path(mridir, 
-                            "ROI_regToT1_AffinetoEve.nii.gz")
-aff_brain = ants_regwrite(filename = brain, 
-                          outfile = aff_t1_outfile,
-                          other.files = reg_roi,
-                          other.outfiles = aff_roi_outfile,
-                          template.file = template.file, 
-                          typeofTransform = "Affine",
-                          verbose = FALSE)
-aff_roi = readNIfTI(aff_roi_outfile, reorient = FALSE)
-```
-\normalsize
-
-## Affine T1 Registration to Template Results
-
-```{r aff_t1_template_plot}
-template = readNIfTI(template.file, reorient = FALSE)
-double_ortho(aff_brain, template)
-```
+<!-- ## Reading in the atlas and look up table (LUT) -->
+<!-- ```{r eve_labels} -->
+<!-- #### extracting JHU Eve atlas Type I an labels########### -->
+<!-- atlas = "JHU_MNI_SS_WMPM_Type-I" -->
+<!-- txtfile = file.path(neurodir, "Template", -->
+<!--                     paste0(atlas, "_SlicerLUT.txt")) -->
+<!-- ### read look up table (LUT) -->
+<!-- jhut1.df = read.table(txtfile, stringsAsFactors=FALSE) -->
+<!-- jhut1.df = jhut1.df[, 1:2] -->
+<!-- colnames(jhut1.df) = c("index", "Label") -->
+<!-- jhut1.df$index = as.numeric(jhut1.df$index) -->
+<!-- ## read in the template image -->
+<!-- jhut1.img = readNIfTI( -->
+<!--   file.path(neurodir, "Template",  -->
+<!--             paste0(atlas, ".nii.gz"))) -->
+<!-- uimg = sort(unique(c(jhut1.img))) -->
+<!-- all.ind = jhut1.df$index -->
+<!-- stopifnot(all(uimg %in% all.ind)) -->
+<!-- ``` -->
 
 
-```{r template_for_figure, echo=FALSE, include=FALSE, fig.height=5, fig.width=4}
-template_plot_img = copyNIfTIHeader(template, 
-                                    arr = template[16:163,21:217,3:154])
-image(template_plot_img, z = 76, plot.type = "single")
-title(main = c("", "", "Template Image"), outer= TRUE, col.main="white", cex.main=3)
-```
+<!-- ## After the warping and interpolation, the ROI is no longer binary -->
 
-## Affine T1 Registration to Template Results: Overlay
+<!-- ```{r syn_roi} -->
+<!-- hist(c(syn_roi[syn_roi > 0])) -->
+<!-- ``` -->
 
-```{r aff_t1_template_overlay}
-ortho2(aff_brain, template, 
-       col.y = alpha(hotmetal(), 0.35))
-```
+<!-- ## Interpolated ROI is not binary -->
+<!-- To estimate the tumor/ROI engagement with areas of the brain we can: -->
 
-## Affine T1 Registration to Template Results: Overlay One Slice
+<!-- 1.  Threshold the ROI to binary -->
+<!-- 2.  Use a weighted sum over the ROI -->
 
-\small
-```{r aff_t1_template_overlay_func}
-overlay(aff_brain, template, 
-        z = ceiling(dim(template)[3]/2), 
-        plot.type = "single", 
-       col.y = alpha(hotmetal(), 0.15))
-```
-\normalsize
+<!-- ## ROI engagement results: engagement of **tumor by region** -->
 
-## Affine T1 Registration to Template Results: ROI Overlay
+<!-- Here we make a `data.frame` with the index for the atlas and the value of the ROI for that voxel, take the sum of the ROI by atlas label then scale it to 100%. -->
 
-```{r aff_t1_roi_overlay}
-ortho2(aff_brain, aff_roi, 
-       col.y = alpha(hotmetal(), 0.35),
-       xyz=xyz(aff_roi))
-```
+<!-- ```{r thresh_syn_roi} -->
+<!-- library(plyr) -->
+<!-- roi.df = data.frame(index = jhut1.img[syn_roi> 0],  -->
+<!--                     roi = syn_roi[ syn_roi > 0]) -->
+<!-- label_sums = ddply(roi.df, .(index), summarize, -->
+<!--   sum_roi = sum(roi), sum_roi_thresh = sum(roi > 0.5) ) -->
+<!-- label_sums = merge(label_sums, jhut1.df, by="index") -->
+<!-- sums = label_sums # will use later -->
+<!-- rownames(label_sums) = label_sums$Label -->
+<!-- label_sums$Label = label_sums$index = NULL -->
+<!-- label_sums = label_sums[ order(label_sums$sum_roi, -->
+<!--                          decreasing = TRUE), ] -->
+<!-- ``` -->
 
 
-## Diffeomorphic Registration of T1 to the template
-Here we will use symmetric image normalization (SyN), which is a symmetric diffeomorphic registration technique.  The registration is non-linear and matches the image to the template well.  SyN performs an affine registration before running, so we can simply pass in the original image.
-
-```{r syn_t1}
-syn_t1_outfile = file.path(mridir, 
-                       "T1_SyNtoEve.nii.gz")
-syn_roi_outfile = file.path(mridir, 
-                        "ROI_regToT1_SyNtoEve.nii.gz")
-syn_brain = ants_regwrite(filename = brain, 
-                          outfile = syn_t1_outfile,                          
-                          other.files = reg_roi,
-                          other.outfiles = syn_roi_outfile,
-                          template.file = template.file, 
-                          typeofTransform = "SyN",
-                          verbose = FALSE)
-syn_roi = readNIfTI(syn_roi_outfile, reorient = FALSE)
-```
-
-## SyN T1 Registration to Template Results
-
-```{r syn_t1_template_plot}
-double_ortho(syn_brain, template)
-```
-
-## SyN T1 Registration to Template Results: Overlay
-
-```{r syn_t1_template_overlay}
-ortho2(syn_brain, template, 
-       col.y = alpha(hotmetal(), 0.25))
-```
-
-## SyN T1 Registration to Template Results: Overlay One Slice
-
-\small
-```{r syn_t1_template_overlay_func}
-overlay(syn_brain, template, z = ceiling(dim(template)[3]/2), 
-        plot.type = "single", 
-       col.y = alpha(hotmetal(), 0.15))
-```
-\normalsize
-
-## Affine T1 Registration to Template Results: Overlay One Slice
-
-\small
-```{r aff_t1_template_overlay_func2}
-overlay(aff_brain, template, z = ceiling(dim(template)[3]/2), 
-        plot.type = "single", 
-       col.y = alpha(hotmetal(), 0.15))
-```
-\normalsize
-
-## SyN T1 Registration to Template Results: ROI Overlay
-
-```{r syn_t1_roi_overlay}
-ortho2(syn_brain, syn_roi, 
-       col.y = alpha(hotmetal(), 0.25),
-       xyz=xyz(syn_roi))
-```
-
-## SyN Results: ROI Overlay on template
-
-```{r syn_t1_roi_overlay_on_template}
-ortho2(template, syn_roi, 
-       col.y = alpha(hotmetal(), 0.25),
-       xyz=xyz(syn_roi))
-```
-
-## Reading in the atlas and look up table (LUT)
-```{r eve_labels}
-#### extracting JHU Eve atlas Type I an labels###########
-atlas = "JHU_MNI_SS_WMPM_Type-I"
-txtfile = file.path(neurodir, "Template",
-                    paste0(atlas, "_SlicerLUT.txt"))
-### read look up table (LUT)
-jhut1.df = read.table(txtfile, stringsAsFactors=FALSE)
-jhut1.df = jhut1.df[, 1:2]
-colnames(jhut1.df) = c("index", "Label")
-jhut1.df$index = as.numeric(jhut1.df$index)
-## read in the template image
-jhut1.img = readNIfTI(
-  file.path(neurodir, "Template", 
-            paste0(atlas, ".nii.gz")))
-uimg = sort(unique(c(jhut1.img)))
-all.ind = jhut1.df$index
-stopifnot(all(uimg %in% all.ind))
-```
+<!-- ## ROI engagement results: top 10 regions -->
+<!-- Each number represents the percentage of the tumor engaging that region. -->
+<!-- \small -->
+<!-- ```{r thresh_syn_roi_res} -->
+<!-- # scale to percent -->
+<!-- label_pct = t(t(label_sums)/colSums(label_sums)) * 100 -->
+<!-- head(round(label_pct, 1), 10) -->
+<!-- ``` -->
+<!-- \normalsize -->
 
 
-## After the warping and interpolation, the ROI is no longer binary
+<!-- ## ROI engagement results: engagement of **region by tumor** -->
+<!-- Each number represents the percentage of the region engaged by the tumor. -->
 
-```{r syn_roi}
-hist(c(syn_roi[syn_roi > 0]))
-```
-
-## Interpolated ROI is not binary
-To estimate the tumor/ROI engagement with areas of the brain we can:
-
-1.  Threshold the ROI to binary
-2.  Use a weighted sum over the ROI
-
-## ROI engagement results: engagement of **tumor by region**
-
-Here we make a `data.frame` with the index for the atlas and the value of the ROI for that voxel, take the sum of the ROI by atlas label then scale it to 100%.
-
-```{r thresh_syn_roi}
-library(plyr)
-roi.df = data.frame(index = jhut1.img[syn_roi> 0], 
-                    roi = syn_roi[ syn_roi > 0])
-label_sums = ddply(roi.df, .(index), summarize,
-  sum_roi = sum(roi), sum_roi_thresh = sum(roi > 0.5) )
-label_sums = merge(label_sums, jhut1.df, by="index")
-sums = label_sums # will use later
-rownames(label_sums) = label_sums$Label
-label_sums$Label = label_sums$index = NULL
-label_sums = label_sums[ order(label_sums$sum_roi,
-                         decreasing = TRUE), ]
-```
-
-
-## ROI engagement results: top 10 regions
-Each number represents the percentage of the tumor engaging that region.
-\small
-```{r thresh_syn_roi_res}
-# scale to percent
-label_pct = t(t(label_sums)/colSums(label_sums)) * 100
-head(round(label_pct, 1), 10)
-```
-\normalsize
-
-
-## ROI engagement results: engagement of **region by tumor**
-Each number represents the percentage of the region engaged by the tumor.
-
-```{r thresh_syn_roi_res_region}
-jhut1.tab = as.data.frame(table(c(jhut1.img)))
-colnames(jhut1.tab) = c("index", "size")
-region_pct = merge(sums, jhut1.tab, by="index")
-rownames(region_pct) = sums$Label
-region_pct$Label = region_pct$index = NULL
-region_pct = region_pct/region_pct$size * 100
-region_pct$size = NULL
-region_pct = region_pct[ order(region_pct$sum_roi,
-                         decreasing = TRUE), ]
-```
+<!-- ```{r thresh_syn_roi_res_region} -->
+<!-- jhut1.tab = as.data.frame(table(c(jhut1.img))) -->
+<!-- colnames(jhut1.tab) = c("index", "size") -->
+<!-- region_pct = merge(sums, jhut1.tab, by="index") -->
+<!-- rownames(region_pct) = sums$Label -->
+<!-- region_pct$Label = region_pct$index = NULL -->
+<!-- region_pct = region_pct/region_pct$size * 100 -->
+<!-- region_pct$size = NULL -->
+<!-- region_pct = region_pct[ order(region_pct$sum_roi, -->
+<!--                          decreasing = TRUE), ] -->
+<!-- ``` -->
 
 
 
-## 10 regions with largest percent of region engaged by tumor
-Each number represents the percentage of the region engaged by the tumor.
-\small
-```{r thresh_syn_roi_res_region_print}
-head(round(region_pct, 1), 10)
-```
-\normalsize
+<!-- ## 10 regions with largest percent of region engaged by tumor -->
+<!-- Each number represents the percentage of the region engaged by the tumor. -->
+<!-- \small -->
+<!-- ```{r thresh_syn_roi_res_region_print} -->
+<!-- head(round(region_pct, 1), 10) -->
+<!-- ``` -->
+<!-- \normalsize -->
 
 
 
