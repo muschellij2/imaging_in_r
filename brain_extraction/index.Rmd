@@ -72,7 +72,7 @@ ortho2(robust_window(t1), bc_bet > 0, col.y = scales::alpha("red", 0.5))
 
 # Attempt 3: Brain Extraction of N4 Corrected
 
-```{r bc_bet, message = FALSE}
+```{r bc_bet2, message = FALSE}
 rb_t1 = robust_window(t1, probs = c(0, 0.99))
 bc_img2 = bias_correct(rb_t1, correction = "N4")
 bc_bet2 = fslbet(bc_img2)
