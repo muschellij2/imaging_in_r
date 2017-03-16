@@ -15,8 +15,14 @@ knitr::opts_chunk$set(
   warning = FALSE)
 ```
 
-## Overview 
-In this tutorial we will discuss segmentation of the brain into tissue classes and automatic MS lesion segmentation using OASIS. 
+## Image segmentation 
+- We are often interested in subdividing or segmenting the brain into meaningful biological regions of interest (ROIs) for an analysis.
+- Examples: tissue segmentation, segmentation of gray matter structures, segmentation of pathology (MS lesions, tumors, ...)
+
+## Goals of this tutorial
+- Perform tissue segmentation in R using FSL and ANTs
+- Discuss multi-atlas label fusion techniques for segmentation
+- Perform automatic MS lesion segmentation using OASIS.
 
 ## Loading Data
 
