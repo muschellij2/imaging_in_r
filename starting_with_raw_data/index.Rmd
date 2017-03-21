@@ -203,7 +203,7 @@ In general, the format we will be using will be NIfTI, and we will store out dat
 
 ## Other formats
 
-* For Philips scanners, files from the scanner are [PAR/REC](http://sourceforge.net/projects/r2agui/) and not DICOM.  [r2a](http://sourceforge.net/projects/r2agui/) can convert these to NIfTI. 
+* For Philips scanners, files from the scanner are PAR/REC and not DICOM, but can still be converted using `dcm2niix`.  [r2a](http://sourceforge.net/projects/r2agui/) can also convert these to NIfTI. 
 
 * NIfTI format was based on ANALYZE format where the header and image were in separate `.hdr` and `.img` files.  This is an older fromat and we will not use this way of storing data because 1) NIfTI can have one file with both header and image information, and 2) Can be stored as compressed .nii.gz files.
 
@@ -213,3 +213,14 @@ In general, the format we will be using will be NIfTI, and we will store out dat
 ```{r, include = FALSE}
 file.remove("Output_3D_File.nii.gz")
 ```
+
+## Conclusions
+
+In this course, we will be using NIfTI images, and will be using `readnii` to read them in, and `writenii` to write them out. 
+
+* Images will be in gzipped format (extension `.nii.gz`)
+* Additional software (e.g. FSL) will be useful to reorient the data to a specified orientation before reading
+* DICOM images can be converted robustly using `divest` or `dcm2niix`
+
+
+

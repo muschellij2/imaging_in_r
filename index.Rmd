@@ -1,0 +1,48 @@
+---
+title: Neuroimaging Analysis within R
+output:
+  html_document:
+    toc: true
+    theme: cosmo
+---
+
+
+### Instructors
+
+  * [John Muschelli](http://www.johnmuschelli.com/)
+  * [Kristin Linn](http://www.kristinlinn.com/)
+
+### Additional Tutorials
+
+* [Neurocondcutor](https://neuroconductor.org/neuroc-help)
+* [Neurohacking](https://www.coursera.org/learn/neurohacking)
+
+### Course Description 
+In this tutorial, we will provide tutorials on how to use R for structural magnetic resonance imaging (MRI) analysis. We will show how to perform entire image analysis in R, from the scans in raw image format to the statistical analysis after image preprocessing, with an emphasis on reproducibility by using a single programming language. This course will use a real multiple sclerosis dataset and will show the steps of going from the raw image files to performing multiple sclerosis lesion classification with a number of classifiers entirely in R. In this hands-on tutorial, attendees will be given instructions for setup and data before the course, so that they are able to follow along and perform the analysis during the tutorial. The topics to be cover in the course are as follows:
+(a) Introduction to the Statistical Software R (JM) (b) Read and Write Images (JM)
+(c) Visualization (JM and JPF)
+(d) Inhomogeneity Correction (JPF)
+1
+(e) Brain Extraction (JM)
+(f) Image Segmentation (JPF)
+(g) Coregistration Within and Between MRI Studies (JM) (h) Intensity Normalization (JPF)
+(i) Harmonization of mutli-site datasets (JPF)
+
+
+### Schedule
+
+```{r}
+library(pander)
+mat = rbind(
+  c("intro", "Introduction"),
+  c("starting_with_raw_data", "Starting with Raw Data"),
+  c("")
+  )
+```
+
+```{r, eval = FALSE, echo = FALSE}
+## Render this file:
+rmarkdown::render('index.Rmd')
+```
+
+This page was last updated on `r Sys.time()` Eastern Time.

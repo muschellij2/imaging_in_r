@@ -75,19 +75,21 @@ Email: klinn@mail.med.upenn.edu
 
 ## Course Website/Materials
 
-http://www.aejaffe.com/winterR_2017/
+http://rstudio_server.html
 
 Materials will be uploaded the night before class
 
 ## Learning Objectives
 
-- Reading data into R
-- Recoding and manipulating data
-- Writing R functions and using add-on packages
-- Making exploratory plots
-- Understanding basic programming syntax
-- Performing basic statistical tests
 
+- Introduction to the Statistical Software R
+- Reading and Writing Images
+- Visualization of Images and Image Data
+- Inhomogeneity Correction 
+- Brain Extraction 
+- Image Segmentation 
+- Coregistration Within and Between MRI Studies
+- Intensity Normalization 
 
 ## RStudio Server
 
