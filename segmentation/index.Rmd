@@ -32,8 +32,9 @@ library(neurobase)
 library(fslr)
 library(oasis)
 library(scales)
+library(extrantsr)
 files = get_image_filenames_list_by_subject(
-  type = "coregistered")$training01
+  type = "coregistered")$training05
 t1file = files["MPRAGE"]
 maskfile = files["Brain_Mask"]
 mask = readnii(maskfile)
@@ -42,53 +43,120 @@ t1 = readnii(t1file)
 
 ```{r window, echo = FALSE}
 # t1 = robust_window(t1, probs = c(0, 0.9999))
-t1 = window_img(t1, window = c(0, 300))
+# t1 = window_img(t1, window = c(0, 300))
 ```
 
+## Tissue Segmentation: Large Outliers
+
+Many tissue class segmentations are based on k-means clustering.  These methods can be skewed by large outliers, wh
+
+```{r hist_vals}
+hist(t1, mask = mask, breaks = 2000)
+```
+
+## Where are the outliers
+
+We see some values that may have been improperly segmentated: 
+
+```{r which_big}
+ortho2(t1, t1 > 400, xyz = xyz(t1 > 400))
+```
 
 ## Tissue Segmentation using FSL FAST
 
-The fslr function fast calls fast from FSL [@fast].  The `--nobias` option tells FSL to not perform inhomogeneity correction. 
+The `fslr` function fast calls fast from FSL [@fast].  The `--nobias` option tells FSL to not perform inhomogeneity correction. 
 
 ```{r fast_show, eval = FALSE}
 t1file = files["MPRAGE"]
-t1fast = fast(t1, outfile = paste0(nii.stub(t1file), "_FAST"), opts = "--nobias")
+t1fast = fast(t1, 
+              outfile = paste0(nii.stub(t1file), "_FAST"), 
+              opts = "--nobias")
 ```
 
-```{r fast_run, echo = FALSE}
-t1fast = readnii(files["FAST"])
+```{r fast_show_run, echo = FALSE}
+t1file = files["MPRAGE"]
+outfile = paste0(nii.stub(t1file, bn = TRUE), "_FAST.nii.gz")
+if (!file.exists(outfile)) {
+  t1fast = fast(t1file, 
+                outfile = outfile, 
+                opts = "--nobias")
+  writenii(t1fast, filename = outfile)
+} else {
+  t1fast = readnii(outfile)
+}
 ```
 
-```{r multi_overlay, eval = FALSE}
-separate = lapply(1:3, function(x){
-  t1fast == x
-})
-L = c(MPRAGE = list(t1), separate)
-L$MPRAGE = robust_window(L$MPRAGE)
-r = range(L$MPRAGE)
-L$MPRAGE = (L$MPRAGE - r[1])/(r[2] - r[1])
-multi_overlay(L, z = 60)
-```
 ## Results
 
-FAST assumes three tissue classes and produces an image with the three labels, ordered by increasing within-class mean intensities. In a T1 image, this results in 1: CSF, 2: Gray Matter, 3: White Matter.  
+FAST assumes three tissue classes and produces an image with the three labels, ordered by increasing within-class mean intensities. In a T1 image, this results in:
+
+* Level 1: CSF
+* Level 2: Gray Matter
+* Level 3: White Matter
 
 ## White Matter
 
-```{r fast_wm}
+```{r fast_wm_nonrobust}
 ortho2(t1, t1fast == 3, col.y = alpha("red", 0.5), text = "White Matter")
 ```
 
 ## Gray Matter
 
+```{r fast_gm_nonrobust}
+ortho2(t1, t1fast == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
+```
+
+## CSF
+
+```{r fast_csf_nonrobust}
+ortho2(t1, t1fast == 1, col.y = alpha("red", 0.5), text = "CSF")
+```
+
+
+## Windowing
+
+```{r fast_better_show, eval = FALSE}
+rb = robust_window(t1)
+robust_fast = fast(t1, 
+              outfile = paste0(nii.stub(t1file), "_FAST"), 
+              opts = "--nobias")
+```
+
+```{r fast_better_run, echo = FALSE}
+rb = robust_window(t1)
+robust_fast = readnii(files["FAST"])
+```
+
+```{r multi_overlay, eval = FALSE}
+separate = separate_img(robust_fast, levels = 1:3)
+names(separate) = c("CSF", "GM", "WM")
+L = c(MPRAGE = list(t1), separate)
+L$MPRAGE = robust_window(L$MPRAGE)
+r = range(L$MPRAGE)
+L$MPRAGE = (L$MPRAGE - r[1])/(r[2] - r[1])
+dd = dropEmptyImageDimensions(t1fast > 0, other.imgs = L)
+L = dd$other.imgs
+multi_overlay(L, z = 58, text = names(L), text.x = 0.5, text.y = 1.4,
+              text.cex = 2.5)
+```
+
+
+## White Matter
+
+```{r fast_wm}
+ortho2(t1, robust_fast == 3, col.y = alpha("red", 0.5), text = "White Matter")
+```
+
+## Gray Matter
+
 ```{r fast_gm}
-ortho2(t1, t1fast == 2, col.y = alpha("red", 0.5), text="Gray Matter")
+ortho2(t1, robust_fast == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 ```
 
 ## CSF
 
 ```{r fast_csf}
-ortho2(t1, t1fast == 1, col.y = alpha("red", 0.5), text="CSF")
+ortho2(t1, robust_fast == 1, col.y = alpha("red", 0.5), text = "CSF")
 ```
 
 
@@ -97,13 +165,23 @@ ortho2(t1, t1fast == 1, col.y = alpha("red", 0.5), text="CSF")
 - Uses Atropos (CITE)
 
 ```{r otropos_show, eval = FALSE}
-t1_otropos = otropos(a = t1, x = mask)
+t1_otropos = otropos(a = t1, x = mask) # using original data
 t1seg = t1_otropos$segmentation
 ```
 
 ```{r otropos_run, echo = FALSE}
-t1seg = readnii(files["Tissue_Classes"])
+t1file = files["MPRAGE"]
+outfile = paste0(nii.stub(t1file, bn = TRUE), "_Atropos.nii.gz")
+if (!file.exists(outfile)) {
+  t1_otropos = otropos(a = t1, x = mask) # using robust
+  t1seg = t1_otropos$segmentation
+  writenii(t1seg, filename = outfile)
+} else {
+  t1seg = readnii(outfile)
+}
 ```
+
+
 
 ## White Matter
 
@@ -121,6 +199,19 @@ ortho2(t1, t1seg == 2, col.y = alpha("red", 0.5), text="Gray Matter")
 
 ```{r otropos_csf}
 ortho2(t1, t1seg == 1, col.y = alpha("red", 0.5), text="CSF")
+```
+
+
+## Tissue Segmentation using ANTsR, extrantsr
+
+
+```{r robust_otropos_show, eval = FALSE}
+t1_otropos = otropos(a = rb, x = mask) # using robust
+t1seg = t1_otropos$segmentation
+```
+
+```{r robust_otropos_run, echo = FALSE}
+t1seg = readnii(files["Tissue_Classes"])
 ```
 
 ### Estimating the Volume of Each Class
