@@ -35,8 +35,7 @@ In this tutorial, we will provide tutorials on how to use R for structural magne
 library(pander)
 mat = rbind(
   c("intro", "Introduction"),
-  c("starting_with_raw_data", "Starting with Raw Data"),
-  c("")
+  c("starting_with_raw_data", "Starting with Raw Data")
   )
 ```
 

@@ -75,7 +75,7 @@ Email: klinn@mail.med.upenn.edu
 
 ## Course Website/Materials
 
-http://rstudio_server.html
+http://johnmuschelli.com/rstudio_server.html
 
 Materials will be uploaded the night before class
 
@@ -96,6 +96,6 @@ Materials will be uploaded the night before class
 
 ## Installing R
 
-* Install the latest version from: [http://cran.r-project.org/](http://cran.r-project.org/ )
+* Install the latest version from: [http://cran.r-project.org/](http://cran.r-project.org/)
 
 * [Install RStudio](https://www.rstudio.com/products/rstudio/download/)
