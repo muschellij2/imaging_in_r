@@ -41,10 +41,20 @@ ortho2(t1)
 hist(t1[ t1 > 0], breaks = 200)
 ```
 
-## Winsorized - may need to remove/dampen tails
+## Limiting extreme values 
+
+`robust_window` essentially performs Winsorizing to limit extreme values
+
+- sets them to 99.9$^{\text{th}}$ quantile
+
+```{r t1_robust}
+rt1 = robust_window(t1); hist(rt1[ rt1 > 0], breaks = 200)
+```
+
+## Re-plotting the image
 
 ```{r t1_plot_robust}
-ortho2(robust_window(t1))
+ortho2(rt1)
 ```
 
 ## Attempt 1: Brain Extraction of T1 image using BET
@@ -65,7 +75,7 @@ Here we will use FSL's Brain Extraction Tool (BET) to extract the brain tissue f
 
   - additional options can be passed to FSL command in using `opts`
 
-```{r t1_naive_ss, cache = FALSE, echo = FALSE, message = FALSE}
+```{r t1_naive_ss, cache = FALSE, message = FALSE, warning = FALSE}
 library(fslr)
 ss = fslbet(infile = t1_fname)
 ```

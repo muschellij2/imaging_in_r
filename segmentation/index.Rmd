@@ -78,7 +78,6 @@ t1file = files["MPRAGE"]
 outfile = paste0(nii.stub(t1file, bn = TRUE), "_FAST.nii.gz")
 if (!file.exists(outfile)) {
   t1fast = fast(t1file, 
-                outfile = outfile, 
                 opts = "--nobias")
   writenii(t1fast, filename = outfile)
 } else {
@@ -206,13 +205,34 @@ ortho2(t1, t1seg == 1, col.y = alpha("red", 0.5), text="CSF")
 
 
 ```{r robust_otropos_show, eval = FALSE}
-t1_otropos = otropos(a = rb, x = mask) # using robust
-t1seg = t1_otropos$segmentation
+robust_t1_otropos = otropos(a = rb, x = mask) # using robust
+robust_t1seg = robust_t1_otropos$segmentation
 ```
 
 ```{r robust_otropos_run, echo = FALSE}
-t1seg = readnii(files["Tissue_Classes"])
+robust_t1seg = readnii(files["Tissue_Classes"])
 ```
+
+
+
+## White Matter
+
+```{r otropos_wm}
+ortho2(t1, robust_t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
+```
+
+## Gray Matter
+
+```{r otropos_gm}
+ortho2(t1, robust_t1seg == 2, col.y = alpha("red", 0.5), text="Gray Matter")
+```
+
+## CSF
+
+```{r otropos_csf}
+ortho2(t1, robust_t1seg == 1, col.y = alpha("red", 0.5), text="CSF")
+```
+
 
 ### Estimating the Volume of Each Class
 
