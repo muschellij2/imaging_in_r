@@ -15,8 +15,7 @@ bibliography: ../refs.bib
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, cache = TRUE, comment = "",
-                      cache.path = "index_cache/html/")
+knitr::opts_chunk$set(echo = TRUE, comment = "")
 ```
 
 ## Overview 

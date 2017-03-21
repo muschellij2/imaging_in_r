@@ -29,6 +29,18 @@ t1_fname = files["MPRAGE"]
 t1 = readnii(t1_fname)
 ```
 
+## Loading Data
+
+The function `within_visit_registration` takes in:
+
+- `fixed` image - the image to be registered to
+- `moving` images - images to register to the `fixed`
+- `typeofTransform` - transformation of moving to fixed image (Rigid/Affine)
+- `interpolator` - how are voxels averaged in `fixed` space
+
+and outputs a list of transformations and output filenames
+
+
 ## Register to the T1 image
 
 ```{r, eval = FALSE}
