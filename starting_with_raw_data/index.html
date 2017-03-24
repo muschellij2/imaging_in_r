@@ -337,9 +337,19 @@ res = readDicom(path, interactive = FALSE)</pre>
 </article></slide><slide class=''><hgroup><h2>Other formats</h2></hgroup><article  id="other-formats">
 
 <ul>
-<li><p>For Philips scanners, files from the scanner are <a href='http://sourceforge.net/projects/r2agui/' title=''>PAR/REC</a> and not DICOM. <a href='http://sourceforge.net/projects/r2agui/' title=''>r2a</a> can convert these to NIfTI.</p></li>
+<li><p>For Philips scanners, files from the scanner are PAR/REC and not DICOM, but can still be converted using <code>dcm2niix</code>. <a href='http://sourceforge.net/projects/r2agui/' title=''>r2a</a> can also convert these to NIfTI.</p></li>
 <li><p>NIfTI format was based on ANALYZE format where the header and image were in separate <code>.hdr</code> and <code>.img</code> files. This is an older fromat and we will not use this way of storing data because 1) NIfTI can have one file with both header and image information, and 2) Can be stored as compressed .nii.gz files.</p></li>
 <li><p>NRRD (Nearly Raw Raster Data) is another format similar to NIfTI. Much of the neuroimaging software can read in both NRRD and NIfTI files, but NIfTI is much more common.</p></li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Conclusions</h2></hgroup><article  id="conclusions">
+
+<p>In this course, we will be using NIfTI images, and will be using <code>readnii</code> to read them in, and <code>writenii</code> to write them out.</p>
+
+<ul>
+<li>Images will be in gzipped format (extension <code>.nii.gz</code>)</li>
+<li>Additional software (e.g. FSL) will be useful to reorient the data to a specified orientation before reading</li>
+<li>DICOM images can be converted robustly using <code>divest</code> or <code>dcm2niix</code></li>
 </ul></article></slide>
 
 

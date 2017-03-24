@@ -9,6 +9,7 @@ bibliography: ../refs.bib
 ---
 
 ```{r setup, results='hide', echo=FALSE, message = FALSE, warning=FALSE, include=FALSE}
+library(methods)
 library(knitr)
 library(highr)
 opts_chunk$set(echo = TRUE, prompt = FALSE, 
