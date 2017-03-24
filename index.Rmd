@@ -3,48 +3,21 @@ title: Neuroimaging Analysis within R
 output:
   html_document:
     toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: false
+    number_sections: true   
     theme: cosmo
 ---
 
 
-### Instructors
+# Instructors
 
   * [John Muschelli](http://www.johnmuschelli.com/)
   * [Kristin Linn](http://www.kristinlinn.com/)
 
-### Materials
-All materials for this course are located at: 
-https://github.com/muschellij2/imaging_in_r
 
-You can download by clicking "Clone or download" (in green), then Download as Zip.  We will also have USB drives loaded with the code.
-
-### Additional Tutorials
-
-* [Neurocondcutor](https://neuroconductor.org/neuroc-help)
-* [Neurohacking](https://www.coursera.org/learn/neurohacking)
-
-### RStudio Server
-The server is located at:
-http://johnmuschelli.com/rstudio_server.html
-and you will be given a username and a password.
-
-The code to make the server is located at:
-https://github.com/muschellij2/rneuro/blob/master/ms_rstudio_droplet.sh
-
-### Course Description 
-In this tutorial, we will provide tutorials on how to use R for structural magnetic resonance imaging (MRI) analysis. We will show how to perform entire image analysis in R, from the scans in raw image format to the statistical analysis after image preprocessing, with an emphasis on reproducibility by using a single programming language. This course will use a real multiple sclerosis dataset and will show the steps of going from the raw image files to performing multiple sclerosis lesion classification with a number of classifiers entirely in R. In this hands-on tutorial, attendees will be given instructions for setup and data before the course, so that they are able to follow along and perform the analysis during the tutorial. The topics to be cover in the course are as follows:
-
-- Introduction to the Statistical Software R
-- Reading and Writing Images
-- Visualization of Images and Image Data
-- Inhomogeneity Correction 
-- Brain Extraction 
-- Image Segmentation 
-- Coregistration Within and Between MRI Studies
-- Intensity Normalization 
-
-
-### Schedule
+## Schedule
 
 ```{r, echo = FALSE}
 # library(pander)
@@ -74,6 +47,39 @@ mat = mat[, c("title", "slides", "rcode", "source")]
 #        justify = c('left', 'center', 'center', "center"))
 knitr::kable(mat)
 ```
+
+
+# Materials
+All materials for this course are located at: 
+https://github.com/muschellij2/imaging_in_r
+
+You can download by clicking "Clone or download" (in green), then Download as Zip.  We will also have USB drives loaded with the code.
+
+## Additional Tutorials
+
+* [Neurocondcutor](https://neuroconductor.org/neuroc-help)
+* [Neurohacking](https://www.coursera.org/learn/neurohacking)
+
+## RStudio Server
+The server is located at:
+http://johnmuschelli.com/rstudio_server.html
+and you will be given a username and a password.
+
+The code to make the server is located at:
+https://github.com/muschellij2/rneuro/blob/master/ms_rstudio_droplet.sh
+
+# Course Description 
+In this tutorial, we will provide tutorials on how to use R for structural magnetic resonance imaging (MRI) analysis. We will show how to perform entire image analysis in R, from the scans in raw image format to the statistical analysis after image preprocessing, with an emphasis on reproducibility by using a single programming language. This course will use a real multiple sclerosis dataset and will show the steps of going from the raw image files to performing multiple sclerosis lesion classification with a number of classifiers entirely in R. In this hands-on tutorial, attendees will be given instructions for setup and data before the course, so that they are able to follow along and perform the analysis during the tutorial. The topics to be cover in the course are as follows:
+
+- Introduction to the Statistical Software R
+- Reading and Writing Images
+- Visualization of Images and Image Data
+- Inhomogeneity Correction 
+- Brain Extraction 
+- Image Segmentation 
+- Coregistration Within and Between MRI Studies
+- Intensity Normalization 
+
 
 ```{r, eval = FALSE, echo = FALSE}
 ## Render this file:
