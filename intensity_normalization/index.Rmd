@@ -1,6 +1,6 @@
 ---
 title: "Intensity Normalization"
-author: "Kristin Linn Jean-Philippe Fortin"
+author: "Kristin Linn"
 date: "`r Sys.Date()`"
 output:
   ioslides_presentation:
