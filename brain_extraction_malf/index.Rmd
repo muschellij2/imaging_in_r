@@ -4,11 +4,12 @@ author: "John Muschelli"
 output:
   ioslides_presentation:
     widescreen: yes
-  beamer_presentation: default
+    css: ../styles.css
 bibliography: ../refs.bib
 ---
 
 ```{r setup, include=FALSE}
+library(methods)
 knitr::opts_chunk$set(echo = TRUE, comment = "")
 ```
 
@@ -258,8 +259,12 @@ if (!file.exists(outfile)) {
 }
 ```
 
-```{r kirby21_t1_ss_plot, cache = TRUE}
+```{r kirby21_t1_ss_plot_show, cache = TRUE}
 ortho2(ss)
+```
+
+```{r kirby21_t1_ss_plot_run, echo = FALSE, cache = TRUE}
+ortho2(dropEmptyImageDimensions(ss))
 ```
 
 ## Conclusions 

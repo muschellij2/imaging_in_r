@@ -5,11 +5,12 @@ date: "1/20/2017"
 output:
   ioslides_presentation:
     widescreen: yes
-  beamer_presentation: default
+    css: ../styles.css
 bibliography: ../refs.bib
 ---
 
 ```{r setup, include=FALSE, message = FALSE}
+library(methods)
 knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 library(kirby21.t1)

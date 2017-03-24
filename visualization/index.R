@@ -1,4 +1,5 @@
 ## ----setup, include=FALSE, message = FALSE-------------------------------
+library(methods)
 knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 library(ms.lesion)
