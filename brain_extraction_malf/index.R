@@ -1,4 +1,5 @@
 ## ----setup, include=FALSE------------------------------------------------
+library(methods)
 knitr::opts_chunk$set(echo = TRUE, comment = "")
 
 ## ------------------------------------------------------------------------
@@ -122,6 +123,9 @@ if (!file.exists(outfile)) {
   ss = readnii(outfile)
 }
 
-## ----kirby21_t1_ss_plot, cache = TRUE------------------------------------
+## ----kirby21_t1_ss_plot_show, cache = TRUE-------------------------------
 ortho2(ss)
+
+## ----kirby21_t1_ss_plot_run, echo = FALSE, cache = TRUE------------------
+ortho2(dropEmptyImageDimensions(ss))
 

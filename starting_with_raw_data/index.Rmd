@@ -4,7 +4,7 @@ author: "John Muschelli"
 output:
   ioslides_presentation:
     widescreen: yes
-  beamer_presentation: default
+    css: ../styles.css  
 bibliography: ../refs.bib
 ---
 

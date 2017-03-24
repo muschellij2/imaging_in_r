@@ -3,12 +3,13 @@ title: "Introduction and R"
 author: "John Muschelli"
 output:
   ioslides_presentation:
+    css: ../styles.css
     widescreen: yes
-  beamer_presentation: default
 bibliography: ../refs.bib
 ---
 
 ```{r, echo = FALSE}
+library(methods)
 library(knitr)
 opts_chunk$set(comment = "")
 ```

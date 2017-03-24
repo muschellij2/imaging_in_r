@@ -34,7 +34,7 @@ mat = rbind(
   )
 mat = data.frame(mat, stringsAsFactors = FALSE)
 colnames(mat) = c("link", "title")
-mat$link = paste0("http://johnmuschelli.com/imaging_in_r/", mat$fname, "/")
+mat$link = paste0("http://johnmuschelli.com/imaging_in_r/", mat$link, "/")
 mat$slides = paste0("[Slides](", paste0(mat$link, "index.html"), ")")
 mat$rcode = paste0("[R Code](", paste0(mat$link, "index.R"), ")")
 mat$source = paste0("[Source](", paste0(mat$link, "index.Rmd"), ")")
