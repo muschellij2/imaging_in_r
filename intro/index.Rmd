@@ -1,5 +1,5 @@
 ---
-title: "Introduction to R"
+title: "Introduction and R"
 author: "John Muschelli"
 output:
   ioslides_presentation:
@@ -75,9 +75,12 @@ Email: klinn@mail.med.upenn.edu
 
 ## Course Website/Materials
 
-http://johnmuschelli.com/rstudio_server.html
+The Course overview is located at (with slides):
+http://johnmuschelli.com/ISBI_2017.html
 
-Materials will be uploaded the night before class
+All materials for this course (including source for the slides) is located at:
+
+http://johnmuschelli.com/rstudio_server.html
 
 ## Learning Objectives
 
@@ -91,11 +94,117 @@ Materials will be uploaded the night before class
 - Coregistration Within and Between MRI Studies
 - Intensity Normalization 
 
-## RStudio Server
-
-
-## Installing R
+## Installing R: Local
 
 * Install the latest version from: [http://cran.r-project.org/](http://cran.r-project.org/)
 
 * [Install RStudio](https://www.rstudio.com/products/rstudio/download/)
+
+
+## RStudio Server
+
+For this course, we will use an RStudio Server because installing all the packages can be a lengthy process.  Mostly all the code we show requires a Linux/Mac OSX platform for FSL and other systems:
+
+http://johnmuschelli.com/rstudio_server.html
+
+The code to make the server is located at:
+https://github.com/muschellij2/rneuro/blob/master/ms_rstudio_droplet.sh
+
+
+## Working with R
+
+* The R Console "interprets" whatever you type
+    * Calculator
+    * Creating variables
+    * Applying functions
+
+* "Analysis" Script + Interactive Exploration
+    * Static copy of what you did (reproducability)
+    * Try things out interactively, then add to your script
+
+# R essentially is a command line with a set of functions loaded
+
+## R Uses Functions, in Packages
+* R revolves around functions
+    * Commands that take input, performs computations, and returns results
+    * When you download R, it has a "base" set of functions/packages (**base R**)
+* Functions are enclosed in packages
+    * These written by R users/developers (like us) - **some are bad**
+    * Think of them as "R Extensions"
+    
+## RStudio (the software)
+
+RStudio is an Integrated Development Environment (IDE) for R
+
+  * It helps the user effectively use R.
+  * Makes things easier  
+* Is NOT dropdown statistical tools
+* All snapshots in these slides are taken from http://ayeimanol-r.net/2013/04/21/289/
+
+## RStudio
+
+Easier working with R 
+
+* Syntax highlighting, code completion, and smart indentation
+* Easily manage multiple working directories and projects
+
+More information
+
+* Workspace browser and data viewer
+* Plot history, zooming, and flexible image and PDF export
+* Integrated R help and documentation
+* Searchable command history
+
+## RStudio/R Console ![Console](r-rstudio-1-3-console.png)
+
+## RStudio/R Console
+
+* Where code is executed (where things happen)
+* You can type here for things interactively
+* Code is **not saved** on your disk
+
+## Source/Editor ![Script](r-rstudio-1-3-script.png)
+
+## Source
+
+* Where files open to
+* Have R code and comments in them
+* Can highlight and press (CMD+Enter (Mac) or Ctrl+Enter (Windows)) to run the code
+
+In a .R file (we call a script), code is saved on your disk
+
+## Workspace/Environment ![Workspace](r-rstudio-1-ggplot-point-2.png)
+
+## Workspace/Environment
+
+* Tells you what **objects** are in R
+* What exists in memory/what is loaded?/what did I read in?
+
+History
+
+* Shows previous commands.  Good to look at for debugging, but **don't rely** on it as a script.  Make a script!
+* Also type the "up" key in the Console to scroll through previous commands
+
+## Other Panes
+
+* **Files** - shows the files on your computer of the directory you are working in
+* **Viewer** - can view data or R objects
+* **Help** - shows help of R commands
+* **Plots** - pretty pictures
+* **Packages** - list of R packages that are loaded in memory
+
+## Main Packages we will use
+
+* `oro.nifti` - reading/writing NIfTI images
+* `neurobase` - extends `oro.nifti` and provides helpful imaging functions
+* `fslr` - wraps FSL commands to use in R
+    - registration, image manipulation
+* `ANTsR` - wrapper for Advanced normalization tools (ANTs) code 
+    - registration, inhomogeneity correction, lots of tools
+* `extrantsr` - allows `ANTsR` to work with objects from `oro.nifti` 
+
+Data 
+* `ms.lesion` - contains training/testing data of patients with multiple sclerosis (MS)
+   - from the MS lesion challenge 2016 (http://iacl.ece.jhu.edu/index.php/MSChallenge)
+   * `kirby21.t1` - scan-rescan data for 3 subjects from @landman2011multi
+  - https://www.nitrc.org/projects/multimodal

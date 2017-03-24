@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Introduction to R</title>
+  <title>Introduction and R</title>
 
   <meta charset="utf-8">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -20,7 +20,7 @@
     var SLIDE_CONFIG = {
       // Slide settings
       settings: {
-                title: 'Introduction to R',
+                title: 'Introduction and R',
                         useBuilds: true,
         usePrettify: true,
         enableSlideAreas: true,
@@ -152,28 +152,165 @@
 
 </article></slide><slide class=''><hgroup><h2>Course Website/Materials</h2></hgroup><article  id="course-websitematerials">
 
-<p><a href='http://www.aejaffe.com/winterR_2017/' title=''>http://www.aejaffe.com/winterR_2017/</a></p>
+<p>The Course overview is located at (with slides): <a href='http://johnmuschelli.com/ISBI_2017.html' title=''>http://johnmuschelli.com/ISBI_2017.html</a></p>
 
-<p>Materials will be uploaded the night before class</p>
+<p>All materials for this course (including source for the slides) is located at:</p>
+
+<p><a href='http://johnmuschelli.com/rstudio_server.html' title=''>http://johnmuschelli.com/rstudio_server.html</a></p>
 
 </article></slide><slide class=''><hgroup><h2>Learning Objectives</h2></hgroup><article  id="learning-objectives">
 
 <ul>
-<li>Reading data into R</li>
-<li>Recoding and manipulating data</li>
-<li>Writing R functions and using add-on packages</li>
-<li>Making exploratory plots</li>
-<li>Understanding basic programming syntax</li>
-<li>Performing basic statistical tests</li>
+<li>Introduction to the Statistical Software R</li>
+<li>Reading and Writing Images</li>
+<li>Visualization of Images and Image Data</li>
+<li>Inhomogeneity Correction</li>
+<li>Brain Extraction</li>
+<li>Image Segmentation</li>
+<li>Coregistration Within and Between MRI Studies</li>
+<li>Intensity Normalization</li>
 </ul>
 
-</article></slide><slide class=''><hgroup><h2>RStudio Server</h2></hgroup><article  id="rstudio-server">
-
-</article></slide><slide class=''><hgroup><h2>Installing R</h2></hgroup><article  id="installing-r">
+</article></slide><slide class=''><hgroup><h2>Installing R: Local</h2></hgroup><article  id="installing-r-local">
 
 <ul>
 <li><p>Install the latest version from: <a href='http://cran.r-project.org/' title=''>http://cran.r-project.org/</a></p></li>
 <li><p><a href='https://www.rstudio.com/products/rstudio/download/' title=''>Install RStudio</a></p></li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>RStudio Server</h2></hgroup><article  id="rstudio-server">
+
+<p>For this course, we will use an RStudio Server because installing all the packages can be a lengthy process. Mostly all the code we show requires a Linux/Mac OSX platform for FSL and other systems:</p>
+
+<p><a href='http://johnmuschelli.com/rstudio_server.html' title=''>http://johnmuschelli.com/rstudio_server.html</a></p>
+
+<p>The code to make the server is located at: <a href='https://github.com/muschellij2/rneuro/blob/master/ms_rstudio_droplet.sh' title=''>https://github.com/muschellij2/rneuro/blob/master/ms_rstudio_droplet.sh</a></p>
+
+</article></slide><slide class=''><hgroup><h2>Working with R</h2></hgroup><article  id="working-with-r">
+
+<ul>
+<li>The R Console &quot;interprets&quot; whatever you type
+
+<ul>
+<li>Calculator</li>
+<li>Creating variables</li>
+<li>Applying functions</li>
+</ul></li>
+<li>&quot;Analysis&quot; Script + Interactive Exploration
+
+<ul>
+<li>Static copy of what you did (reproducability)</li>
+<li>Try things out interactively, then add to your script</li>
+</ul></li>
+</ul>
+
+</article></slide><slide class='segue dark nobackground level1'><hgroup class = 'auto-fadein'><h2>R essentially is a command line with a set of functions loaded</h2></hgroup><article  id="r-essentially-is-a-command-line-with-a-set-of-functions-loaded">
+
+</article></slide><slide class=''><hgroup><h2>R Uses Functions, in Packages</h2></hgroup><article  id="r-uses-functions-in-packages">
+
+<ul>
+<li>R revolves around functions
+
+<ul>
+<li>Commands that take input, performs computations, and returns results</li>
+<li>When you download R, it has a &quot;base&quot; set of functions/packages (<strong>base R</strong>)</li>
+</ul></li>
+<li>Functions are enclosed in packages
+
+<ul>
+<li>These written by R users/developers (like us) - <strong>some are bad</strong></li>
+<li>Think of them as &quot;R Extensions&quot;</li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>RStudio (the software)</h2></hgroup><article  id="rstudio-the-software">
+
+<p>RStudio is an Integrated Development Environment (IDE) for R</p>
+
+<ul>
+<li>It helps the user effectively use R.</li>
+<li>Makes things easier<br/></li>
+<li>Is NOT dropdown statistical tools</li>
+<li>All snapshots in these slides are taken from <a href='http://ayeimanol-r.net/2013/04/21/289/' title=''>http://ayeimanol-r.net/2013/04/21/289/</a></li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>RStudio</h2></hgroup><article  id="rstudio">
+
+<p>Easier working with R</p>
+
+<ul>
+<li>Syntax highlighting, code completion, and smart indentation</li>
+<li>Easily manage multiple working directories and projects</li>
+</ul>
+
+<p>More information</p>
+
+<ul>
+<li>Workspace browser and data viewer</li>
+<li>Plot history, zooming, and flexible image and PDF export</li>
+<li>Integrated R help and documentation</li>
+<li>Searchable command history</li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>RStudio/R Console <img src='r-rstudio-1-3-console.png' title=''/></h2></hgroup><article  id="rstudior-console-console">
+
+</article></slide><slide class=''><hgroup><h2>RStudio/R Console</h2></hgroup><article  id="rstudior-console">
+
+<ul>
+<li>Where code is executed (where things happen)</li>
+<li>You can type here for things interactively</li>
+<li>Code is <strong>not saved</strong> on your disk</li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Source/Editor <img src='r-rstudio-1-3-script.png' title=''/></h2></hgroup><article  id="sourceeditor-script">
+
+</article></slide><slide class=''><hgroup><h2>Source</h2></hgroup><article  id="source">
+
+<ul>
+<li>Where files open to</li>
+<li>Have R code and comments in them</li>
+<li>Can highlight and press (CMD+Enter (Mac) or Ctrl+Enter (Windows)) to run the code</li>
+</ul>
+
+<p>In a .R file (we call a script), code is saved on your disk</p>
+
+</article></slide><slide class=''><hgroup><h2>Workspace/Environment <img src='r-rstudio-1-ggplot-point-2.png' title=''/></h2></hgroup><article  id="workspaceenvironment-workspace">
+
+</article></slide><slide class=''><hgroup><h2>Workspace/Environment</h2></hgroup><article  id="workspaceenvironment">
+
+<ul>
+<li>Tells you what <strong>objects</strong> are in R</li>
+<li>What exists in memory/what is loaded?/what did I read in?</li>
+</ul>
+
+<p>History</p>
+
+<ul>
+<li>Shows previous commands. Good to look at for debugging, but <strong>don&#39;t rely</strong> on it as a script. Make a script!</li>
+<li>Also type the &quot;up&quot; key in the Console to scroll through previous commands</li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Other Panes</h2></hgroup><article  id="other-panes">
+
+<ul>
+<li><strong>Files</strong> - shows the files on your computer of the directory you are working in</li>
+<li><strong>Viewer</strong> - can view data or R objects</li>
+<li><strong>Help</strong> - shows help of R commands</li>
+<li><strong>Plots</strong> - pretty pictures</li>
+<li><strong>Packages</strong> - list of R packages that are loaded in memory</li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Useful R Studio Shortcuts</h2></hgroup><article  id="useful-r-studio-shortcuts">
+
+<ul>
+<li><code>Ctrl + Enter</code> (<code>Cmd + Enter</code> on OS X) in your script evaluates that line of code
+
+<ul>
+<li>It&#39;s like copying and pasting the code into the console for it to run.</li>
+</ul></li>
+<li><code>Ctrl+1</code> takes you to the script page</li>
+<li><code>Ctrl+2</code> takes you to the console</li>
+<li><a href='http://www.rstudio.com/ide/docs/using/keyboard_shortcuts' title=''>http://www.rstudio.com/ide/docs/using/keyboard_shortcuts</a></li>
 </ul></article></slide>
 
 
