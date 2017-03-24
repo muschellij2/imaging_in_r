@@ -1,0 +1,204 @@
+---
+title: "Local R Setup"
+author: "John Muschelli"
+output:
+  ioslides_presentation:
+    widescreen: yes
+  beamer_presentation: default
+bibliography: ../refs.bib
+---
+
+
+```{r, echo = FALSE}
+library(knitr)
+opts_chunk$set(eval = FALSE)
+```
+
+# System Requirements
+
+The functionality of some of these packages requires Linux, Mac OSX, or a Unix-type system.   This excludes Windows in some cases.  The code was run on Linux and Mac OSX.  Although we do not currently support it, [Windows 10 has a Linux subsystem ](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide), which may allow for a working installation of all the dependencies of Neuroconductor. 
+
+Although still untested there is a good [tutorial on running FSL on Windows](http://www.nemotos.net/?p=1481) as well as [ANTsR on Windows](https://github.com/stnava/ANTsR/wiki/Installing-ANTsR-in-Windows-10-(along-with-FSL,-Rstudio,-Freesurfer,-etc)).  
+
+## Install R
+
+You can install the latest R from [http://cran.r-project.org/](http://cran.r-project.org/).
+
+We also recommend installing the  [RStudio IDE](https://www.rstudio.com/products/rstudio/download/)
+
+## CMake and Git
+
+These are required by the `ANTsR` suite of tools.  To install these, see the relevant sections in the [Installing ANTsR tutorial ](http://johnmuschelli.com/neuroc/installing_ANTsR/index.html)
+
+
+## FSL
+See the installation instructions for FSL from [https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FslInstallation](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FslInstallation).  
+
+### Neurodebian
+The following was done to make the Neurodebian installation look like that of Mac OSX:
+```bash
+##########################################
+# FSL
+##########################################
+sudo apt-get update \
+    && sudo apt-get install -y fsl-complete
+
+# Debian has a fixed FSLDIR
+export FSLDIR=/usr/local/fsl
+export FSLSHARE=/usr/share/data
+# add the fsl binary path to the search path
+export PATH=$PATH:${FSLDIR}/bin
+# export PATH=$PATH:/usr/lib/fsl/5.0
+# Possum is installed in the same directory
+export POSSUMDIR=$FSLDIR
+
+sudo mkdir -p ${FSLDIR}/bin
+sudo cp /usr/lib/fsl/5.0/* ${FSLDIR}/bin/
+sudo mkdir -p ${FSLDIR}/lib
+sudo mv ${FSLDIR}/bin/lib* ${FSLDIR}/lib/
+
+export FSLOUTPUTTYPE=NIFTI_GZ
+# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/fsl/5.0
+export LD_LIBRARY_PATH=${FSLDIR}/lib/:$LD_LIBRARY_PATH:
+
+# sudo cp /usr/share/fsl/5.0/etc/fslconf/fsl.sh $FSLDIR/etc/fslconf/fsl.sh
+export FSLOUTPUTTYPE=NIFTI_GZ
+# sudo rm $FSLDIR/etc/fslconf/fsl.sh
+sudo mkdir -p $FSLDIR/etc/fslconf/
+fname=${FSLDIR}/etc/fslconf/fsl.sh
+echo "FSLDIR=/usr/local/fsl" > ${fname}
+echo 'PATH=${PATH}:${FSLDIR}/bin' >> ${fname}
+echo 'LD_LIBRARY_PATH=${FSLDIR}/lib:$LD_LIBRARY_PATH' >> ${fname}
+echo "FSLOUTPUTTYPE=NIFTI_GZ" >> ${fname}
+
+##########################
+# Setting global library
+##########################
+sudo echo "${FSLDIR}/lib" > /etc/ld.so.conf.d/fsl.conf
+sudo ldconfig
+
+sudo mkdir -p ${FSLDIR}/data/standard
+sudo mkdir -p ${FSLDIR}/data/atlases 
+
+#######################################
+# Setting things up like other installers
+#######################################
+# settring up standard
+sudo cp -R ${FSLSHARE}/fsl-mni152-templates/* ${FSLDIR}/data/standard/
+
+# setting up atlases
+sudo cp -R ${FSLSHARE}/harvard-oxford-atlases/* ${FSLDIR}/data/atlases/
+sudo cp -R ${FSLSHARE}/juelich-histological-atlas/* ${FSLDIR}/data/atlases/
+sudo cp -R ${FSLSHARE}/bangor-cerebellar-atlas/* ${FSLDIR}/data/atlases/
+sudo cp -R ${FSLSHARE}/jhu-dti-whitematter-atlas/* ${FSLDIR}/data/atlases/
+sudo cp -R ${FSLSHARE}/forstmann-subthalamic-nucleus-atlas/* ${FSLDIR}/data/atlases/
+sudo cp -R ${FSLSHARE}/fsl-resting-connectivity-parcellation-atlases/* ${FSLDIR}/data/atlases/
+sudo cp -R ${FSLSHARE}/mni-structural-atlas/* ${FSLDIR}/data/atlases/
+sudo cp -R ${FSLSHARE}/oxford-thalamic-connectivity-atlas/* ${FSLDIR}/data/atlases/
+sudo cp -R ${FSLSHARE}/talairach-daemon-atlas/* ${FSLDIR}/data/atlases/ 
+```
+
+# R Packages
+## Devtools Package
+
+The tutorial and breakdown for installing the `devtools` package is located at: [https://www.rstudio.com/products/rpackages/devtools/](https://www.rstudio.com/products/rpackages/devtools/).  Please read through it as most of the code below requires `devtools`.
+
+## Bioconductor
+We need Bioconductor packages in some cases and we can install it with the code below:
+
+```{r}
+# Installing Bioconductor
+library(utils); 
+source("http://bioconductor.org/biocLite.R"); 
+biocLite(pkgs = c("Biobase"), suppressUpdates = TRUE, suppressAutoUpdate = TRUE, ask = FALSE)
+```
+
+## RGL
+
+## Mac and Linux
+The `rgl` package cand be installed using `install.packages` usually.
+
+## Linux
+The `install.packages` command may have some problems on Linux machines.  It can be installed in `bash` using: 
+```bash
+sudo apt-get -y update && sudo apt-get build-dep -y r-cran-rgl 
+```
+
+There may be an error that may be mitigated by the following command in bash:
+```bash
+sudo sed -i -- 's/#deb-src/deb-src/g' /etc/apt/sources.list && sudo sed -i -- 's/# deb-src/deb-src/g' /etc/apt/sources.list
+```
+and re-running the code above.
+
+
+## Neuroimaging packages on Github
+
+### Standard Packages
+```{r}
+# DICOM converter
+devtools::install_github("muschellij2/dcm2niir")
+library(dcm2niir); install_dcm2nii()
+# HCP database connector
+devtools::install_github("muschellij2/hcp")
+# dcm2nii Rcpp implementation
+install.packages(c("RNifti", "divest", "oro.dicom", "oro.nifti", "WhiteStripe"))
+# data for whitestripe
+library(WhiteStripe); download_img_data()
+
+# neurobase package
+devtools::install_github("muschellij2/neurobase")
+devtools::install_github("muschellij2/fslr")
+```
+
+### ANTsR
+
+Please see the the [Installing ANTsR tutorial ](http://johnmuschelli.com/neuroc/installing_ANTsR/index.html) if anything errors here:
+
+```{r}
+##########################################
+# ANTs
+##########################################
+devtools::install_github("stnava/ITKR")
+devtools::install_github("stnava/ANTsRCore", upgrade_dependencies = FALSE)
+devtools::install_github("stnava/ANTsR", upgrade_dependencies = FALSE)
+devtools::install_github("muschellij2/extrantsr", 
+                         upgrade_dependencies = FALSE)
+```
+
+### Knitting using RStudio
+```{r}
+install.packages(c("formatR", "caTools", "rprojroot", "rmarkdown"))
+```
+
+### Imaging Packages and Data
+
+The only package that isn't directly available is the `ms.lesion` package, which is due to restrictions on the data.  This should be available from the tutorial
+
+```{r}
+##############################
+# Install MS LESION DATA!
+# INSTALL KIRBY21
+##############################
+devtools::install_github("muschellij2/papayar")
+devtools::install_github("emsweene/oasis")
+devtools::install_github("muschellij2/malf.templates")
+devtools::install_github("muschellij2/kirby21.t1")
+```
+
+# Conclusion
+If all of these install correctly, restart `R` and test:
+
+## Working installation of FSL and fslr test
+
+```{r}
+library(fslr)
+have_fsl()
+example("fsl_smooth")
+```
+
+## Working installation of ANTsR and extrantsr
+
+```{r}
+library(extrantsr)
+example("smooth_image")
+```

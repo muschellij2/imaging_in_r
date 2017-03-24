@@ -56,11 +56,6 @@ All materials for this course (including source for the slides) is located at:
 https://github.com/muschellij2/imaging_in_r
 
 
-## Installing R: Local
-
-* You can install the latest R from [http://cran.r-project.org/](http://cran.r-project.org/)
-
-* [Install RStudio](https://www.rstudio.com/products/rstudio/download/)
 
 ## RStudio Server
 
@@ -70,6 +65,15 @@ http://johnmuschelli.com/rstudio_server.html
 
 The code to make the server is located at:
 https://github.com/muschellij2/rneuro/blob/master/ms_rstudio_droplet.sh
+
+## Installing R: Local
+
+If you want to install 
+
+* You can install the latest R from [http://cran.r-project.org/](http://cran.r-project.org/)
+
+* [Install RStudio](https://www.rstudio.com/products/rstudio/download/)
+
 
 # Introduction to R
 
