@@ -2,10 +2,13 @@
 title: "Local R Setup"
 author: "John Muschelli"
 output:
-  ioslides_presentation:
-    widescreen: yes
-  beamer_presentation: default
-bibliography: ../refs.bib
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: false
+    number_sections: true   
+    theme: cosmo
 ---
 
 
