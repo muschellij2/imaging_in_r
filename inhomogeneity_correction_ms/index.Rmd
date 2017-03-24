@@ -1,5 +1,5 @@
 ---
-title: "Inhomogeneity Correction in MS"
+title: "Inhomogeneity Correction"
 author: "John Muschelli"
 output:
   ioslides_presentation:

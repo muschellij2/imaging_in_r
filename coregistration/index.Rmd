@@ -1,5 +1,5 @@
 ---
-title: "Co-registration"
+title: "Registration of Images"
 author: "John Muschelli"
 date: "`r Sys.Date()`"
 output:

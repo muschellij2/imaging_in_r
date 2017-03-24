@@ -16,6 +16,8 @@ output:
 All materials for this course are located at: 
 https://github.com/muschellij2/imaging_in_r
 
+You can download by clicking "Clone or download" (in green), then Download as Zip.  We will also have USB drives loaded with the code.
+
 ### Additional Tutorials
 
 * [Neurocondcutor](https://neuroconductor.org/neuroc-help)
@@ -44,14 +46,33 @@ In this tutorial, we will provide tutorials on how to use R for structural magne
 
 ### Schedule
 
-```{r}
-library(pander)
+```{r, echo = FALSE}
+# library(pander)
+# library(DT)
 mat = rbind(
-  c("intro", "Introduction"),
+  c("intro", "Introduction and R"),
   c("starting_with_raw_data", "Starting with Raw Data"),
   c("visualization", "Visualization of Images"),
-  c("visualization", "Visualization of Images")
+  c("inhomogeneity_correction_ms", "Inhomogeneity Correction"),
+  c("brain_extraction_malf", "Brain Extraction/Segmentation"),
+  c("segmentation", "Image Segmentation"),
+  c("coregistration", "Registration of Images"),
+  c("intensity_normalization", "Intensity Normalization")
   )
+mat = data.frame(mat, stringsAsFactors = FALSE)
+colnames(mat) = c("link", "title")
+mat$link = paste0("http://johnmuschelli.com/imaging_in_r/", mat$fname, "/")
+mat$slides = paste0("[Slides](", paste0(mat$link, "index.html"), ")")
+mat$rcode = paste0("[R Code](", paste0(mat$link, "index.R"), ")")
+mat$source = paste0("[Source](", paste0(mat$link, "index.Rmd"), ")")
+# mat = mat[, c("title", "slides", "rcode", "source")]
+# mat$links = paste(mat$slides, mat$rcode, mat$source)
+# mat$x = ""
+mat = mat[, c("title", "slides", "rcode", "source")]
+# mat = mat[, c("links"), drop = FALSE]
+# pander(mat, split.cells = c("0%", "70%", "10%", "10%", "10%"),
+#        justify = c('left', 'center', 'center', "center"))
+knitr::kable(mat)
 ```
 
 ```{r, eval = FALSE, echo = FALSE}
