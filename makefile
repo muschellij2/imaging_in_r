@@ -5,7 +5,7 @@ LIST += inhomogeneity_correction_ms
 LIST += brain_extraction_malf
 LIST += segmentation
 LIST += coregistration
-LIST += intensity_normalization
+# LIST += intensity_normalization
 
 all:
 	for fol in $(LIST) ; do \
