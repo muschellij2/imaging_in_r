@@ -10,6 +10,7 @@ bibliography: ../refs.bib
 ---
 
 ```{r setup, include=FALSE}
+library(methods)
 knitr::opts_chunk$set(echo = TRUE, comment = "")
 options(fsl.path = "/usr/local/fsl/")
 options(fsl.outputtype = "NIFTI_GZ")

@@ -10,6 +10,7 @@ bibliography: ../refs.bib
 
 ```{r setup, include=FALSE, message = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(methods)
 library(ggplot2)
 library(ms.lesion)
 library(neurobase)

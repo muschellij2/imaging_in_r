@@ -9,6 +9,7 @@ bibliography: ../refs.bib
 ---
 
 ```{r setup, include=FALSE}
+library(methods)
 knitr::opts_chunk$set(
   message = FALSE, echo = TRUE, 
   comment = "", 
@@ -217,19 +218,19 @@ robust_t1seg = readnii(files["Tissue_Classes"])
 
 ## White Matter
 
-```{r otropos_wm}
+```{r otropos_wm_robust}
 ortho2(t1, robust_t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
 ```
 
 ## Gray Matter
 
-```{r otropos_gm}
+```{r otropos_gm_robust}
 ortho2(t1, robust_t1seg == 2, col.y = alpha("red", 0.5), text="Gray Matter")
 ```
 
 ## CSF
 
-```{r otropos_csf}
+```{r otropos_csf_robust}
 ortho2(t1, robust_t1seg == 1, col.y = alpha("red", 0.5), text="CSF")
 ```
 
