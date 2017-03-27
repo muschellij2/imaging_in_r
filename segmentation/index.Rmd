@@ -39,7 +39,15 @@ files = get_image_filenames_list_by_subject(
 t1file = files["MPRAGE"]
 maskfile = files["Brain_Mask"]
 mask = readnii(maskfile)
-t1 = readnii(t1file)
+
+fnames = get_image_filenames_list_by_subject(group="training", type = "coregistered")
+t1s = lapply(fnames, function(x) readnii(x["MPRAGE"]))
+t2s = lapply(fnames, function(x) readnii(x["T2"]))
+flairs = lapply(fnames, function(x) readnii(x["FLAIR"]))
+pds = lapply(fnames, function(x) readnii(x["PD"]))
+# golds = lapply(fnames, function(x) readnii(x["LESIONS"]))
+
+t1 = t1s[[5]]
 ```
 
 ```{r window, echo = FALSE}
@@ -162,7 +170,7 @@ ortho2(t1, robust_fast == 1, col.y = alpha("red", 0.5), text = "CSF")
 
 ## Tissue Segmentation using ANTsR, extrantsr
 
-- Uses Atropos (CITE)
+- Uses Atropos (Avants, BB, et al. (2011) Neuroinformatics)
 
 ```{r otropos_show, eval = FALSE}
 t1_otropos = otropos(a = t1, x = mask) # using original data
@@ -180,8 +188,6 @@ if (!file.exists(outfile)) {
   t1seg = readnii(outfile)
 }
 ```
-
-
 
 ## White Matter
 
@@ -259,4 +265,19 @@ vol_ants = tab_ants * vres
 vol_ants
 ```
 
+
+## MS Lesion Segmentation with OASIS
+- OASIS is Automated Statistical Inference for Segmentation
+- The OASIS algorithm takes FLAIR, T1, T2, and PD images from patients with multiple sclerosis (MS) and produces OASIS probability maps of MS lesion presence, which can be thresholded into a binary lesion segmentation.
+- The OASIS library in R provides default parameters from a previously trained data set.
+- To retrain the model using new data, binary masks of `gold standard’ lesion segmentations are needed and should be in T1 space.
+
+## MS Lesion Segmentation with OASIS
+- Here's the T1 volume for training subject 05 with the ‘gold standard’ manual lesion segmentation overlayed.
+
+```{r over_show_run}
+overlay = golds[[5]]
+overlay[golds[[5]] == FALSE] = NA
+orthographic(t1s[[5]], overlay, col.y = "orange")
+```
 
