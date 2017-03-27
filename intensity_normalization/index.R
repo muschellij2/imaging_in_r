@@ -1,43 +1,17 @@
----
-title: "Intensity Normalization"
-author: "Kristin Linn"
-date: "`r Sys.Date()`"
-output:
-  ioslides_presentation:
-    widescreen: yes
-  beamer_presentation: default    
-bibliography: ../refs.bib      
----
-
-```{r setup, include=FALSE}
+## ----setup, include=FALSE------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE, comment = "")
 options(fsl.path = "/usr/local/fsl/")
 options(fsl.outputtype = "NIFTI_GZ")
-```
 
-## Intensity normalization
-- Conventional MRI intensites (T1-w, T2-w, PD, FLAIR) are acquired in arbitrary units, making the images not comparable across scanners and visits. 
-- Intensity normalization brings the intensities to a common scale.
-
-
-## Goals of this tutorial
-- Visualize the intensities using boxplots and densities
-- Apply the WhiteStripe intensity normalization 
-
-
-## Reading in the images
-For the moment, we will work with the T1-w images from the training data.
-```{r t1, warning=FALSE, message=FALSE}
+## ----t1, warning=FALSE, message=FALSE------------------------------------
 library(ms.lesion)
 library(neurobase)
 library(WhiteStripe)
 t1_fnames = get_image_filenames_list_by_subject(group="training", type = "coregistered")
 t1s = lapply(t1_fnames, function(x) readnii(x["MPRAGE"]))
 tissues = lapply(t1_fnames, function(x) readnii(x["Tissue_Classes"]))
-```
 
-## Visualizing the intensities 
-```{r t1viz, warning=FALSE, message=FALSE}
+## ----t1viz, warning=FALSE, message=FALSE---------------------------------
 wbDens = list()
 for(i in 1:5){
   wbDens[[i]] = density(t1s[[i]][tissues[[i]]>0])
@@ -57,10 +31,8 @@ boxplots <- lapply(1:5, function(i){
 })
 boxplots <- do.call(cbind, boxplots)
 boxplot(boxplots, main="Whole Brain")
-```
 
-## Visualizing the intensities by tissue class
-```{r t1viz2, warning=FALSE, message=FALSE}
+## ----t1viz2, warning=FALSE, message=FALSE--------------------------------
 gmDens = list()
 for(i in 1:5){
   gmDens[[i]] = density(t1s[[i]][tissues[[i]]==2])
@@ -80,10 +52,8 @@ boxplots <- lapply(1:5, function(i){
 })
 boxplots <- do.call(cbind, boxplots)
 boxplot(boxplots, main="Gray Matter")
-```
 
-## Visualizing the intensities by tissue class
-```{r t1viz3, warning=FALSE, message=FALSE}
+## ----t1viz3, warning=FALSE, message=FALSE--------------------------------
 wmDens = list()
 for(i in 1:5){
   wmDens[[i]] = density(t1s[[i]][tissues[[i]]==3])
@@ -104,10 +74,8 @@ boxplots <- lapply(1:5, function(i){
 boxplots <- do.call(cbind, boxplots)
 boxplot(boxplots, main="White Matter")
 
-```
 
-## Visualizing the intensities by tissue class
-```{r t1viz1, warning=FALSE, message=FALSE}
+## ----t1viz1, warning=FALSE, message=FALSE--------------------------------
 csfDens = list()
 for(i in 1:5){
   csfDens[[i]] = density(t1s[[i]][tissues[[i]]==1])
@@ -127,18 +95,13 @@ boxplots <- lapply(1:5, function(i){
 })
 boxplots <- do.call(cbind, boxplots)
 boxplot(boxplots, main="CSF")
-```
 
-## Whole-brain normalization
-- Z-score each voxel using mean and standard deviation computed from all voxels in the brain mask.
-```{r wbViz, warning=FALSE, message=FALSE}
+## ----wbViz, warning=FALSE, message=FALSE---------------------------------
 t1means = lapply(1:5, function(x) mean(t1s[[x]][tissues[[x]]>0]))
 t1sds = lapply(1:5, function(x) sd(t1s[[x]][tissues[[x]]>0]))
 t1WBNorm = lapply(1:5, function(x) (t1s[[x]]-t1means[[x]])/t1sds[[x]])
-```
 
-## Whole-brain normalized intensities
-```{r wbViz2, warning=FALSE, message=FALSE}
+## ----wbViz2, warning=FALSE, message=FALSE--------------------------------
 gmDensWB = list()
 for(i in 1:5){
   gmDensWB[[i]] = density(t1WBNorm[[i]][tissues[[i]]==2])
@@ -160,10 +123,8 @@ boxplots <- lapply(1:5, function(i){
 boxplots <- do.call(cbind, boxplots)
 boxplot(boxplots, main="Gray Matter")
 
-```
 
-## Whole-brain normalized intensities
-```{r wbViz3, warning=FALSE, message=FALSE}
+## ----wbViz3, warning=FALSE, message=FALSE--------------------------------
 wmDensWB = list()
 for(i in 1:5){
   wmDensWB[[i]] = density(t1WBNorm[[i]][tissues[[i]]==3])
@@ -185,10 +146,8 @@ boxplots <- lapply(1:5, function(i){
 boxplots <- do.call(cbind, boxplots)
 boxplot(boxplots, main="White Matter")
 
-```
 
-## Whole-brain normalized intensities
-```{r wbViz1, warning=FALSE, message=FALSE}
+## ----wbViz1, warning=FALSE, message=FALSE--------------------------------
 csfDensWB = list()
 for(i in 1:5){
   csfDensWB[[i]] = density(t1WBNorm[[i]][tissues[[i]]==1])
@@ -210,22 +169,14 @@ boxplots <- lapply(1:5, function(i){
 boxplots <- do.call(cbind, boxplots)
 boxplot(boxplots, main="CSF")
 
-```
 
-## White Stripe normalization
-- Normalize each voxel using mean and standard deviation computed from normal appearing white matter voxels.
-- Normal appearing white matter will have a standard normal distribution.
-- Units will correspond to variability (standard deviation) of normal appearing white matter.
-
-```{r ws, warning=FALSE, message=FALSE}
+## ----ws, warning=FALSE, message=FALSE------------------------------------
 t1WSNorm = lapply(1:5, function(x){
   indices = whitestripe(t1s[[x]], type="T1", stripped=TRUE)$whitestripe.ind
   whitestripe_norm(t1s[[x]], indices)
 })
-```
 
-## White Stripe normalized intensities
-```{r wsViz2, warning=FALSE, message=FALSE}
+## ----wsViz2, warning=FALSE, message=FALSE--------------------------------
 gmDensWS = list()
 for(i in 1:5){
   gmDensWS[[i]] = density(t1WSNorm[[i]][tissues[[i]]==2])
@@ -247,10 +198,8 @@ boxplots <- lapply(1:5, function(i){
 boxplots <- do.call(cbind, boxplots)
 boxplot(boxplots, main="Gray Matter")
 
-```
 
-## White Stripe normalized intensities
-```{r wsViz3, warning=FALSE, message=FALSE}
+## ----wsViz3, warning=FALSE, message=FALSE--------------------------------
 wmDensWS = list()
 for(i in 1:5){
   wmDensWS[[i]] = density(t1WSNorm[[i]][tissues[[i]]==3])
@@ -272,10 +221,8 @@ boxplots <- lapply(1:5, function(i){
 boxplots <- do.call(cbind, boxplots)
 boxplot(boxplots, main="White Matter")
 
-```
 
-## White Stripe normalized intensities
-```{r wsViz1, warning=FALSE, message=FALSE}
+## ----wsViz1, warning=FALSE, message=FALSE--------------------------------
 csfDensWS = list()
 for(i in 1:5){
   csfDensWS[[i]] = density(t1WSNorm[[i]][tissues[[i]]==1])
@@ -296,25 +243,5 @@ boxplots <- lapply(1:5, function(i){
 })
 boxplots <- do.call(cbind, boxplots)
 boxplot(boxplots, main="CSF")
-
-```
-## Intensity normalization with RAVEL
-
-- WhiteStripe is great, it normalized the WM intensities across samples
-- Grey matter (GM) and cerebrospinal fluid (CSF) intensites are still not comparable
-- RAVEL extends WhiteStripe to make intensites comparable across subjects for all tissues
-
-## RAVEL methodology
-
-## Creating a control region mask
-
-## Performing RAVEL normalization
-
-
-
-
-
-
-
 
 
