@@ -21,33 +21,24 @@ knitr::opts_chunk$set(
 - Examples: tissue segmentation, segmentation of gray matter structures, segmentation of pathology (MS lesions, tumors, ...)
 
 ## Goals of this tutorial
-- Perform tissue segmentation in R using FSL and ANTs
-- Discuss multi-atlas label fusion techniques for segmentation
+- Perform tissue segmentation in R using FSL and ANTs.
+- Discuss multi-atlas label fusion techniques for segmentation.
 - Perform automatic MS lesion segmentation using OASIS.
 
 ## Loading Data
+- Let's read in the training T1s and brain mask for subject 05.
 
 ```{r loading}
 library(ms.lesion)
 library(neurobase)
 library(fslr)
-library(oasis)
 library(scales)
 library(extrantsr)
-files = get_image_filenames_list_by_subject(
-  type = "coregistered")$training05
-t1file = files["MPRAGE"]
-maskfile = files["Brain_Mask"]
-mask = readnii(maskfile)
-
-fnames = get_image_filenames_list_by_subject(group="training", type = "coregistered")
-t1s = lapply(fnames, function(x) readnii(x["MPRAGE"]))
-t2s = lapply(fnames, function(x) readnii(x["T2"]))
-flairs = lapply(fnames, function(x) readnii(x["FLAIR"]))
-pds = lapply(fnames, function(x) readnii(x["PD"]))
-# golds = lapply(fnames, function(x) readnii(x["LESIONS"]))
-
+files = get_image_filenames_list_by_subject(group="training", type = "coregistered")
+t1s = lapply(files, function(x) readnii(x["MPRAGE"]))
 t1 = t1s[[5]]
+masks = lapply(files, function(x) readnii(x["Brain_Mask"]))
+mask = masks[[5]]
 ```
 
 ```{r window, echo = FALSE}
@@ -56,8 +47,8 @@ t1 = t1s[[5]]
 ```
 
 ## Tissue Segmentation: Large Outliers
-
-Many tissue class segmentations are based on k-means clustering.  These methods can be skewed by large outliers, wh
+- Many tissue class segmentations are based on k-means clustering.
+- These methods can be skewed by large outliers.
 
 ```{r hist_vals}
 hist(t1, mask = mask, breaks = 2000)
@@ -170,7 +161,7 @@ ortho2(t1, robust_fast == 1, col.y = alpha("red", 0.5), text = "CSF")
 
 ## Tissue Segmentation using ANTsR, extrantsr
 
-- Uses Atropos (Avants, BB, et al. (2011) Neuroinformatics)
+- Uses Atropos [@avants2011open]
 
 ```{r otropos_show, eval = FALSE}
 t1_otropos = otropos(a = t1, x = mask) # using original data
@@ -267,10 +258,20 @@ vol_ants
 
 
 ## MS Lesion Segmentation with OASIS
-- OASIS is Automated Statistical Inference for Segmentation
+- OASIS is Automated Statistical Inference for Segmentation [@sweeney2013oasis]
 - The OASIS algorithm takes FLAIR, T1, T2, and PD images from patients with multiple sclerosis (MS) and produces OASIS probability maps of MS lesion presence, which can be thresholded into a binary lesion segmentation.
 - The OASIS library in R provides default parameters from a previously trained data set.
 - To retrain the model using new data, binary masks of `gold standard’ lesion segmentations are needed and should be in T1 space.
+
+## MS Lesion Segmentation with OASIS
+- Let's read in the other modalities and manual segmentations
+
+```{r readnii_show_run}
+t2s = lapply(files, function(x) readnii(x["T2"]))
+flairs = lapply(files, function(x) readnii(x["FLAIR"]))
+pds = lapply(files, function(x) readnii(x["PD"]))
+# golds = lapply(files, function(x) readnii(x["LESIONS"]))
+```
 
 ## MS Lesion Segmentation with OASIS
 - Here's the T1 volume for training subject 05 with the ‘gold standard’ manual lesion segmentation overlayed.
@@ -281,3 +282,23 @@ overlay[golds[[5]] == FALSE] = NA
 orthographic(t1s[[5]], overlay, col.y = "orange")
 ```
 
+## Making OASIS data frames
+- OASIS requires a particular data frame format
+- OASIS has an option to preprocess your data for you (preproc)
+- OASIS has an option to normalize the intensities of your data for you using a whole-brain normalization (normalize)
+- make_df() below is a helper function
+
+```{r oasis_df_show, eval=FALSE}
+make_df = function(x){
+  return(oasis_train_dataframe(flair=flairs[[x]], t1=t1s[[x]], t2=t2s[[x]], pd=pds[[x]], gold_standard=golds[[x]], brain_mask=masks[[x]], preproc=FALSE, normalize=TRUE, return_preproc=FALSE)}
+oasis_dfs = lapply(1:5, function(x) make_df(x))
+```
+
+## Training OASIS
+
+```{r oasis_run_show, eval=FALSE}
+all = paste(unlist(lapply(1:5, function(x) paste0("oasis_dfs[[",x,"]]"))), collapse=",")
+oasis_model = oasis_training(eval(parse(text=all)))
+```
+
+## References {.smaller}
