@@ -1,7 +1,7 @@
 all: index.html index.R 
     
-index.html: index.Rmd 
-	Rscript -e "rmarkdown::render('index.Rmd')"
+index.html index.pdf: index.Rmd 
+	Rscript -e "rmarkdown::render('index.Rmd', output_format = 'all')"
 
 index.R: index.Rmd
 	Rscript -e "knitr::purl('index.Rmd')"
