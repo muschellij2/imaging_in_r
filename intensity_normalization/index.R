@@ -1,0 +1,247 @@
+## ----setup, include=FALSE------------------------------------------------
+knitr::opts_chunk$set(echo = TRUE, comment = "")
+options(fsl.path = "/usr/local/fsl/")
+options(fsl.outputtype = "NIFTI_GZ")
+
+## ----t1, warning=FALSE, message=FALSE------------------------------------
+library(ms.lesion)
+library(neurobase)
+library(WhiteStripe)
+t1_fnames = get_image_filenames_list_by_subject(group="training", type = "coregistered")
+t1s = lapply(t1_fnames, function(x) readnii(x["MPRAGE"]))
+tissues = lapply(t1_fnames, function(x) readnii(x["Tissue_Classes"]))
+
+## ----t1viz, warning=FALSE, message=FALSE---------------------------------
+wbDens = list()
+for(i in 1:5){
+  wbDens[[i]] = density(t1s[[i]][tissues[[i]]>0])
+}
+wbMaxY = max(unlist(lapply(wbDens, function(x) max(x$y))))
+wbMaxX = max(unlist(lapply(wbDens, function(x) max(x$x))))
+plot(wbDens[[1]], xlim=c(0, wbMaxX), ylim=c(0, wbMaxY), xlab="Raw Intensities", main="Whole Brain")
+lines(wbDens[[2]], col="red")
+lines(wbDens[[3]], col="orange")
+lines(wbDens[[4]], col="green")
+lines(wbDens[[5]], col="blue")
+
+boxplots <- lapply(1:5, function(i){
+  x = t1s[[i]]
+  x = x[tissues[[i]]>0]
+  boxplot(x, outline=FALSE, plot=FALSE)$stats
+})
+boxplots <- do.call(cbind, boxplots)
+boxplot(boxplots, main="Whole Brain")
+
+## ----t1viz2, warning=FALSE, message=FALSE--------------------------------
+gmDens = list()
+for(i in 1:5){
+  gmDens[[i]] = density(t1s[[i]][tissues[[i]]==2])
+}
+gmMaxY = max(unlist(lapply(gmDens, function(x) max(x$y))))
+gmMaxX = max(unlist(lapply(gmDens, function(x) max(x$x))))
+plot(gmDens[[1]], xlim=c(0, gmMaxX), ylim=c(0, gmMaxY), xlab="Raw Intensities", main="Gray Matter")
+lines(gmDens[[2]], col="red")
+lines(gmDens[[3]], col="orange")
+lines(gmDens[[4]], col="green")
+lines(gmDens[[5]], col="blue")
+
+boxplots <- lapply(1:5, function(i){
+  x = t1s[[i]]
+  x = x[tissues[[i]]==3]
+  boxplot(x, outline=FALSE, plot=FALSE)$stats
+})
+boxplots <- do.call(cbind, boxplots)
+boxplot(boxplots, main="Gray Matter")
+
+## ----t1viz3, warning=FALSE, message=FALSE--------------------------------
+wmDens = list()
+for(i in 1:5){
+  wmDens[[i]] = density(t1s[[i]][tissues[[i]]==3])
+}
+wmMaxY = max(unlist(lapply(wmDens, function(x) max(x$y))))
+wmMaxX = max(unlist(lapply(wmDens, function(x) max(x$x))))
+plot(wmDens[[1]], xlim=c(0, wmMaxX), ylim=c(0, wmMaxY), xlab="Raw Intensities", main="White Matter")
+lines(wmDens[[2]], col="red")
+lines(wmDens[[3]], col="orange")
+lines(wmDens[[4]], col="green")
+lines(wmDens[[5]], col="blue")
+
+boxplots <- lapply(1:5, function(i){
+  x = t1s[[i]]
+  x = x[tissues[[i]]==2]
+  boxplot(x, outline=FALSE, plot=FALSE)$stats
+})
+boxplots <- do.call(cbind, boxplots)
+boxplot(boxplots, main="White Matter")
+
+
+## ----t1viz1, warning=FALSE, message=FALSE--------------------------------
+csfDens = list()
+for(i in 1:5){
+  csfDens[[i]] = density(t1s[[i]][tissues[[i]]==1])
+}
+csfMaxY = max(unlist(lapply(csfDens, function(x) max(x$y))))
+csfMaxX = max(unlist(lapply(csfDens, function(x) max(x$x))))
+plot(csfDens[[1]], ylim=c(0, csfMaxY), xlim=c(0, 200), xlab="Raw Intensities", main="CSF")
+lines(csfDens[[2]], col="red")
+lines(csfDens[[3]], col="orange")
+lines(csfDens[[4]], col="green")
+lines(csfDens[[5]], col="blue")
+
+boxplots <- lapply(1:5, function(i){
+  x = t1s[[i]]
+  x = x[tissues[[i]]==1]
+  boxplot(x, outline=FALSE, plot=FALSE)$stats
+})
+boxplots <- do.call(cbind, boxplots)
+boxplot(boxplots, main="CSF")
+
+## ----wbViz, warning=FALSE, message=FALSE---------------------------------
+t1means = lapply(1:5, function(x) mean(t1s[[x]][tissues[[x]]>0]))
+t1sds = lapply(1:5, function(x) sd(t1s[[x]][tissues[[x]]>0]))
+t1WBNorm = lapply(1:5, function(x) (t1s[[x]]-t1means[[x]])/t1sds[[x]])
+
+## ----wbViz2, warning=FALSE, message=FALSE--------------------------------
+gmDensWB = list()
+for(i in 1:5){
+  gmDensWB[[i]] = density(t1WBNorm[[i]][tissues[[i]]==2])
+}
+gmMaxYWB = max(unlist(lapply(gmDensWB, function(x) max(x$y))))
+gmMaxXWB = max(unlist(lapply(gmDensWB, function(x) max(x$x))))
+gmMinXWB = min(unlist(lapply(gmDensWB, function(x) min(x$x))))
+plot(gmDensWB[[1]], xlim=c(-3,3), ylim=c(0, gmMaxYWB), xlab="Whole-brain Normalized Intensities", main="Gray Matter")
+lines(gmDensWB[[2]], col="red")
+lines(gmDensWB[[3]], col="orange")
+lines(gmDensWB[[4]], col="green")
+lines(gmDensWB[[5]], col="blue")
+
+boxplots <- lapply(1:5, function(i){
+  x = t1WBNorm[[i]]
+  x = x[tissues[[i]]==3]
+  boxplot(x, outline=FALSE, plot=FALSE)$stats
+})
+boxplots <- do.call(cbind, boxplots)
+boxplot(boxplots, main="Gray Matter")
+
+
+## ----wbViz3, warning=FALSE, message=FALSE--------------------------------
+wmDensWB = list()
+for(i in 1:5){
+  wmDensWB[[i]] = density(t1WBNorm[[i]][tissues[[i]]==3])
+}
+wmMaxYWB = max(unlist(lapply(wmDensWB, function(x) max(x$y))))
+wmMaxXWB = max(unlist(lapply(wmDensWB, function(x) max(x$x))))
+wmMinXWB = min(unlist(lapply(wmDensWB, function(x) min(x$x))))
+plot(wmDensWB[[1]], xlim=c(-3, 3), ylim=c(0, wmMaxYWB), xlab="Whole-brain Normalized Intensities", main="White Matter")
+lines(wmDensWB[[2]], col="red")
+lines(wmDensWB[[3]], col="orange")
+lines(wmDensWB[[4]], col="green")
+lines(wmDensWB[[5]], col="blue")
+
+boxplots <- lapply(1:5, function(i){
+  x = t1WBNorm[[i]]
+  x = x[tissues[[i]]==2]
+  boxplot(x, outline=FALSE, plot=FALSE)$stats
+})
+boxplots <- do.call(cbind, boxplots)
+boxplot(boxplots, main="White Matter")
+
+
+## ----wbViz1, warning=FALSE, message=FALSE--------------------------------
+csfDensWB = list()
+for(i in 1:5){
+  csfDensWB[[i]] = density(t1WBNorm[[i]][tissues[[i]]==1])
+}
+csfMaxYWB = max(unlist(lapply(csfDensWB, function(x) max(x$y))))
+csfMaxXWB = max(unlist(lapply(csfDensWB, function(x) max(x$x))))
+csfMinXWB = min(unlist(lapply(csfDensWB, function(x) min(x$x))))
+plot(csfDensWB[[1]], xlim=c(-3,3), ylim=c(0, csfMaxYWB), xlab="Whole-brain Normalized Intensities", main="CSF")
+lines(csfDensWB[[2]], col="red")
+lines(csfDensWB[[3]], col="orange")
+lines(csfDensWB[[4]], col="green")
+lines(csfDensWB[[5]], col="blue")
+
+boxplots <- lapply(1:5, function(i){
+  x = t1WBNorm[[i]]
+  x = x[tissues[[i]]==1]
+  boxplot(x, outline=FALSE, plot=FALSE)$stats
+})
+boxplots <- do.call(cbind, boxplots)
+boxplot(boxplots, main="CSF")
+
+
+## ----ws, warning=FALSE, message=FALSE------------------------------------
+t1WSNorm = lapply(1:5, function(x){
+  indices = whitestripe(t1s[[x]], type="T1", stripped=TRUE)$whitestripe.ind
+  whitestripe_norm(t1s[[x]], indices)
+})
+
+## ----wsViz2, warning=FALSE, message=FALSE--------------------------------
+gmDensWS = list()
+for(i in 1:5){
+  gmDensWS[[i]] = density(t1WSNorm[[i]][tissues[[i]]==2])
+}
+gmMaxYWS = max(unlist(lapply(gmDensWS, function(x) max(x$y))))
+gmMaxXWS = max(unlist(lapply(gmDensWS, function(x) max(x$x))))
+gmMinXWS = min(unlist(lapply(gmDensWS, function(x) min(x$x))))
+plot(gmDensWS[[1]], xlim=c(gmMinXWS, gmMaxXWS), ylim=c(0, gmMaxYWS), xlab="White Stripe Normalized Intensities", main="Gray Matter")
+lines(gmDensWS[[2]], col="red")
+lines(gmDensWS[[3]], col="orange")
+lines(gmDensWS[[4]], col="green")
+lines(gmDensWS[[5]], col="blue")
+
+boxplots <- lapply(1:5, function(i){
+  x = t1WSNorm[[i]]
+  x = x[tissues[[i]]==2]
+  boxplot(x, outline=FALSE, plot=FALSE)$stats
+})
+boxplots <- do.call(cbind, boxplots)
+boxplot(boxplots, main="Gray Matter")
+
+
+## ----wsViz3, warning=FALSE, message=FALSE--------------------------------
+wmDensWS = list()
+for(i in 1:5){
+  wmDensWS[[i]] = density(t1WSNorm[[i]][tissues[[i]]==3])
+}
+wmMaxYWS = max(unlist(lapply(wmDensWS, function(x) max(x$y))))
+wmMaxXWS = max(unlist(lapply(wmDensWS, function(x) max(x$x))))
+wmMinXWS = min(unlist(lapply(wmDensWS, function(x) min(x$x))))
+plot(wmDensWS[[1]], xlim=c(wmMinXWS, wmMaxXWS), ylim=c(0, wmMaxYWS), xlab="White Stripe Normalized Intensities", main="White Matter")
+lines(wmDensWS[[2]], col="red")
+lines(wmDensWS[[3]], col="orange")
+lines(wmDensWS[[4]], col="green")
+lines(wmDensWS[[5]], col="blue")
+
+boxplots <- lapply(1:5, function(i){
+  x = t1WSNorm[[i]]
+  x = x[tissues[[i]]==3]
+  boxplot(x, outline=FALSE, plot=FALSE)$stats
+})
+boxplots <- do.call(cbind, boxplots)
+boxplot(boxplots, main="White Matter")
+
+
+## ----wsViz1, warning=FALSE, message=FALSE--------------------------------
+csfDensWS = list()
+for(i in 1:5){
+  csfDensWS[[i]] = density(t1WSNorm[[i]][tissues[[i]]==1])
+}
+csfMaxYWS = max(unlist(lapply(csfDensWS, function(x) max(x$y))))
+csfMaxXWS = max(unlist(lapply(csfDensWS, function(x) max(x$x))))
+csfMinXWS = min(unlist(lapply(csfDensWS, function(x) min(x$x))))
+plot(csfDensWS[[1]], xlim=c(csfMinXWS, csfMaxXWS), ylim=c(0, csfMaxYWS), xlab="White Stripe Normalized Intensities", main="CSF")
+lines(csfDensWS[[2]], col="red")
+lines(csfDensWS[[3]], col="orange")
+lines(csfDensWS[[4]], col="green")
+lines(csfDensWS[[5]], col="blue")
+
+boxplots <- lapply(1:5, function(i){
+  x = t1WSNorm[[i]]
+  x = x[tissues[[i]]==1]
+  boxplot(x, outline=FALSE, plot=FALSE)$stats
+})
+boxplots <- do.call(cbind, boxplots)
+boxplot(boxplots, main="CSF")
+
+
