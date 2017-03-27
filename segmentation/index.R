@@ -9,15 +9,18 @@ knitr::opts_chunk$set(
 library(ms.lesion)
 library(neurobase)
 library(fslr)
-library(oasis)
 library(scales)
 library(extrantsr)
-files = get_image_filenames_list_by_subject(
-  type = "coregistered")$training05
-t1file = files["MPRAGE"]
-maskfile = files["Brain_Mask"]
-mask = readnii(maskfile)
-t1 = readnii(t1file)
+all_files = get_image_filenames_list_by_subject(
+  group = "training", 
+  type = "coregistered")
+files = all_files$training05
+t1 = readnii(files["MPRAGE"])
+mask = readnii(files["Brain_Mask"])
+# t1s = lapply(files, function(x) readnii(x["MPRAGE"]))
+# t1 = t1s[[5]]
+# masks = lapply(files, function(x) readnii(x["Brain_Mask"]))
+# mask = masks[[5]]
 
 ## ----window, echo = FALSE------------------------------------------------
 # t1 = robust_window(t1, probs = c(0, 0.9999))
