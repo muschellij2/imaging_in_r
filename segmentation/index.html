@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Image Segmentation</title>
+  <title>Tissue-Class Segmentation</title>
 
   <meta charset="utf-8">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -20,7 +20,7 @@
     var SLIDE_CONFIG = {
       // Slide settings
       settings: {
-                title: 'Image Segmentation',
+                title: 'Tissue-Class Segmentation',
                         useBuilds: true,
         usePrettify: true,
         enableSlideAreas: true,
@@ -80,7 +80,7 @@
 
   </style>
 
-  <link href="data:text/css;charset=utf-8,pre%20%7B%0Afont%2Dfamily%3A%20%27Source%20Code%20Pro%27%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2024px%3B%0Aline%2Dheight%3A%2024px%3B%0Apadding%3A%2010px%200%2010px%2060px%3B%0Aletter%2Dspacing%3A%20%2D1px%3B%0Amargin%2Dbottom%3A%208px%3B%0Awidth%3A%20106%25%3B%0Aleft%3A%20%2D60px%3B%0Aposition%3A%20relative%3B%0A%2Dwebkit%2Dbox%2Dsizing%3A%20border%2Dbox%3B%0A%2Dmoz%2Dbox%2Dsizing%3A%20border%2Dbox%3B%0Abox%2Dsizing%3A%20border%2Dbox%3B%0A%0A%7D%0A%0Abody%7B%0Afont%2Dfamily%3A%20Helvetica%3B%0Afont%2Dsize%3A%2016pt%3B%0A%7D%0A%0Ah1%7B%0Afont%2Dsize%3A%2028pt%3B%0A%7D%0Ah2%7B%0Afont%2Dsize%3A%2024pt%3B%0A%7D%0Ah3%7B%0Afont%2Dsize%3A%2020pt%3B%0A%7D%0A%2Eemphasized%20%7B%0Afont%2Dsize%3A%201%2E2em%3B%0A%7D%0A%2Esmall%20%7B%0Afont%2Dsize%3A%200%2E8em%3B%0A%7D%0Astrong%20%7B%20font%2Dweight%3A%20bold%3B%0Acolor%3A%20black%3B%0A%7D" rel="stylesheet" type="text/css" />
+  <link href="data:text/css;charset=utf-8,pre%20%7B%0Afont%2Dfamily%3A%20%27Source%20Code%20Pro%27%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2024px%3B%0Aline%2Dheight%3A%2024px%3B%0Apadding%3A%2010px%200%2010px%2060px%3B%0Aletter%2Dspacing%3A%20%2D1px%3B%0Amargin%2Dbottom%3A%208px%3B%0Awidth%3A%20106%25%3B%0Aleft%3A%20%2D50px%3B%0Aposition%3A%20relative%3B%0A%2Dwebkit%2Dbox%2Dsizing%3A%20border%2Dbox%3B%0A%2Dmoz%2Dbox%2Dsizing%3A%20border%2Dbox%3B%0Abox%2Dsizing%3A%20border%2Dbox%3B%0A%0A%7D%0A%0Abody%7B%0Afont%2Dfamily%3A%20Helvetica%3B%0Afont%2Dsize%3A%2016pt%3B%0A%7D%0A%0Ah1%7B%0Afont%2Dsize%3A%2028pt%3B%0A%7D%0Ah2%7B%0Afont%2Dsize%3A%2024pt%3B%0A%7D%0Ah3%7B%0Afont%2Dsize%3A%2020pt%3B%0A%7D%0A%2Eemphasized%20%7B%0Afont%2Dsize%3A%201%2E2em%3B%0A%7D%0A%2Esmall%20%7B%0Afont%2Dsize%3A%200%2E8em%3B%0A%7D%0Astrong%20%7B%20font%2Dweight%3A%20bold%3B%0Acolor%3A%20black%3B%0A%7D" rel="stylesheet" type="text/css" />
 
 </head>
 
@@ -107,29 +107,39 @@
 </article></slide><slide class=''><hgroup><h2>Goals of this tutorial</h2></hgroup><article  id="goals-of-this-tutorial">
 
 <ul>
-<li>Perform tissue segmentation in R using FSL and ANTs</li>
-<li>Discuss multi-atlas label fusion techniques for segmentation</li>
+<li>Perform tissue segmentation in R using FSL and ANTs.</li>
+<li>Discuss multi-atlas label fusion techniques for segmentation.</li>
 <li>Perform automatic MS lesion segmentation using OASIS.</li>
 </ul>
 
 </article></slide><slide class=''><hgroup><h2>Loading Data</h2></hgroup><article  id="loading-data">
 
+<ul>
+<li>Let&#39;s read in the training T1s and brain mask for subject 05.</li>
+</ul>
+
 <pre class = 'prettyprint lang-r'>library(ms.lesion)
 library(neurobase)
 library(fslr)
-library(oasis)
 library(scales)
 library(extrantsr)
-files = get_image_filenames_list_by_subject(
-  type = &quot;coregistered&quot;)$training05
-t1file = files[&quot;MPRAGE&quot;]
-maskfile = files[&quot;Brain_Mask&quot;]
-mask = readnii(maskfile)
-t1 = readnii(t1file)</pre>
+all_files = get_image_filenames_list_by_subject(
+  group = &quot;training&quot;, 
+  type = &quot;coregistered&quot;)
+files = all_files$training05
+t1 = readnii(files[&quot;MPRAGE&quot;])
+mask = readnii(files[&quot;Brain_Mask&quot;])
+# t1s = lapply(files, function(x) readnii(x[&quot;MPRAGE&quot;]))
+# t1 = t1s[[5]]
+# masks = lapply(files, function(x) readnii(x[&quot;Brain_Mask&quot;]))
+# mask = masks[[5]]</pre>
 
 </article></slide><slide class=''><hgroup><h2>Tissue Segmentation: Large Outliers</h2></hgroup><article  id="tissue-segmentation-large-outliers">
 
-<p>Many tissue class segmentations are based on k-means clustering. These methods can be skewed by large outliers, wh</p>
+<ul>
+<li>Many tissue class segmentations are based on k-means clustering.</li>
+<li>These methods can be skewed by large outliers.</li>
+</ul>
 
 <pre class = 'prettyprint lang-r'>hist(t1, mask = mask, breaks = 2000)</pre>
 
@@ -219,7 +229,7 @@ multi_overlay(L, z = 58, text = names(L), text.x = 0.5, text.y = 1.4,
 </article></slide><slide class=''><hgroup><h2>Tissue Segmentation using ANTsR, extrantsr</h2></hgroup><article  id="tissue-segmentation-using-antsr-extrantsr">
 
 <ul>
-<li>Uses Atropos (CITE)</li>
+<li>Uses Atropos <span class="cite">(Avants et al. 2011)</span></li>
 </ul>
 
 <pre class = 'prettyprint lang-r'>t1_otropos = otropos(a = t1, x = mask) # using original data
@@ -303,7 +313,12 @@ vol_ants</pre>
 <pre >     CSF       GM       WM 
 292.1947 551.6877 380.1783 </pre>
 
+</article></slide><slide class=''><hgroup><h2>References</h2></hgroup><article  id="references" class="unnumbered smaller">
+
 <div id="refs" class="references">
+<div id="ref-avants2011open">
+<p>Avants, Brian B, Nicholas J Tustison, Jue Wu, Philip A Cook, and James C Gee. 2011. “An Open Source Multivariate Framework for N-Tissue Segmentation with Evaluation on Public Data.” <em>Neuroinformatics</em> 9 (4). Springer: 381–400.</p></div>
+
 <div id="ref-fast">
 <p>Zhang, Yongyue, Michael Brady, and Stephen Smith. 2001. “Segmentation of Brain MR Images Through a Hidden Markov Random Field Model and the Expectation-Maximization Algorithm.” <em>Medical Imaging, IEEE Transactions on</em> 20 (1): 45–57. <a href='http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=906424' title=''>http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=906424</a>.</p></div></div></article></slide>
 
