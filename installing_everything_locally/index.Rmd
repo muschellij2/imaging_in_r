@@ -9,6 +9,7 @@ output:
       collapsed: false
     number_sections: true   
     theme: cosmo
+  beamer_presentation: default
 ---
 
 

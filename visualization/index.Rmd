@@ -5,9 +5,9 @@ output:
   ioslides_presentation:
     widescreen: yes
     css: ../styles.css
+  beamer_presentation: default
 bibliography: ../refs.bib
 ---
-
 
 ```{r setup, include=FALSE, message = FALSE}
 library(methods)

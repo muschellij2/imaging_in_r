@@ -12,11 +12,11 @@ all:
 	for fol in $(LIST) ; do \
 		pwd && echo $$fol && cp makefile.copy $$fol/makefile && cd $$fol && make all && cd ../; \
 	done
-	Rscript -e "rmarkdown::render('index.Rmd')"
+	Rscript -e "rmarkdown::render('index.Rmd', output_format = 'all')"
 #  
 
-index.html: index.Rmd 
-	Rscript -e "rmarkdown::render('index.Rmd')"
+index.html index.pdf: index.Rmd 
+	Rscript -e "rmarkdown::render('index.Rmd', output_format = 'all')"
 
 clean: 
 	rm index.html
