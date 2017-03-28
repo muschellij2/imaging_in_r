@@ -5,7 +5,7 @@ LIST += inhomogeneity_correction_ms
 LIST += brain_extraction_malf
 LIST += segmentation
 LIST += coregistration
-LIST += ms_lesion_segmentation
+# LIST += ms_lesion_segmentation
 LIST += installing_everything_locally
 LIST += intensity_normalization
 
