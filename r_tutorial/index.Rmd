@@ -1,0 +1,52 @@
+---
+title: "R Tutorial"
+author: "Kristin Linn"
+output:
+  ioslides_presentation:
+    widescreen: yes
+    css: ../styles.css
+bibliography: ../refs.bib       
+---
+
+```{r setup, include=FALSE}
+library(methods)
+knitr::opts_chunk$set(echo = TRUE, comment = "")
+```
+
+## Help
+- To see the documentation for a function, use the ? symbol before the name of the function.
+- For example, to see documentation for `solve`:
+
+```{r help}
+?solve
+```
+- To search for help files, use a double ??
+
+```{r help2}
+??solve
+```
+
+## Some Details
+- R is case sensitive
+- Commands separated by new line or by a colon (;)
+- Use # to comment
+- Functions and commands in a separate file, say myCode.R, may be executed using 
+
+```{r source, eval=FALSE}
+source(myCode.R)
+```
+
+## Objects
+- `ls()' or `objects()' may be used to display names of objects that are currently stored in the R session.
+- Objects can be variables, arrays, character strings, functions, etc.
+- Assignment by `<-' or `='.
+
+## Other stuff
+- Need to explain types, subsetting, and do.call
+- Need to explain file.path and system.? commands?
+
+
+
+
+
+
