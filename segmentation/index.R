@@ -60,7 +60,7 @@ ortho2(t1, t1fast == 1, col.y = alpha("red", 0.5), text = "CSF")
 
 ## ----fast_better_show, eval = FALSE--------------------------------------
 ## rb = robust_window(t1)
-## robust_fast = fast(t1,
+## robust_fast = fast(rb,
 ##               outfile = paste0(nii.stub(t1file), "_FAST"),
 ##               opts = "--nobias")
 
@@ -68,7 +68,7 @@ ortho2(t1, t1fast == 1, col.y = alpha("red", 0.5), text = "CSF")
 rb = robust_window(t1)
 robust_fast = readnii(files["FAST"])
 
-## ----multi_overlay, eval = FALSE-----------------------------------------
+## ----multi_overlay, eval = FALSE, echo = FALSE---------------------------
 ## separate = separate_img(robust_fast, levels = 1:3)
 ## names(separate) = c("CSF", "GM", "WM")
 ## L = c(MPRAGE = list(t1), separate)
@@ -108,10 +108,10 @@ if (!file.exists(outfile)) {
 ortho2(t1, t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
 
 ## ----otropos_gm----------------------------------------------------------
-ortho2(t1, t1seg == 2, col.y = alpha("red", 0.5), text="Gray Matter")
+ortho2(t1, t1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 
 ## ----otropos_csf---------------------------------------------------------
-ortho2(t1, t1seg == 1, col.y = alpha("red", 0.5), text="CSF")
+ortho2(t1, t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 
 ## ----robust_otropos_show, eval = FALSE-----------------------------------
 ## robust_t1_otropos = otropos(a = rb, x = mask) # using robust
@@ -124,10 +124,10 @@ robust_t1seg = readnii(files["Tissue_Classes"])
 ortho2(t1, robust_t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
 
 ## ----otropos_gm_robust---------------------------------------------------
-ortho2(t1, robust_t1seg == 2, col.y = alpha("red", 0.5), text="Gray Matter")
+ortho2(t1, robust_t1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 
 ## ----otropos_csf_robust--------------------------------------------------
-ortho2(t1, robust_t1seg == 1, col.y = alpha("red", 0.5), text="CSF")
+ortho2(t1, robust_t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 
 ## ----tabs----------------------------------------------------------------
 tab_fsl = table(t1seg[ t1seg != 0])

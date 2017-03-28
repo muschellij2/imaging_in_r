@@ -30,7 +30,7 @@ ss = fslbet(infile = t1_fname)
 ortho2(robust_window(ss))
 
 ## ----t1_ss_plot----------------------------------------------------------
-ortho2(t1, ss > 0, col.y = red0.5)
+ortho2(rt1, ss > 0, col.y = red0.5)
 
 ## ----bc_show, eval = FALSE-----------------------------------------------
 ## library(extrantsr)
@@ -45,14 +45,14 @@ bc_img = robust_window(bc_img)
 bc_bet = fslbet(bc_img); ortho2(bc_img, bc_bet > 0, col.y = red0.5)
 
 ## ----t1_malf_ss, echo = TRUE, eval = FALSE-------------------------------
-## library(malf.templates)
+## library(malf.templates) # load the data package
 ## library(extrantsr)
-## timgs = mass_images(n_templates = 5)
+## timgs = mass_images(n_templates = 5) # let's register 5 templates
 ## ss = extrantsr::malf(
 ##   infile = bc_img,
 ##   template.images = timgs$images,
 ##   template.structs = timgs$masks,
-##   keep_images = FALSE
+##   keep_images = FALSE # don't keep the registered images
 ## )
 
 ## ----t1_malf_ss_run, echo = FALSE, message = FALSE-----------------------
@@ -77,11 +77,13 @@ if (!file.exists(outfile)) {
 ortho2(bc_img, ss > 0, col.y = red0.5)
 
 ## ---- echo = TRUE, eval = FALSE------------------------------------------
-## files = get_image_filenames_list_by_subject(type = "coregistered")$training01
+## files = get_image_filenames_list_by_subject(
+##   type = "coregistered")$training01
 ## files["Brain_Mask"]
 
 ## ---- echo = FALSE-------------------------------------------------------
-files = get_image_filenames_list_by_subject(type = "coregistered")$training01
+files = get_image_filenames_list_by_subject(
+  type = "coregistered")$training01
 files = files["Brain_Mask"]
 dd = strsplit(files, "/")$Brain_Mask
 ind = which(dd == "library")

@@ -36,7 +36,7 @@ library(scales)
 q = quantile(ratio[ ratio != 0], probs = seq(0, 1, by = 0.1), na.rm = TRUE)
 q = unique(q)
 # get a diverging gradient palette
-fcol = scales::div_gradient_pal(low = "blue", mid = "yellow", high = "red") 
+fcol = scales::div_gradient_pal(low = "blue", mid = "orange", high = "red") 
 colors =  scales::alpha(fcol(seq(0,1, length = length(q) - 1)), 0.5)
 
 ## ----better_ratio_plot---------------------------------------------------

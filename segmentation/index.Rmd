@@ -70,7 +70,7 @@ ortho2(t1, t1 > 400, xyz = xyz(t1 > 400))
 
 ## Tissue Segmentation using FSL FAST
 
-The `fslr` function fast calls fast from FSL [@fast].  The `--nobias` option tells FSL to not perform inhomogeneity correction. 
+The `fslr` function fast calls fast from FSL [@fast].  The `--nobias` option tells FSL to not perform inhomogeneity correction (was already performed in `ANTsR`). 
 
 ```{r fast_show, eval = FALSE}
 t1file = files["MPRAGE"]
@@ -122,7 +122,7 @@ ortho2(t1, t1fast == 1, col.y = alpha("red", 0.5), text = "CSF")
 
 ```{r fast_better_show, eval = FALSE}
 rb = robust_window(t1)
-robust_fast = fast(t1, 
+robust_fast = fast(rb, 
               outfile = paste0(nii.stub(t1file), "_FAST"), 
               opts = "--nobias")
 ```
@@ -132,7 +132,7 @@ rb = robust_window(t1)
 robust_fast = readnii(files["FAST"])
 ```
 
-```{r multi_overlay, eval = FALSE}
+```{r multi_overlay, eval = FALSE, echo = FALSE}
 separate = separate_img(robust_fast, levels = 1:3)
 names(separate) = c("CSF", "GM", "WM")
 L = c(MPRAGE = list(t1), separate)
@@ -164,6 +164,11 @@ ortho2(t1, robust_fast == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 ortho2(t1, robust_fast == 1, col.y = alpha("red", 0.5), text = "CSF")
 ```
 
+## FAST Results
+
+- overall the results look good
+  - not much difference after dampening outliers using `robust_window`
+- FAST is robust to noise
 
 ## Tissue Segmentation using ANTsR, extrantsr
 
@@ -195,13 +200,13 @@ ortho2(t1, t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
 ## Gray Matter
 
 ```{r otropos_gm}
-ortho2(t1, t1seg == 2, col.y = alpha("red", 0.5), text="Gray Matter")
+ortho2(t1, t1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 ```
 
 ## CSF
 
 ```{r otropos_csf}
-ortho2(t1, t1seg == 1, col.y = alpha("red", 0.5), text="CSF")
+ortho2(t1, t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 ```
 
 
@@ -228,13 +233,13 @@ ortho2(t1, robust_t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
 ## Gray Matter
 
 ```{r otropos_gm_robust}
-ortho2(t1, robust_t1seg == 2, col.y = alpha("red", 0.5), text="Gray Matter")
+ortho2(t1, robust_t1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 ```
 
 ## CSF
 
 ```{r otropos_csf_robust}
-ortho2(t1, robust_t1seg == 1, col.y = alpha("red", 0.5), text="CSF")
+ortho2(t1, robust_t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 ```
 
 
