@@ -69,8 +69,12 @@ ortho2(t1, t1 > 400, xyz = xyz(t1 > 400))
 ```
 
 ## Tissue Segmentation using FSL FAST
+- FAST is based on a hidden Markov random field model and an Expectation-Maximization algorithm.
+- It jointly produces a bias field corrected image and a probabilistic tissue segmentation.
+- More robust to noise and outliers than finite mixture model-based methods that do not incorporate spatial information.
 
-The `fslr` function fast calls fast from FSL [@fast].  The `--nobias` option tells FSL to not perform inhomogeneity correction. 
+## Tissue Segmentation using FSL FAST
+- The `fslr` function fast calls fast from FSL [@fast].  The `--nobias` option tells FSL to not perform inhomogeneity correction. 
 
 ```{r fast_show, eval = FALSE}
 t1file = files["MPRAGE"]
