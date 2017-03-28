@@ -5,6 +5,7 @@ output:
   ioslides_presentation:
     widescreen: yes
     css: ../styles.css
+  beamer_presentation: default
 bibliography: ../refs.bib
 ---
 
@@ -114,7 +115,7 @@ library(scales)
 q = quantile(ratio[ ratio != 0], probs = seq(0, 1, by = 0.1), na.rm = TRUE)
 q = unique(q)
 # get a diverging gradient palette
-fcol = scales::div_gradient_pal(low = "blue", mid = "yellow", high = "red") 
+fcol = scales::div_gradient_pal(low = "blue", mid = "orange", high = "red") 
 colors =  scales::alpha(fcol(seq(0,1, length = length(q) - 1)), 0.5)
 ```
 
@@ -129,7 +130,7 @@ ortho2(t1, ratio, col.y = colors, ybreaks = q, ycolorbar = TRUE)
 
 ## Histogram of Ratio Values
 
-The majority of voxels have a ratio of $1$ because `n4BiasFieldCorrection` does some implicit masking using `ANTsR::getMask`.
+The majority of voxels have a ratio of $1$ because `n4BiasFieldCorrection` does some implicit masking using `ANTsR::getMask`, and those values are unchanged (backround excluded).
 
 ```{r ratio_hist_plot, echo = FALSE}
 hist(ratio, breaks = 200)
@@ -145,7 +146,7 @@ hist(ratio, breaks = 200)
 
 ## Visualizing Bias Field Correction
 
-Removing these, we can see what the distribution of ratios look like:
+Removing these, we can see what the distribution of ratios look like (most are below 1):
 
 ```{r ratio_hist_plot_no1}
 hist(ratio[ratio < 0.999 | ratio > 1.0001], breaks = 200)
@@ -154,7 +155,7 @@ hist(ratio[ratio < 0.999 | ratio > 1.0001], breaks = 200)
 
 ## Visualizing Bias Field Correction
 
-Here we make a `data.frame` of the indices with the values and cut the z-dimension into the bottom, middle and top:
+We would like to see how the ratio changes in different areas of the brain.  Here we make a `data.frame` of voxel location and intensity.  We cut the location into the bottom, middle, and top of the brain:
 
 ```{r make_df}
 df = which(ratio < 0.999 | ratio > 1.0001, arr.ind = TRUE)
