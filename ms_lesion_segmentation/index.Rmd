@@ -5,6 +5,7 @@ output:
   ioslides_presentation:
     widescreen: yes
     css: ../styles.css
+  beamer_presentation: default
 bibliography: ../refs.bib       
 ---
 
@@ -57,7 +58,7 @@ ortho2(t1s$training05, les_mask, col.y = "orange")
 ```{r test_loading}
 library(oasis)
 test_files = get_image_filenames_list_by_subject(
-  group = "testing", 
+  group = "test", 
   type = "coregistered")
 test_t1s = lapply(test_files, 
 	function(x) readnii(x["MPRAGE"]))
@@ -120,7 +121,7 @@ make_df = function(x){
 oasis_dfs = lapply(1:5, make_df)
 ```
 
-```{r oasis_df_run, eval = TRUE, echo = FALSE}
+```{r oasis_df_run, eval = FALSE, echo = FALSE}
 if(file.exists()){
 	
 }
