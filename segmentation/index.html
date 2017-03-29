@@ -155,7 +155,17 @@ mask = readnii(files[&quot;Brain_Mask&quot;])
 
 </article></slide><slide class=''><hgroup><h2>Tissue Segmentation using FSL FAST</h2></hgroup><article  id="tissue-segmentation-using-fsl-fast">
 
-<p>The <code>fslr</code> function fast calls fast from FSL <span class="cite">(Zhang, Brady, and Smith 2001)</span>. The <code>--nobias</code> option tells FSL to not perform inhomogeneity correction (was already performed in <code>ANTsR</code>).</p>
+<ul>
+<li>FAST is based on a hidden Markov random field model and an Expectation-Maximization algorithm.</li>
+<li>It jointly produces a bias field corrected image and a probabilistic tissue segmentation.</li>
+<li>More robust to noise and outliers than finite mixture model-based methods that do not incorporate spatial information.</li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Tissue Segmentation using FSL FAST</h2></hgroup><article  id="tissue-segmentation-using-fsl-fast-1">
+
+<ul>
+<li>The <code>fslr</code> function fast calls fast from FSL <span class="cite">(Zhang, Brady, and Smith 2001)</span>. The <code>--nobias</code> option tells FSL to not perform inhomogeneity correction (was already performed in <code>ANTsR</code>).</li>
+</ul>
 
 <pre class = 'prettyprint lang-r'>t1file = files[&quot;MPRAGE&quot;]
 t1fast = fast(t1, 
