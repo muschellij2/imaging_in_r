@@ -28,9 +28,10 @@ mat = rbind(
   c("visualization", "Visualization of Images"),
   c("inhomogeneity_correction_ms", "Inhomogeneity Correction"),
   c("brain_extraction_malf", "Brain Extraction/Segmentation"),
-  c("segmentation", "Image Segmentation"),
+  c("segmentation", "Tissue-Class Segmentation"),
   c("coregistration", "Registration of Images"),
-  c("intensity_normalization", "Intensity Normalization")
+  c("intensity_normalization", "Intensity Normalization"),
+  c("ms_lesion_segmentation", "Segmentation of MS Lesions")
   )
 mat = data.frame(mat, stringsAsFactors = FALSE)
 colnames(mat) = c("link", "title")
