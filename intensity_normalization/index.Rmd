@@ -145,6 +145,7 @@ t1_norm = mapply(function(img, mask){
 
 ## Whole-brain normalized intensities
 - Gray matter distributions are more comparable.
+
 <div class="columns-2">
 ```{r wbViz2, warning=FALSE, message=FALSE, echo = FALSE}
 gm_norm_vals = mapply(function(t1, mask){
