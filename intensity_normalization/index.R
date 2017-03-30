@@ -1,5 +1,5 @@
 ## ----setup, include=FALSE------------------------------------------------
-knitr::opts_chunk$set(echo = TRUE, comment = "", fig.height = 5, fig.width = 5)
+knitr::opts_chunk$set(echo = TRUE, comment = "", fig.height = 5, fig.width = 5, cache = TRUE)
 options(fsl.path = "/usr/local/fsl/")
 options(fsl.outputtype = "NIFTI_GZ")
 
@@ -40,7 +40,8 @@ plot_boxplots = function(vals,
 }
 
 ## ----t1viz, warning=FALSE, message=FALSE---------------------------------
-dens = lapply(vals, density); plot_densities(dens)
+dens = lapply(vals, density)
+plot_densities(dens)
 
 ## ----t1box, echo = FALSE-------------------------------------------------
 plot_boxplots(vals)
