@@ -11,10 +11,16 @@ files = get_image_filenames_list_by_subject()$training01
 t1_fname = files["MPRAGE"]
 t1 = readnii(t1_fname)
 
+## ----eval = FALSE--------------------------------------------------------
+## library(extrantsr)
+## reg = registration(filename = files["FLAIR"], template.file = files["MPRAGE"],
+##                    typeofTransform = "Rigid", interpolator = "linear")
+
 ## ---- eval = FALSE-------------------------------------------------------
 ## res = within_visit_registration(
 ##   fixed = files["MPRAGE"],
 ##   moving = files[c("T2", "FLAIR", "PD")],
+##   correct = TRUE, correction = "N4",
 ##   typeofTransform = "Rigid",
 ##   interpolator = "Linear"
 ## )
@@ -30,6 +36,7 @@ if (!all(file.exists(outfiles))) {
   res = within_visit_registration(
     fixed = files["MPRAGE"],
     moving = files[c("T2", "FLAIR", "PD")],
+    correct = TRUE, correction = "N4",
     typeofTransform = "Rigid", 
     interpolator = "Linear"
   )

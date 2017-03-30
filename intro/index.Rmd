@@ -46,7 +46,8 @@ Email: klinn@mail.med.upenn.edu
 - Brain Extraction 
 - Image Segmentation 
 - Coregistration Within and Between MRI Studies
-- Intensity Normalization 
+- Intensity Normalization
+- Segmentation of MS lesions
 
 
 ## Course Website/Materials
