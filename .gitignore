@@ -5,3 +5,4 @@
 packrat/lib*/
 
 brain_extraction_malf/index_cache/*
+*/index_cache/*

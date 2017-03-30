@@ -23,8 +23,8 @@ output:
 # library(pander)
 # library(DT)
 mat = rbind(
-  c("intro", "Introduction"),
-  c("r_tutorial", "R Basics"),
+  c("intro", "Introduction and R"),
+  c("reading_writing_data", "Reading and Writing Data"),
   c("starting_with_raw_data", "Starting with Raw Data"),
   c("visualization", "Visualization of Images"),
   c("inhomogeneity_correction_ms", "Inhomogeneity Correction"),

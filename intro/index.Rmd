@@ -214,20 +214,3 @@ History
 * **Plots** - pretty pictures
 * **Packages** - list of R packages that are loaded in memory
 
-
-## Main Packages we will use
-
-* `oro.nifti` - reading/writing NIfTI images
-* `neurobase` - extends `oro.nifti` and provides helpful imaging functions
-* `fslr` - wraps FSL commands to use in R
-    - registration, image manipulation
-* `ANTsR` - wrapper for Advanced normalization tools (ANTs) code 
-    - registration, inhomogeneity correction, lots of tools
-* `extrantsr` - allows `ANTsR` to work with objects from `oro.nifti` 
-
-## Data Packages we will use
- 
-* `ms.lesion` - contains training/testing data of patients with multiple sclerosis (MS)
-    - from the MS lesion challenge 2016 (http://iacl.ece.jhu.edu/index.php/MSChallenge)
-* `kirby21.t1` - scan-rescan data for 3 subjects from @landman2011multi
-    - https://www.nitrc.org/projects/multimodal
