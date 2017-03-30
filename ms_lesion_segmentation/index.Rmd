@@ -1,6 +1,7 @@
 ---
-title: "Image Segmentation"
+title: "MS Lesion Segmentation"
 author: "Kristin Linn"
+date: "`r Sys.Date()`"
 output:
   ioslides_presentation:
     widescreen: yes
@@ -11,7 +12,7 @@ bibliography: ../refs.bib
 
 ```{r setup, include=FALSE}
 library(methods)
-knitr::opts_chunk$set(echo = TRUE, comment = "")
+knitr::opts_chunk$set(echo = TRUE, comment = "", cache=TRUE)
 ```
 
 ## Background
@@ -35,12 +36,11 @@ knitr::opts_chunk$set(echo = TRUE, comment = "")
 ## Loading Data
 - Let's read in the images, brain masks, and manual lesion segmentations.
 
-```{r loading}
+```{r loading, message=FALSE}
 library(ms.lesion)
 library(neurobase)
 library(fslr)
 library(scales)
-library(extrantsr)
 library(oasis)
 tr_files = get_image_filenames_list_by_subject(group = "training", type = "coregistered")
 ts_files = get_image_filenames_list_by_subject(group = "test", type = "coregistered")

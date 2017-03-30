@@ -10,7 +10,7 @@ bibliography: ../refs.bib
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, comment = "", fig.height = 5, fig.width = 5)
+knitr::opts_chunk$set(echo = TRUE, comment = "", fig.height = 5, fig.width = 5, cache = TRUE)
 options(fsl.path = "/usr/local/fsl/")
 options(fsl.outputtype = "NIFTI_GZ")
 ```
@@ -26,8 +26,8 @@ options(fsl.outputtype = "NIFTI_GZ")
 
 
 ## Reading in the images
-For the moment, we will work with the T1-w images from the training data.
-- `vals` below is restricting to values of the T1 within the brain mask.
+- For the moment, we will work with the T1-w images from the training data. 
+- `vals` below is restricting to T1-w voxels that are within the brain mask.
 
 ```{r t1, warning=FALSE, message=FALSE}
 library(ms.lesion)
@@ -70,17 +70,12 @@ plot_boxplots = function(vals,
 
 ## Visualizing the intensities 
 
-<div class="columns-2">
-- Whole brain densities are mixture distributions of the three tissue classes.
-- Notice the third peak is non-overlapping among subjects.
-</div>
+- We see that whole brain densities are mixture distributions of the three tissue classes.
 
-<div>
 ```{r t1viz, warning=FALSE, message=FALSE}
 dens = lapply(vals, density)
 plot_densities(dens)
 ```
-</div>
 
 <div class="columns-2">
 ```{r t1box, echo = FALSE}

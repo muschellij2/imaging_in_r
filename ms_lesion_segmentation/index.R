@@ -1,43 +1,100 @@
 ## ----setup, include=FALSE------------------------------------------------
 library(methods)
-knitr::opts_chunk$set(echo = TRUE, comment = "")
+knitr::opts_chunk$set(echo = TRUE, comment = "", cache=TRUE)
 
-## ----loading-------------------------------------------------------------
+## ----loading, message=FALSE----------------------------------------------
 library(ms.lesion)
 library(neurobase)
 library(fslr)
 library(scales)
-library(extrantsr)
-files = get_image_filenames_list_by_subject(
-  group = "training", 
-  type = "coregistered")
-t1s = lapply(files, function(x) readnii(x["MPRAGE"]))
-masks = lapply(files, function(x) readnii(x["Brain_Mask"]))
-
-## ----readnii_show_run----------------------------------------------------
-t2s = lapply(files, function(x) readnii(x["T2"]))
-flairs = lapply(files, function(x) readnii(x["FLAIR"]))
-pds = lapply(files, function(x) readnii(x["PD"]))
-golds = lapply(files, function(x) readnii(x["mask2"]))
+library(oasis)
+tr_files = get_image_filenames_list_by_subject(group = "training", type = "coregistered")
+ts_files = get_image_filenames_list_by_subject(group = "test", type = "coregistered")
+tr_t1s = lapply(tr_files, function(x) readnii(x["MPRAGE"]))
+tr_t2s = lapply(tr_files, function(x) readnii(x["T2"]))
+tr_flairs = lapply(tr_files, function(x) readnii(x["FLAIR"]))
+tr_pds = lapply(tr_files, function(x) readnii(x["PD"]))
+tr_masks = lapply(tr_files, function(x) readnii(x["Brain_Mask"]))
+tr_golds = lapply(tr_files, function(x) readnii(x["mask2"]))
+ts_t1s = lapply(ts_files, function(x) readnii(x["MPRAGE"]))
+ts_t2s = lapply(ts_files, function(x) readnii(x["T2"]))
+ts_flairs = lapply(ts_files, function(x) readnii(x["FLAIR"]))
+ts_pds = lapply(ts_files, function(x) readnii(x["PD"]))
+ts_masks = lapply(ts_files, function(x) readnii(x["Brain_Mask"]))
 
 ## ----over_show_run-------------------------------------------------------
-les_mask = golds$training05
-ortho2(t1s$training05, les_mask, col.y = "orange")
+les_mask = tr_golds$training05
+ortho2(tr_t1s$training05, les_mask, col.y = "orange")
+
+## ----default_predict_ts_show, eval=FALSE---------------------------------
+## default_predict_ts = function(x){
+##   res = oasis_predict(
+##       flair=ts_flairs[[x]], t1=ts_t1s[[x]],
+##       t2=ts_t2s[[x]], pd=ts_pds[[x]],
+##       brain_mask=ts_masks[[x]],
+##       preproc=FALSE, normalize=TRUE,
+##       model=oasis::oasis_model)
+##   return(res)
+## }
+## default_probs_ts = lapply(1:3, default_predict_ts)
+
+## ----default_predict_run, eval=TRUE, echo=FALSE--------------------------
+default_ts = lapply(ts_files, 
+	function(x) readnii(x["Default_OASIS"]))
+
+## ----viz_01--------------------------------------------------------------
+les_mask = default_ts[[1]]
+ortho2(ts_t1s$test01, les_mask)
+
+## ----default_predict_tr_show, eval=FALSE---------------------------------
+## default_predict_tr = function(x){
+##   res = oasis_predict(
+##       flair=tr_flairs[[x]], t1=tr_t1s[[x]],
+##       t2=tr_t2s[[x]], pd=tr_pds[[x]],
+##       brain_mask=tr_masks[[x]],
+##       preproc=FALSE, normalize=TRUE,
+##       model=oasis::oasis_model, binary=TRUE)
+##   return(res)
+## }
+## default_probs_tr = lapply(1:5, default_predict_tr)
+
+## ----default_predict_tr_run, eval=TRUE, echo=FALSE-----------------------
+default_tr = lapply(tr_files, 
+	function(x){
+		img = readnii(x["Default_OASIS"])
+		img[img>.16] = 1
+		img[img<1] = 0
+		return(img)
+	})
+
+## ----over_05_run---------------------------------------------------------
+les_mask = default_tr[[5]]
+ortho2(tr_t1s$training05, les_mask, col.y = "orange")
+
+## ----table1--------------------------------------------------------------
+tbls = lapply(1:5, function(x) table(c(tr_golds[[x]]), c(default_tr[[x]])))
+lapply(tbls, function(x) (2*x[2,2])/(2*x[2,2] + x[1,2] + x[2,1]))
 
 ## ----oasis_df_show, eval=FALSE-------------------------------------------
 ## library(oasis)
 ## make_df = function(x){
 ##   res = oasis_train_dataframe(
-##       flair=flairs[[x]], t1=t1s[[x]],
-##       t2=t2s[[x]], pd=pds[[x]],
-##       gold_standard=golds[[x]],
-##       brain_mask=masks[[x]],
+##       flair=tr_flairs[[x]], t1=tr_t1s[[x]],
+##       t2=tr_t2s[[x]], pd=tr_pds[[x]],
+##       gold_standard=tr_golds[[x]],
+##       brain_mask=tr_masks[[x]],
 ##       preproc=FALSE, normalize=TRUE,
 ##       return_preproc=FALSE)
 ##   return(res$oasis_dataframe)
 ## }
 ## oasis_dfs = lapply(1:5, make_df)
 
-## ----oasis_run_show, eval=FALSE------------------------------------------
-## oasis_model = do.call("oasis_training", args = oasis_dfs)
+## ----oasis_model_show, eval=FALSE----------------------------------------
+## model = do.call("oasis_training", oasis_dfs)
+
+## ----trained_predict_run, eval=TRUE, echo=FALSE--------------------------
+trained_ts = lapply(ts_files, 
+	function(x) readnii(x["Trained_OASIS"]))
+trained_tr = lapply(tr_files, 
+	function(x) readnii(x["Trained_OASIS"]))
 
