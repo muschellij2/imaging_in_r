@@ -33,8 +33,7 @@ options(fsl.outputtype = "NIFTI_GZ")
 library(ms.lesion)
 library(neurobase)
 library(WhiteStripe)
-fnames = get_image_filenames_list_by_subject(
-  group = "training", 
+fnames = get_image_filenames_list_by_subject(group = "training", 
   type = "coregistered")
 t1s = lapply(fnames, function(x) readnii(x["MPRAGE"]))
 tissues = lapply(fnames, function(x) readnii(x["Tissue_Classes"]))
@@ -43,6 +42,8 @@ masks = lapply(fnames, function(x) readnii(x["Brain_Mask"]))
 vals = mapply(function(t1, mask){
   mask_vals(t1, mask)
 }, t1s, masks, SIMPLIFY = FALSE)
+
+dens = lapply(vals, density)
 ```
 
 ## Code for plotting the data
@@ -70,14 +71,13 @@ plot_boxplots = function(vals,
 
 ## Visualizing the intensities 
 
-- We see that whole brain densities are mixture distributions of the three tissue classes.
+- Full brain densities are mixtures of the tissue class distributions.
 
+<div class="columns-2">
 ```{r t1viz, warning=FALSE, message=FALSE}
-dens = lapply(vals, density)
 plot_densities(dens)
 ```
 
-<div class="columns-2">
 ```{r t1box, echo = FALSE}
 plot_boxplots(vals)
 ```
@@ -100,7 +100,7 @@ plot_boxplots(gm_vals, main = "Gray Matter")
 </div>
 
 ## Visualizing the intensities by tissue class
-- Notice again the complete non-overlap between some subjects' white matter.
+- Notice the complete non-overlap between some subjects' white matter distributions.
 
 <div class="columns-2">
 
@@ -135,6 +135,7 @@ plot_boxplots(csf_vals, main = "CSF")
 
 ## Whole-brain normalization
 - Let's Z-score each voxel using mean and standard deviation computed from all voxels in the brain mask.
+- `zscore_img` is a function in `fslr` that does this.
 
 ```{r wbViz, warning=FALSE, message=FALSE}
 t1_norm = mapply(function(img, mask){
@@ -143,7 +144,7 @@ t1_norm = mapply(function(img, mask){
 ```
 
 ## Whole-brain normalized intensities
-
+- Gray matter distributions are more comparable.
 <div class="columns-2">
 ```{r wbViz2, warning=FALSE, message=FALSE, echo = FALSE}
 gm_norm_vals = mapply(function(t1, mask){
@@ -162,6 +163,7 @@ plot_boxplots(gm_norm_vals, main = "Gray Matter")
 
 
 ## Whole-brain normalized intensities
+- White matter distributions are more comparable.
 
 <div class="columns-2">
 ```{r wbViz3, warning=FALSE, message=FALSE, echo = FALSE}
@@ -174,9 +176,7 @@ plot_densities(wm_norm_dens,
                main = "White Matter")
 ```
 
-</div>
 
-<div>
 ```{r wm_box, echo = FALSE}
 plot_boxplots(wm_norm_vals, main = "White Matter")
 ```
@@ -200,10 +200,16 @@ plot_boxplots(csf_norm_vals, main = "CSF")
 ```
 </div>
 
+## Why White Stripe?
+- Whole-brain normalization may reduce signal in the higher intensities, i.e., less contrast between lesion intensities and normal appearing white matter.
+- White Stripe normalization is based on parameters obtained from a sample of normal appearing white matter. 
+- The idea is to make normal appearing white matter comparable across subjects while preserving high lesion intensity contrast to aid automatic segmentation algorithms.
+
 ## White Stripe normalization
-- Normalize each voxel using mean and standard deviation computed from normal appearing white matter voxels.
-- Normal appearing white matter will have a standard normal distribution.
+- We normalize each voxel using the mean and standard deviation computed from normal appearing white matter voxels.
+- Thus, normal appearing white matter will have a standard normal distribution.
 - Units will correspond to variability (standard deviation) of normal appearing white matter.
+- Gray matter and CSF distributions, however, may not be comparable across subjects.
 
 ```{r ws, warning = FALSE, message = FALSE, results='hide'}
 ws_norm = function(t1) {
@@ -221,7 +227,7 @@ t1_ws_norm = lapply(t1s, ws_norm)
 ```{r ws_viz_gm, warning=FALSE, message=FALSE, echo = FALSE}
 gm_norm_vals = mapply(function(t1, mask){
   mask_vals(t1, mask == 2)
-}, t1_norm, tissues, SIMPLIFY = FALSE)
+}, t1_ws_norm, tissues, SIMPLIFY = FALSE)
 gm_norm_dens = lapply(gm_norm_vals, density)
 plot_densities(gm_norm_dens, 
                xlab = "WhiteStripe Normalized Intensities", 
@@ -240,7 +246,7 @@ plot_boxplots(gm_norm_vals, main = "Gray Matter")
 ```{r ws_viz_wm, warning=FALSE, message=FALSE, echo = FALSE}
 wm_norm_vals = mapply(function(t1, mask){
   mask_vals(t1, mask == 3)
-}, t1_norm, tissues, SIMPLIFY = FALSE)
+}, t1_ws_norm, tissues, SIMPLIFY = FALSE)
 wm_norm_dens = lapply(wm_norm_vals, density)
 plot_densities(wm_norm_dens, 
                xlab = "WhiteStripe Normalized Intensities", 
@@ -259,7 +265,7 @@ plot_boxplots(wm_norm_vals, main = "White Matter")
 ```{r ws_viz_csf, warning=FALSE, message=FALSE, echo = FALSE}
 csf_norm_vals = mapply(function(t1, mask){
   mask_vals(t1, mask == 1)
-}, t1_norm, tissues, SIMPLIFY = FALSE)
+}, t1_ws_norm, tissues, SIMPLIFY = FALSE)
 csf_norm_dens = lapply(csf_norm_vals, density)
 plot_densities(csf_norm_dens, 
                xlab = "WhiteStripe Normalized Intensities", 
@@ -270,6 +276,8 @@ plot_densities(csf_norm_dens,
 plot_boxplots(csf_norm_vals, main = "CSF")
 ```
 </div>
+
+## References {.smaller}
 
 
 <!-- ## Intensity normalization with RAVEL -->
