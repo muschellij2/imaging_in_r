@@ -40,7 +40,8 @@ plot_boxplots = function(vals,
 }
 
 ## ----t1viz, warning=FALSE, message=FALSE---------------------------------
-dens = lapply(vals, density); plot_densities(dens)
+dens = lapply(vals, density)
+plot_densities(dens)
 
 ## ----t1box, echo = FALSE-------------------------------------------------
 plot_boxplots(vals)
