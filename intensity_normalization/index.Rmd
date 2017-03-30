@@ -74,8 +74,10 @@ plot_boxplots = function(vals,
 - Whole brain densities are mixture distributions of the three tissue classes.
 - Notice the third peak is non-overlapping among subjects.
 </div>
+
 <div>
 ```{r t1viz, warning=FALSE, message=FALSE}
+dens = lapply(vals, density)
 plot_densities(dens)
 ```
 </div>
@@ -137,12 +139,8 @@ plot_boxplots(csf_vals, main = "CSF")
 </div>
 
 ## Whole-brain normalization
-<<<<<<< HEAD
 - Let's Z-score each voxel using mean and standard deviation computed from all voxels in the brain mask.
-=======
 
-- Z-score each voxel using mean and standard deviation computed from all voxels in the brain mask.
->>>>>>> 59b67484d074847ec7f5a945788e8549e11fbdb6
 ```{r wbViz, warning=FALSE, message=FALSE}
 t1_norm = mapply(function(img, mask){
   zscore_img(img = img, mask = mask, margin = NULL)
@@ -180,13 +178,10 @@ plot_densities(wm_norm_dens,
                xlab = "Whole-brain Normalized Intensities", 
                main = "White Matter")
 ```
-<<<<<<< HEAD
+
 </div>
 
 <div>
-=======
-
->>>>>>> 59b67484d074847ec7f5a945788e8549e11fbdb6
 ```{r wm_box, echo = FALSE}
 plot_boxplots(wm_norm_vals, main = "White Matter")
 ```
