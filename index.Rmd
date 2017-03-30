@@ -23,6 +23,7 @@ output:
 # library(pander)
 # library(DT)
 mat = rbind(
+<<<<<<< HEAD
   c("intro", "Introduction and R"),
   c("reading_writing_data", "Reading and Writing Data"),
   c("starting_with_raw_data", "Starting with Raw Data"),
