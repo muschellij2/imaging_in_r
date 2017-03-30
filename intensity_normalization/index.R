@@ -7,8 +7,7 @@ options(fsl.outputtype = "NIFTI_GZ")
 library(ms.lesion)
 library(neurobase)
 library(WhiteStripe)
-fnames = get_image_filenames_list_by_subject(
-  group = "training", 
+fnames = get_image_filenames_list_by_subject(group = "training", 
   type = "coregistered")
 t1s = lapply(fnames, function(x) readnii(x["MPRAGE"]))
 tissues = lapply(fnames, function(x) readnii(x["Tissue_Classes"]))
@@ -17,6 +16,8 @@ masks = lapply(fnames, function(x) readnii(x["Brain_Mask"]))
 vals = mapply(function(t1, mask){
   mask_vals(t1, mask)
 }, t1s, masks, SIMPLIFY = FALSE)
+
+dens = lapply(vals, density)
 
 ## ----show_code-----------------------------------------------------------
 plot_densities = function(dens, xlab = "Raw Intensities", 
@@ -40,7 +41,6 @@ plot_boxplots = function(vals,
 }
 
 ## ----t1viz, warning=FALSE, message=FALSE---------------------------------
-dens = lapply(vals, density)
 plot_densities(dens)
 
 ## ----t1box, echo = FALSE-------------------------------------------------
@@ -129,7 +129,7 @@ t1_ws_norm = lapply(t1s, ws_norm)
 ## ----ws_viz_gm, warning=FALSE, message=FALSE, echo = FALSE---------------
 gm_norm_vals = mapply(function(t1, mask){
   mask_vals(t1, mask == 2)
-}, t1_norm, tissues, SIMPLIFY = FALSE)
+}, t1_ws_norm, tissues, SIMPLIFY = FALSE)
 gm_norm_dens = lapply(gm_norm_vals, density)
 plot_densities(gm_norm_dens, 
                xlab = "WhiteStripe Normalized Intensities", 
@@ -141,7 +141,7 @@ plot_boxplots(gm_norm_vals, main = "Gray Matter")
 ## ----ws_viz_wm, warning=FALSE, message=FALSE, echo = FALSE---------------
 wm_norm_vals = mapply(function(t1, mask){
   mask_vals(t1, mask == 3)
-}, t1_norm, tissues, SIMPLIFY = FALSE)
+}, t1_ws_norm, tissues, SIMPLIFY = FALSE)
 wm_norm_dens = lapply(wm_norm_vals, density)
 plot_densities(wm_norm_dens, 
                xlab = "WhiteStripe Normalized Intensities", 
@@ -153,7 +153,7 @@ plot_boxplots(wm_norm_vals, main = "White Matter")
 ## ----ws_viz_csf, warning=FALSE, message=FALSE, echo = FALSE--------------
 csf_norm_vals = mapply(function(t1, mask){
   mask_vals(t1, mask == 1)
-}, t1_norm, tissues, SIMPLIFY = FALSE)
+}, t1_ws_norm, tissues, SIMPLIFY = FALSE)
 csf_norm_dens = lapply(csf_norm_vals, density)
 plot_densities(csf_norm_dens, 
                xlab = "WhiteStripe Normalized Intensities", 
