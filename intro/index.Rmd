@@ -213,4 +213,3 @@ History
 * **Help** - shows help of R commands
 * **Plots** - pretty pictures
 * **Packages** - list of R packages that are loaded in memory
-
