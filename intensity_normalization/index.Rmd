@@ -277,6 +277,11 @@ plot_boxplots(csf_norm_vals, main = "CSF")
 ```
 </div>
 
+## Conclusions
+- Intensity normalization is an important step in any image analysis with more than one subject or time point to ensure comparability across images.
+- White Stripe normalization may work better for subsequent lesion segmentation algorithms or analysis.
+- Newer methods exist, such as RAVEL, which extends WhiteStripe to make intensites comparable across subjects for all tissues [@fortin2016removing].
+
 ## References {.smaller}
 
 
