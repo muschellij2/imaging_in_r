@@ -102,6 +102,7 @@ plot_boxplots(gm_vals, main = "Gray Matter")
 </div>
 
 ## Visualizing the intensities by tissue class
+- Notice again the complete non-overlap between some subjects' white matter.
 
 <div class="columns-2">
 
@@ -135,7 +136,7 @@ plot_boxplots(csf_vals, main = "CSF")
 </div>
 
 ## Whole-brain normalization
-- Z-score each voxel using mean and standard deviation computed from all voxels in the brain mask.
+- Let's Z-score each voxel using mean and standard deviation computed from all voxels in the brain mask.
 ```{r wbViz, warning=FALSE, message=FALSE}
 t1_norm = mapply(function(img, mask){
   zscore_img(img = img, mask = mask, margin = NULL)
@@ -174,6 +175,9 @@ plot_densities(wm_norm_dens,
                xlab = "Whole-brain Normalized Intensities", 
                main = "White Matter")
 ```
+</div>
+
+<div>
 ```{r wm_box, echo = FALSE}
 plot_boxplots(wm_norm_vals, main = "White Matter")
 ```
