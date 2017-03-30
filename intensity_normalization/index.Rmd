@@ -68,9 +68,12 @@ plot_boxplots = function(vals,
 
 ## Visualizing the intensities 
 
+```{r make_dense, echo = FALSE}
+dens = lapply(vals, density);
+```
 <div class="columns-2">
 ```{r t1viz, warning=FALSE, message=FALSE}
-dens = lapply(vals, density); plot_densities(dens)
+plot_densities(dens)
 ```
 
 ```{r t1box, echo = FALSE}
@@ -128,6 +131,7 @@ plot_boxplots(csf_vals, main = "CSF")
 </div>
 
 ## Whole-brain normalization
+
 - Z-score each voxel using mean and standard deviation computed from all voxels in the brain mask.
 ```{r wbViz, warning=FALSE, message=FALSE}
 t1_norm = mapply(function(img, mask){
@@ -157,7 +161,6 @@ plot_boxplots(gm_norm_vals, main = "Gray Matter")
 ## Whole-brain normalized intensities
 
 <div class="columns-2">
-
 ```{r wbViz3, warning=FALSE, message=FALSE, echo = FALSE}
 wm_norm_vals = mapply(function(t1, mask){
   mask_vals(t1, mask == 3)
@@ -167,14 +170,15 @@ plot_densities(wm_norm_dens,
                xlab = "Whole-brain Normalized Intensities", 
                main = "White Matter")
 ```
+
 ```{r wm_box, echo = FALSE}
 plot_boxplots(wm_norm_vals, main = "White Matter")
 ```
 </div>
 
 ## Whole-brain normalized intensities
-<div class="columns-2">
 
+<div class="columns-2">
 ```{r wbViz1, warning=FALSE, message=FALSE, echo = FALSE}
 csf_norm_vals = mapply(function(t1, mask){
   mask_vals(t1, mask == 1)

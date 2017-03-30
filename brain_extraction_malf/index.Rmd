@@ -119,7 +119,7 @@ bc_bet = fslbet(bc_img); ortho2(bc_img, bc_bet > 0, col.y = red0.5)
 
 Figure from @mass:
 
-<img src="malf_figure.jpg" style="width: 45%; display: block; margin: auto;">
+<img src="malf_figure.jpg" style="width: 40%; display: block; margin: auto;">
 
 
 ## Attempt 3: Brain Extraction of T1 image using MALF
