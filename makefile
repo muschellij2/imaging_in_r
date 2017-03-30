@@ -7,7 +7,7 @@ LIST += segmentation
 LIST += coregistration
 # LIST += ms_lesion_segmentation
 LIST += installing_everything_locally
-LIST += intensity_normalization
+# LIST += intensity_normalization
 
 all:
 	for fol in $(LIST) ; do \
