@@ -25,14 +25,14 @@ output:
 mat = rbind(
   c("intro", "Introduction and R"),
   c("reading_writing_data", "Reading and Writing Data"),
-  c("starting_with_raw_data", "Starting with Raw Data"),
   c("visualization", "Visualization of Images"),
   c("inhomogeneity_correction_ms", "Inhomogeneity Correction"),
   c("brain_extraction_malf", "Brain Extraction/Segmentation"),
   c("segmentation", "Tissue-Class Segmentation"),
   c("coregistration", "Registration of Images"),
   c("intensity_normalization", "Intensity Normalization"),
-  c("ms_lesion_segmentation", "Segmentation of MS Lesions")
+  c("ms_lesion_segmentation", "Segmentation of MS Lesions"),
+  c("starting_with_raw_data", "Starting with Raw (DICOM) Data (not covered)")
   )
 mat = data.frame(mat, stringsAsFactors = FALSE)
 colnames(mat) = c("link", "title")
