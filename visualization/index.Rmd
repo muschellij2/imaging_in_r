@@ -1,6 +1,5 @@
 ---
-title: "Visualization of Images"
-author: "John Muschelli"
+title: "Visualization of NIfTI Images"
 output:
   ioslides_presentation:
     widescreen: yes
@@ -18,6 +17,137 @@ library(neurobase)
 library(extrantsr)
 library(scales)
 ```
+
+## Formats of Images
+
+There are multiple imaging formats.  We will use NIfTI:
+
+* NIfTI - Neuroimaging Informatics Technology Initiative (https://nifti.nimh.nih.gov/nifti-1)
+    - essentially a header and data (binary format)
+    - will have extension .nii (uncompressed) or .nii.gz (compressed)
+    - we will primarily use compressed NIfTI images
+    - we will use 3-D images (4-D and 5-D are possible)
+* ANALYZE 7.5 was a precursor to NIfTI 
+    - had a `hdr` file (header) and `img` file (data)
+
+
+# An Imaging into to R
+
+## What is a package?
+
+A package is collection of functions, documentation, data, and tutorials (called vignettes).
+
+- You install a package using the `install.packages` command/function:
+
+```r
+install.packages("oro.nifti")
+```
+
+`install.packages` is a function, `"oro.nifti"` is a character string.
+
+
+## Loading Packages
+
+When you install a package, that means it's downloaded on your computer.  That **doesn't** mean that you can use the functions from that package just yet.
+
+- You "load"/import a package into memory using the `library` command
+
+For example, to load the `oro.nifti` package:
+
+```r
+library(oro.nifti)
+```
+
+Now, functions from the `oro.nifti` package can be used.
+
+## Some packages we will use
+
+All packages we will discuss are loaded on the RStudio Server:
+
+* `oro.nifti` - reading/writing NIfTI images
+* `neurobase` - extends `oro.nifti` and provides helpful imaging functions
+
+Let's load them:
+
+```{r, message=FALSE}
+library(oro.nifti)
+library(neurobase)
+```
+
+## Reading in NIfTI images: assignment
+
+We will use the `readnii` function (from `neurobase`) to read in a `nifti` object (this is an `R` object).
+
+Here we read in the `training01_01_mprage.nii.gz` file, and assign it to an object called `t1`
+```{r}
+t1 = readnii("training01_01_mprage.nii.gz")
+```
+
+Now, an object `t1` is in memory/the workspace.
+
+## Reading in NIfTI images: assignment
+
+In `R`, you can assign using the equals `=` or arrow `<-` (aka assigment operator).
+
+The above command is equivalent to:
+
+```{r, eval = FALSE}
+t1 <- readnii("training01_01_mprage.nii.gz")
+```
+
+There are no differences in these 2 commands, but just personal preference.
+
+
+---
+
+By default, if you simply pass the object, it is printed, we can also do `print(t1)`:
+```{r}
+class(t1)
+t1
+```
+
+## Help
+
+- To see the documentation for a function, use the `?` symbol before the name of the function.  This is a shortcut for the `help` command:
+- For example, to see documentation for `readnii`:
+
+```{r help, eval = FALSE}
+?readnii
+help(topic = "readnii")
+```
+- To search for help files, use a double `??` or `help.search`:
+
+```{r help2, eval = FALSE}
+??readnii
+help.search(pattern = "readnii")
+```
+
+## Some Details
+
+- R is case sensitive (e.g. `y` and `Y` are different)
+- Commands separated by new line or by a colon (;)
+- Use `#` to comment
+
+You can also be explicit about which package you are using with the `::` operator, where the syntax is `package::function`:
+
+```{r colon_twice, eval=FALSE}
+t1 = neurobase::readnii("training01_01_mprage.nii.gz")
+```
+
+
+## `ms.lesion` Package
+
+The `ms.lesion` package was made for this course.  It has all the data we will work with and the outputs from the analyses.  
+
+The main function we will use is `get_image_filenames_list_by_subject`.  It returns a `list` of filenames of the images for the 5 training and 3 test subjects from the MS lesion challenge 2016 (http://iacl.ece.jhu.edu/index.php/MSChallenge)
+
+```{r}
+library(ms.lesion)
+files = get_image_filenames_list_by_subject()
+length(files); names(files); 
+head(files$training01)
+```
+
 
 ## MS Lesion 
 

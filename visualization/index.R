@@ -7,6 +7,37 @@ library(neurobase)
 library(extrantsr)
 library(scales)
 
+## ---- message=FALSE------------------------------------------------------
+library(oro.nifti)
+library(neurobase)
+
+## ------------------------------------------------------------------------
+t1 = readnii("training01_01_mprage.nii.gz")
+
+## ---- eval = FALSE-------------------------------------------------------
+## t1 <- readnii("training01_01_mprage.nii.gz")
+
+## ------------------------------------------------------------------------
+class(t1)
+t1
+
+## ----help, eval = FALSE--------------------------------------------------
+## ?readnii
+## help(topic = "readnii")
+
+## ----help2, eval = FALSE-------------------------------------------------
+## ??readnii
+## help.search(pattern = "readnii")
+
+## ----colon_twice, eval=FALSE---------------------------------------------
+## t1 = neurobase::readnii("training01_01_mprage.nii.gz")
+
+## ------------------------------------------------------------------------
+library(ms.lesion)
+files = get_image_filenames_list_by_subject()
+length(files); names(files); 
+head(files$training01)
+
 ## ------------------------------------------------------------------------
 library(ms.lesion)
 library(neurobase)
