@@ -1,0 +1,219 @@
+---
+title: "General R (and Writing Images)"
+output:
+  ioslides_presentation:
+    widescreen: yes
+    css: ../styles.css
+  beamer_presentation: default
+bibliography: ../refs.bib       
+---
+
+```{r setup, include=FALSE}
+library(methods)
+knitr::opts_chunk$set(echo = TRUE, comment = "")
+```
+
+## Reading in the image
+
+Again we will read in the `training01_01_mprage.nii.gz` file, and assign it to an object called `t1`
+```{r}
+library(neurobase)
+t1 = readnii("training01_01_mprage.nii.gz")
+```
+
+
+## Data Classes
+
+- Numeric - numbers (e.g. 1, 3.673)
+- Character - strings or words (`"hey"`, `"I'm a string"`) in either single or double quotes
+- Logicals - `TRUE` or `FALSE` - all capital letters and are **not** in quotes. 
+
+## Data Types
+
+- `vector` - 1-dimensional object of one class (all numeric or all character)
+- `matrix` - 2-dimensional object of one class
+- `data.frame` - 2-dimensional object, can be multiple classes (like Excel spreadsheet)
+- `array` - object of dimensions > 2 of one class.  The data in a `nifti` object is one of these (usually 3-D)
+- `nifti` - an array with header information
+- `list` - a general holder of things (discuss when necessary)
+
+
+## Vectors
+
+- Create a vector of numeric values and assign to variable `v`
+
+```{r vec}
+v = c(1, 4, 3, 7, 8)
+```
+
+- Subsetting (first index is `1`, not zero):
+```{r vecSub}
+print(v[4])
+print(v[1:3])
+print(v[c(1,3,5)])
+```
+
+`:` creates a sequence of numbers
+
+## Matrices
+
+- Create a 3 x 4 numeric matrix and assign to variable `m`
+```{r mat}
+m = matrix(1:12, nrow = 3)
+```
+
+- Subsetting - `[row,column]` format, if `row` or `column` missing then all values:
+```{r matSub}
+print(m[,4])
+print(m[2,])
+print(m[1,3])
+print(m[1:2,3:4])
+```
+
+## Subsetting with logicals 
+
+You can either do subsetting with indices or logical vectors:
+```{r}
+v[ v > 5 ]
+```
+the `which` command takes a logical and gets the indices:
+```{r}
+which(v > 5)
+v[ which(v > 5) ]
+```
+
+
+## Working with `nifti` objects
+
+The subsetting here is similar to that of arrays, so we will use the `t1`. Since it's 3-dimensions the subsetting goes to the 3rd dimension
+```{r}
+t1[5, 4, 3]
+```
+
+```{r, eval = FALSE}
+t1[5, 4, ] # returns a vector of numbers (1-d)
+t1[, 4, ] # returns a 2-d matrix
+t1[1, , ] # returns a 2-d matrix
+```
+
+## Working with `nifti` objects
+
+Again, we can use a logical operation.  Let's get the values of the `t1` greater than 400 (`head` only prints the first 6 values):
+
+```{r}
+head(t1[ t1 > 400 ])
+```
+
+## Working with `nifti` objects
+
+The operation results in a `nifti` object, and if we look at the values, they are logical:
+```{r}
+class(t1 > 400)
+head(t1 > 400)
+```
+## `which` with `nifti` objects
+
+The `which` function works to get indices, but you can pass the `arr.ind = TRUE` argument to get "array" indices:
+
+```{r}
+head(which(t1 > 400, arr.ind = TRUE))
+```
+
+## Working with `nifti` objects
+
+Again, we can use a logical operation.  Let's get the values of the `t1` greater than 400 (`head` only prints the first 6 values):
+
+```{r}
+head(t1[ t1 > 400 ])
+```
+
+## Working with `nifti` objects: reassignment 
+
+Subsetting can work on the left hand side of assignment too:
+
+```{r}
+t1_copy = t1
+t1_copy[ t1_copy > 400] = 400 # changed these values!
+max(t1_copy) # should be 400
+max(t1) 
+```
+
+Note, although `t1_copy` was copied from `t1`, they are not linked - if you change values in `t1_copy`, values in `t1` are unchanged.
+
+
+## Writing Images out
+
+We now can write out this modified `t1_copy` image:
+```{r}
+writenii(nim = t1_copy, 
+         filename = "training01_mprage_under400.nii.gz")
+file.exists("training01_mprage_under400.nii.gz")
+```
+
+## File helpers
+
+Use `paste` if you want to put strings together with spaces:
+
+Use `paste0` if you want no spaces by default:
+
+`file.path(directory, filename)` will paste `directory` and `filename` with file separators (e.g. `/`)
+
+```{r}
+paste("img", ".nii.gz")
+paste0("img", ".nii.gz")
+file.path("output_directory", paste0("img", ".nii.gz"))
+```
+
+## Operations with `nifti` objects
+
+- Comparison: `>`, `>=`, `<`, `<=`, `==` (equals), `!=` (not equal)
+- Logical: `!` - not, `&` - and, `|` - or (a "pipe")
+- Arithmetic: `+`, `-`, `*`, `/`, `^` - exponents
+- Standard math functions: `log`, `abs`, `sqrt`
+
+These work with an image and a number (`img + 2`) or two images of the same dimensions `img1 + img2`.
+
+
+## Main Packages we will use
+
+* `oro.nifti` - reading/writing NIfTI images
+* `neurobase` - extends `oro.nifti` and provides helpful imaging functions
+* `fslr` - wraps FSL commands to use in R
+    - registration, image manipulation
+* `ANTsR` - wrapper for Advanced normalization tools (ANTs) code 
+    - registration, inhomogeneity correction, lots of tools
+* `extrantsr` - allows `ANTsR` to work with objects from `oro.nifti` 
+
+## Data Packages we will use
+ 
+* `ms.lesion` - contains training/testing data of patients with multiple sclerosis (MS)
+    - from the MS lesion challenge 2016 (http://iacl.ece.jhu.edu/index.php/MSChallenge)
+* `kirby21.t1` - scan-rescan data for 3 subjects from @landman2011multi
+    - https://www.nitrc.org/projects/multimodal
+
+
+## Conclusions
+
+- We have (briefly) covered some R data classes and types to get you started
+- We will be using `nifti` objects
+    - They are special 3-dimensional arrays
+    - Contain numbers or logicals
+- We have briefly covered subsetting and image manipulation
+    - more on that later
+
+
+## Lists
+
+- Initialize an empty list and add two elements to it
+
+```{r list}
+l = list()
+l[[1]] = v
+l[[2]] = m
+print(l)
+```
+
+- Subsetting:
+```{r listSub}
+print(l[[1]])
+```

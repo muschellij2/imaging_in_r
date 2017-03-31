@@ -24,8 +24,8 @@ output:
 # library(DT)
 mat = rbind(
   c("intro", "Introduction and R"),
-  c("reading_writing_data", "Reading and Writing Data"),
   c("visualization", "Visualization of Images"),
+  c("general_r", "General R"),
   c("inhomogeneity_correction_ms", "Inhomogeneity Correction"),
   c("brain_extraction_malf", "Brain Extraction/Segmentation"),
   c("segmentation", "Tissue-Class Segmentation"),
