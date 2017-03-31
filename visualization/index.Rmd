@@ -141,6 +141,8 @@ The `ms.lesion` package was made for this course.  It has all the data we will w
 
 The main function we will use is `get_image_filenames_list_by_subject`.  It returns a `list` of filenames of the images for the 5 training and 3 test subjects from the MS lesion challenge 2016 (http://iacl.ece.jhu.edu/index.php/MSChallenge)
 
+## `ms.lesion` Package
+
 ```{r}
 library(ms.lesion)
 files = get_image_filenames_list_by_subject()
@@ -154,9 +156,7 @@ head(files$training01)
 Let's read in the T1 image from a MS lesion data set to visualize:
 
 ```{r}
-library(ms.lesion)
-library(neurobase)
-files = get_image_filenames_list_by_subject()$training01
+files = files$training01
 t1_fname = files["MPRAGE"]
 t1 = readnii(t1_fname)
 ```
@@ -186,29 +186,6 @@ We see that in `ortho2` there are annotations of the orientation of the image.  
 neurobase::ortho2(t1, add.orient = FALSE)
 ```
 
-## Differences between `orthographic` and `ortho2`
-
-The above code does not fully illustrate the differences between `orthographic` and `ortho2`.  One marked difference is when you would like to "overlay" an image on top of another in an orthograhic view.  
-
-## Differences between `orthographic` and `ortho2`
-
-Here we will highlight voxels greater than the 90th quantile of the image:
-
-```{r ortho_nona}
-orthographic(t1, y = t1 > quantile(t1, 0.9))
-```
-
-## Differences between `orthographic` and `ortho2`
-
-We see that the white matter is represented here, but we would like to see areas of the brain that are not over this quantile to be shown as the image.  Let us contrast this with:
-
-```{r ortho2_nona}
-ortho2(t1, y = t1 > quantile(t1, 0.9))
-```
-
-## Differences between `orthographic` and `ortho2`
-
-We see the image where the mask is 0 shows the original image.  This is due to the `NA.y` argument in `ortho2`.  The `ortho2` (and `orthograhic`) function is based on the `graphics::image` function in R, as well as many other functions we will discuss below.  When `graphics::image` sees an `NA` value, it does not plot anything there.  The `NA.y` argument in `ortho2` makes it so any values in the `y` argument (in this case the mask) that are equal to zero are turned to `NA`.  
 
 ## Bright values 
 
@@ -217,6 +194,7 @@ Large intensities can "dampen" the viewing of an image.
 ```{r eve2, cache=FALSE}
 ortho2(t1)
 ```
+
 
 ## Bright values 
 
@@ -234,19 +212,53 @@ The `zlim` option can also map intensities that can be plotted:
 ortho2(t1, zlim = quantile(t1, probs = c(0, 0.999)))
 ```
 
-```{r, echo = FALSE}
-t1 = robust_window(t1)
+## Differences between `orthographic` and `ortho2`
+
+The above code does not fully illustrate the differences between `orthographic` and `ortho2`.  One marked difference is when you would like to "overlay" an image on top of another in an orthograhic view.  
+
+We will be plotting the windowed image for visualization:
+
+```{r robust, echo = TRUE}
+rt1 = robust_window(t1)
 ```
+
+## Differences between `orthographic` and `ortho2`
+
+Here we will highlight voxels greater than the 90th quantile of the image:
+
+```{r ortho_nona}
+orthographic(rt1, y = t1 > quantile(t1, 0.9))
+```
+
+## Differences between `orthographic` and `ortho2`
+
+We see that the white matter is represented here, but we would like to see areas of the brain that are not over this quantile to be shown as the image.  Let us contrast this with:
+
+```{r ortho2_nona}
+ortho2(rt1, y = t1 > quantile(t1, 0.9))
+```
+
+## Differences between `orthographic` and `ortho2`
+
+In `R`, `NA` is the placeholder for missing data.  
+
+The `ortho2` (and `orthograhic`) function is based on the `graphics::image` function in R, as well as many other functions we will discuss below.  When `graphics::image` sees an `NA` value, it does not plot anything there.  
+
+We see the image where the mask is `0` shows the original image.  This is due to the `NA.y` argument in `ortho2`.  The `NA.y` argument in `ortho2` makes it so any values in the `y` argument (in this case the mask) that are equal to zero are turned to `NA`.  
 
 ## Double orthographic view
 
 Sometimes you would like to represent 2 images side by side, of the same dimensions and orientation of course.  The `double_ortho` function allows you to do this.  Let's get a coarse mask of the image:
 
 ```{r mask}
-mask = oMask(t1)
+mask = extrantsr::oMask(t1)
 ```
 
-## Double time
+```{r, echo = FALSE}
+t1 = robust_window(t1)
+```
+
+## Double viewing images
 
 We can view the original T1 alongside the brain-extracted image:
 
@@ -256,11 +268,15 @@ double_ortho(t1, mask)
 
 ## Single slice view
 
-We may want to view a single slice of an image.  The `oro.nifti::image` function can be used here.  Note, `graphics::image` exists and `oro.nifti::image` both exist.  The `oro.nifti::image` allows you to just write `image(nifti_object)`, which performs operations and calls functions using `graphics::image`.  This allows the user to use a "generic" version of `image`, which `oro.nifti` adapted specifically for `nifti` objects.  You can see the help for this function in `?image.nifti`.
+We may want to view a single slice of an image.  The `oro.nifti::image` function can be used here.  Note, `graphics::image` exists and `oro.nifti::image` both exist.  
+
+The `oro.nifti::image` allows you to just write `image(nifti_object)`, which performs operations and calls functions using `graphics::image`.  
+
+This allows the user to use a "generic" version of `image`, which `oro.nifti` adapted specifically for `nifti` objects.  You can see the help for this function in `?image.nifti`.
 
 ## Plotter
 
-Let's plot an image of the 80th slice of the T1 image:
+Let's **try** to plot an image of the $80^{th}$ slice of the T1 image:
 ```{r all_slices}
 image(t1, z = 80)
 ```
@@ -281,6 +297,14 @@ If we put multiple slices with `plot.type = "single"`, then we will get a view o
 image(t1, z = c(60, 80), plot.type = "single")
 ```
 
+## Multiple Slices but not All 
+
+In `oro.nifti` version `0.7.4`, we added `slice`, which is the same as `image`, but `plot.type = "single"`.
+
+```{r two_slicewslice}
+oro.nifti::slice(t1, z = c(60, 80))
+```
+
 ### Different Planes
 
 We can specify `z` the same way but change the `plane` to be different to get a different slice of the brain:
@@ -299,11 +323,9 @@ overlay(t1, y = t1 > quantile(t1, 0.9), z = 80, plot.type = "single")
 
 ## Overlay2
 
-We have not yet implemented `overlay2` (at the time of running this), which has the `NA.y` option, but will in the future.  We can do this prior to plotting and pass in this `NA`'d mask:
-
+There is no `overlay2` (at the time of running this) because we added `NA.y` in `oro.nifti` version `0.7.4`.  
 ```{r one_slice_overlay_right}
-mask = t1 > quantile(t1, 0.9); mask[ mask == 0] = NA
-overlay(t1, y = mask, z = 90, plot.type = "single")
+overlay(t1, y = t1 > quantile(t1, 0.9), z = 80, plot.type = "single", NA.y = TRUE)
 ```
 
 ## Dropping empty dimensions
