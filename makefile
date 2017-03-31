@@ -1,13 +1,14 @@
 LIST = intro
-LIST += starting_with_raw_data
 LIST += visualization
+LIST += general_r
 LIST += inhomogeneity_correction_ms
 LIST += brain_extraction_malf
 LIST += segmentation
 LIST += coregistration
-# LIST += ms_lesion_segmentation
-LIST += installing_everything_locally
 # LIST += intensity_normalization
+# LIST += ms_lesion_segmentation
+LIST += starting_with_raw_data
+LIST += installing_everything_locally
 
 all:
 	for fol in $(LIST) ; do \
