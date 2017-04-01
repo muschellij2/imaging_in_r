@@ -1,7 +1,5 @@
 ---
 title: "MS Lesion Segmentation"
-author: "Kristin Linn"
-date: "`r Sys.Date()`"
 output:
   ioslides_presentation:
     widescreen: yes

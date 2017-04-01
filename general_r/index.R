@@ -62,6 +62,16 @@ writenii(nim = t1_copy,
          filename = "training01_mprage_under400.nii.gz")
 file.exists("training01_mprage_under400.nii.gz")
 
+## ----vec_nifti, cache=FALSE----------------------------------------------
+vals = c(t1)
+class(vals)
+
+## ----dens----------------------------------------------------------------
+plot(density(vals))
+
+## ----dens_with_mask------------------------------------------------------
+plot(density(t1, mask = t1 > 0))
+
 ## ------------------------------------------------------------------------
 paste("img", ".nii.gz")
 paste0("img", ".nii.gz")
