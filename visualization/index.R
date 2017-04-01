@@ -39,9 +39,7 @@ length(files); names(files);
 head(files$training01)
 
 ## ------------------------------------------------------------------------
-library(ms.lesion)
-library(neurobase)
-files = get_image_filenames_list_by_subject()$training01
+files = files$training01
 t1_fname = files["MPRAGE"]
 t1 = readnii(t1_fname)
 
@@ -54,12 +52,6 @@ neurobase::ortho2(t1)
 ## ----ortho2_noorient-----------------------------------------------------
 neurobase::ortho2(t1, add.orient = FALSE)
 
-## ----ortho_nona----------------------------------------------------------
-orthographic(t1, y = t1 > quantile(t1, 0.9))
-
-## ----ortho2_nona---------------------------------------------------------
-ortho2(t1, y = t1 > quantile(t1, 0.9))
-
 ## ----eve2, cache=FALSE---------------------------------------------------
 ortho2(t1)
 
@@ -69,11 +61,20 @@ ortho2(robust_window(t1))
 ## ----ortho2_zlim---------------------------------------------------------
 ortho2(t1, zlim = quantile(t1, probs = c(0, 0.999)))
 
-## ---- echo = FALSE-------------------------------------------------------
-t1 = robust_window(t1)
+## ----robust, echo = TRUE-------------------------------------------------
+rt1 = robust_window(t1)
+
+## ----ortho_nona----------------------------------------------------------
+orthographic(rt1, y = t1 > quantile(t1, 0.9))
+
+## ----ortho2_nona---------------------------------------------------------
+ortho2(rt1, y = t1 > quantile(t1, 0.9))
 
 ## ----mask----------------------------------------------------------------
-mask = oMask(t1)
+mask = extrantsr::oMask(t1)
+
+## ---- echo = FALSE-------------------------------------------------------
+t1 = robust_window(t1)
 
 ## ----double_ortho--------------------------------------------------------
 double_ortho(t1, mask)
@@ -87,6 +88,9 @@ image(t1, z = 80, plot.type = "single")
 ## ----two_slice-----------------------------------------------------------
 image(t1, z = c(60, 80), plot.type = "single")
 
+## ----two_slicewslice-----------------------------------------------------
+oro.nifti::slice(t1, z = c(60, 80))
+
 ## ----one_slice_sag-------------------------------------------------------
 image(t1, z = 125, plot.type = "single", plane = "sagittal")
 
@@ -94,8 +98,7 @@ image(t1, z = 125, plot.type = "single", plane = "sagittal")
 overlay(t1, y = t1 > quantile(t1, 0.9), z = 80, plot.type = "single")
 
 ## ----one_slice_overlay_right---------------------------------------------
-mask = t1 > quantile(t1, 0.9); mask[ mask == 0] = NA
-overlay(t1, y = mask, z = 90, plot.type = "single")
+overlay(t1, y = t1 > quantile(t1, 0.9), z = 80, plot.type = "single", NA.y = TRUE)
 
 ## ----dd, cache=FALSE-----------------------------------------------------
 reduced = dropEmptyImageDimensions(t1)
