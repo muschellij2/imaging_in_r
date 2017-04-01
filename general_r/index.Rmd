@@ -21,7 +21,6 @@ library(neurobase)
 t1 = readnii("training01_01_mprage.nii.gz")
 ```
 
-
 ## Data Classes
 
 - Numeric - numbers (e.g. 1, 3.673)
