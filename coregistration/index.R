@@ -13,8 +13,10 @@ t1 = readnii(t1_fname)
 
 ## ----eval = FALSE--------------------------------------------------------
 ## library(extrantsr)
-## reg = registration(filename = files["FLAIR"], template.file = files["MPRAGE"],
-##                    typeofTransform = "Rigid", interpolator = "linear")
+## reg = registration(filename = files["FLAIR"],
+##                    template.file = files["MPRAGE"],
+##                    typeofTransform = "Rigid",
+##                    interpolator = "linear")
 
 ## ---- eval = FALSE-------------------------------------------------------
 ## res = within_visit_registration(
@@ -53,7 +55,7 @@ xout = dd$other.imgs
 out = lapply(xout, zscore_img, mask = dd$outimg)
 out = lapply(out, window_img, window = c(-4, 4))
 
-## ----multi_overlay-------------------------------------------------------
+## ----multi_overlay, echo = FALSE-----------------------------------------
 multi_overlay(out)
 
 ## ----reg_plot_ortho2_show, eval = FALSE----------------------------------
@@ -62,11 +64,15 @@ multi_overlay(out)
 ## ----reg_plot_ortho2_run, echo = FALSE-----------------------------------
 double_ortho(robust_window(xout$MPRAGE), robust_window(xout$T2 ))
 
-## ----bet_t1--------------------------------------------------------------
+## ----bet_t1_show, echo = TRUE, eval = FALSE------------------------------
+## mask = readnii("../output/training01_01_mprage_mask.nii.gz")
+## masked_imgs = lapply(out, mask_img, sub_mask)
+
+## ----bet_t1, echo = FALSE------------------------------------------------
 mask = readnii("../output/training01_01_mprage_mask.nii.gz")
 sub_mask = applyEmptyImageDimensions(mask, inds = dd$inds)
 masked_imgs = lapply(xout, mask_img, sub_mask)
 
 ## ----mimgs_2-------------------------------------------------------------
-orthographic(masked_imgs[[2]])
+orthographic(masked_imgs$FLAIR)
 

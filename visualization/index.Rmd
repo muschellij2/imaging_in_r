@@ -139,7 +139,6 @@ t1 = neurobase::readnii("training01_01_mprage.nii.gz")
 ## Multiple Sclerosis
 
 - Multiple sclerosis is a chronic disease of the central nervous system (brain, spinal chord, optic nerves)
-- Symptoms can include blurred vision, loss of balance, poor coordination, slurred speech, tremors, numbness, extreme fatigue, problems with memory and concentration, paralysis, and blindness.
 - Multiple sclerosis lesions in the brain are areas of active inflammation, demylenation, or permanent tissue damage. 
     - lesions are primarily in the white matter
 - MRI is well-suited for assessing lesion burden (volume and patterns) because lesions appear as hyperintensities on FLAIR, T2-w, and PD images and as hypointensities on T1-w images.
@@ -158,11 +157,24 @@ The main function we will use is `get_image_filenames_list_by_subject`.  It retu
 library(ms.lesion)
 files = get_image_filenames_list_by_subject()
 length(files); names(files); 
+```
+```{r, eval = FALSE}
 head(files$training01)
+```
+```{r, echo = FALSE}
+f = files$training01
+f = strsplit(f, "/")
+f = sapply(f, function(x){
+  ind = which(x == "library")
+  x = x[ind:length(x)]
+  x = paste(x, collapse = "/")
+})
+head(f)
+rm(list = "f")
 ```
 
 
-## MS Lesion 
+## Reading in a T1 image
 
 Let's read in the T1 image from a MS lesion data set to visualize:
 
@@ -170,12 +182,13 @@ Let's read in the T1 image from a MS lesion data set to visualize:
 files = files$training01
 t1_fname = files["MPRAGE"]
 t1 = readnii(t1_fname)
+t1
 ```
 
 
 ## Orthographic view
 
-The `oro.nifti::orthographic` function provides great functionality on displaying `nifti` objects in 3 different planes.  
+The `oro.nifti::orthographic` function displays `nifti` objects in 3 different planes.  
 
 ```{r ortho}
 oro.nifti::orthographic(t1)
@@ -191,7 +204,7 @@ neurobase::ortho2(t1)
 
 ## Orthographic view with additions
 
-We see that in `ortho2` there are annotations of the orientation of the image.  Again, if the image was not reoriented, then these many not be corrrect.  You can turn these off with the `add.orient` argument:
+`ortho2` annotates the orientation of the image.  These many not be correct.  You can turn these off with the `add.orient` argument:
 
 ```{r ortho2_noorient}
 neurobase::ortho2(t1, add.orient = FALSE)
@@ -200,7 +213,7 @@ neurobase::ortho2(t1, add.orient = FALSE)
 
 ## Bright values 
 
-Large intensities can "dampen" the viewing of an image. 
+High intensities can "dampen" the viewing of an image. 
 
 ```{r eve2, cache=FALSE}
 ortho2(t1)
@@ -232,20 +245,26 @@ We will be plotting the windowed image for visualization:
 rt1 = robust_window(t1)
 ```
 
-## Differences between `orthographic` and `ortho2`
-
 Here we will highlight voxels greater than the 90th quantile of the image:
 
-```{r ortho_nona}
-orthographic(rt1, y = t1 > quantile(t1, 0.9))
+```{r qmask}
+qmask = t1 > quantile(t1, 0.9)
 ```
 
 ## Differences between `orthographic` and `ortho2`
 
-We see that the white matter is represented here, but we would like to see areas of the brain that are not over this quantile to be shown as the image.  Let us contrast this with:
+We see that the white matter is represented here, but we would like to see areas of the brain that are not over this quantile to be shown as the image. 
+
+```{r ortho_nona}
+orthographic(rt1, y = qmask)
+```
+
+## Differences between `orthographic` and `ortho2`
+
+ Let us contrast this with:
 
 ```{r ortho2_nona}
-ortho2(rt1, y = t1 > quantile(t1, 0.9))
+ortho2(rt1, y = qmask)
 ```
 
 ## Differences between `orthographic` and `ortho2`
@@ -258,7 +277,7 @@ We see the image where the mask is `0` shows the original image.  This is due to
 
 ## Double orthographic view
 
-Sometimes you would like to represent 2 images side by side, of the same dimensions and orientation of course.  The `double_ortho` function allows you to do this.  Let's get a coarse mask of the image:
+Sometimes you would like to represent 2 images side by side, of the same dimensions and orientation of course.  The `double_ortho` function allows you to do this.  Let's get a coarse mask of the image using the `oMask` function:
 
 ```{r mask}
 mask = extrantsr::oMask(t1)
@@ -270,7 +289,7 @@ t1 = robust_window(t1)
 
 ## Double viewing images
 
-We can view the original T1 alongside the brain-extracted image:
+We can view the original T1 alongside the estimated mask:
 
 ```{r double_ortho}
 double_ortho(t1, mask)
@@ -309,7 +328,7 @@ image(t1, z = c(60, 80), plot.type = "single")
 
 ## Multiple Slices but not All 
 
-In `oro.nifti` version `0.7.4`, we added `slice`, which is the same as `image`, but `plot.type = "single"`.
+In `oro.nifti` version `0.7.4`, we added `slice`, which is the same as `image`, but `plot.type = "single"` as default:
 
 ```{r two_slicewslice}
 oro.nifti::slice(t1, z = c(60, 80))
@@ -328,14 +347,15 @@ We can similarly do the same for "coronal" slices.
 
 We can also overlay one slice of an image upon another using the `oro.nifti::overlay` function.  Here we must specify `plot.type` again for only one slice.
 ```{r one_slice_overlay}
-overlay(t1, y = t1 > quantile(t1, 0.9), z = 80, plot.type = "single")
+overlay(t1, y = qmask, z = 80, plot.type = "single")
 ```
 
 ## Overlay2
 
-There is no `overlay2` (at the time of running this) because we added `NA.y` in `oro.nifti` version `0.7.4`.  
+There is no `overlay2` because we added `NA.y` in `oro.nifti` version `0.7.4`:
+
 ```{r one_slice_overlay_right}
-overlay(t1, y = t1 > quantile(t1, 0.9), z = 80, plot.type = "single", NA.y = TRUE)
+overlay(t1, y = qmask, z = 80, plot.type = "single", NA.y = TRUE)
 ```
 
 ## Dropping empty dimensions
@@ -355,31 +375,3 @@ dim(reduced)
 ortho2(reduced)
 ```
 
-
-## Vectorizing a `nifti`
-
-To convert a `nifti` to a `vector`, you can simply use the `c()` operator:
-
-```{r vec, cache=FALSE}
-vals = c(t1)
-class(vals)
-```
-
-Note an `array` can be reconstructed by using `array(vals, dim = dim(eve))` and will be in the correct order as the way R creates vectors and arrays.  
-
-## Histogram
-
-From these values we can do all the standard plotting/manipulations of data.  For example, let's do a marginal density of the values:
-
-```{r dens}
-plot(density(vals))
-```
-
-
-## Histogram
-
-You can also pass in a mask to most standard functions:
-
-```{r dens_with_mask}
-plot(density(t1, mask = t1 > 0))
-```

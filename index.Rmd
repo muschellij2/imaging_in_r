@@ -29,7 +29,7 @@ mat = rbind(
   c("inhomogeneity_correction_ms", "Inhomogeneity Correction"),
   c("brain_extraction_malf", "Brain Extraction/Segmentation"),
   c("segmentation", "Tissue-Class Segmentation"),
-  c("coregistration", "Registration of Images"),
+  c("coregistration", "Image Registration"),
   c("intensity_normalization", "Intensity Normalization"),
   c("ms_lesion_segmentation", "Segmentation of MS Lesions"),
   c("starting_with_raw_data", "Starting with Raw (DICOM) Data (not covered)")

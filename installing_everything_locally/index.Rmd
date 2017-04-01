@@ -1,6 +1,5 @@
 ---
 title: "Local R Setup"
-author: "John Muschelli"
 output:
   html_document:
     toc: true

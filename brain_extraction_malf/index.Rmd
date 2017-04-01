@@ -1,6 +1,5 @@
 ---
 title: "Brain Extraction/Segmentation"
-author: "John Muschelli"
 output:
   ioslides_presentation:
     widescreen: yes
@@ -16,7 +15,13 @@ knitr::opts_chunk$set(echo = TRUE, comment = "")
 
 ## Brain Extraction 3 Different Attempts
 
-In this tutorial we will discuss performing brain segmentation using the brain extraction tool (BET) [@smith_fast_2002] in `FSL` [@jenkinson_fsl_2012], a robust version using a wrapper function in `extrantsr`, `fslbet_robust`, and a multi-atlas approach, called "multi-atlas label fusion" with the `malf` command. 
+In this tutorial we will discuss performing brain segmentation using:
+
+- the brain extraction tool (BET) [@smith_fast_2002] in `FSL` [@jenkinson_fsl_2012]
+    - with and without bias correction
+- a multi-atlas approach, called "multi-atlas label fusion" with the `malf` command. 
+- (extra slides) a robust version using a wrapper function in `extrantsr`, `fslbet_robust`
+
 
 
 ## Loading Data from `ms.lesion`
@@ -27,33 +32,11 @@ library(neurobase)
 files = get_image_filenames_list_by_subject()$training01
 t1_fname = files["MPRAGE"]
 t1 = readnii(t1_fname)
+rt1 = robust_window(t1);
 red0.5 = scales::alpha("red", 0.5)
 ```
 
-## T1 image: high intensity values
-
-```{r t1_plot}
-ortho2(t1)
-```
-
-
-## T1 image has long tails
-
-```{r t1_plot_hist}
-hist(t1[ t1 > 0], breaks = 200)
-```
-
-## Limiting extreme values 
-
-`robust_window` essentially performs Winsorizing to limit extreme values
-
-- sets them to 99.9$^{\text{th}}$ quantile
-
-```{r t1_robust}
-rt1 = robust_window(t1); hist(rt1[ rt1 > 0], breaks = 200)
-```
-
-## Re-plotting the image
+## Robust T1 image: high intensity values
 
 ```{r t1_plot_robust}
 ortho2(rt1)
@@ -117,7 +100,7 @@ bc_bet = fslbet(bc_img); ortho2(bc_img, bc_bet > 0, col.y = red0.5)
 
 ## Attempt 3: Brain Extraction of T1 image using MALF
 
-Figure from @mass:
+Figure from Multi-Atlas Skull Stripping method paper [@mass]:
 
 <img src="malf_figure.jpg" style="width: 40%; display: block; margin: auto;">
 
@@ -204,7 +187,7 @@ print(dd)
 
 ## Conclusions from the MS data
 
-- FSL BET can perform brain extraction (we will show when it works)
+- FSL BET can perform brain extraction (additional ex shows when it works)
   - it did not work sufficiently here
   - there are options you can change for performance
 - Bias-correction before brain extraction is a good idea
@@ -212,6 +195,7 @@ print(dd)
 - MALF/MASS is a good option, but needs templates and is computationally expensive
     - weighted templates or local weighting is done in other software (not discussed)
     
+
 
 ## Additional Example
 
@@ -295,10 +279,11 @@ ortho2(dropEmptyImageDimensions(ss))
 
 - Brain extraction allows you to analyze the brain only
   - Important for tissue segmentation/registration
-- BET can work well (look at your data!)
+- BET may work (look at your data!)
   - Should bias correct first 
   - May need to remove neck
   - High values may affect results - may need to remove/Winsorize them
+
 
 
 ## References {.smaller}
