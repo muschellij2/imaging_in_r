@@ -21,10 +21,7 @@ knitr::opts_chunk$set(echo = TRUE, comment = "", cache=TRUE)
 - Compare the results using the default OASIS settings to those obtained after re-training the model using our data.
 
 
-## Loading Data
-- Let's read in the images, brain masks, and manual lesion segmentations.
-
-```{r loading, message=FALSE}
+```{r loading, echo=FALSE, message=FALSE}
 library(ms.lesion)
 library(neurobase)
 library(fslr)
@@ -48,7 +45,7 @@ ts_masks = lapply(ts_files, function(x) readnii(x["Brain_Mask"]))
 ## Visualization
 - Here's the T1 volume for training subject 05 with the ‘gold standard’ manual lesion segmentation overlayed.
 
-```{r over_show_run}
+```{r over_show_run, echo=FALSE}
 les_mask = tr_golds$training05
 ortho2(tr_t1s$training05, les_mask, col.y = "orange")
 ```
@@ -60,7 +57,7 @@ ortho2(tr_t1s$training05, les_mask, col.y = "orange")
 
 ## Default OASIS Model
 - The OASIS library comes with default parameters that can be used to generate probability maps for new test subjects
-- Here we apply the default model to obtain OASIS probability maps for the test subjects.
+- Here we apply the function `oasis_predict` with the default model to obtain OASIS probability maps for the test subjects.
 
 ```{r default_predict_ts_show, eval=FALSE}
 default_predict_ts = function(x){
@@ -81,18 +78,27 @@ default_ts = lapply(ts_files,
 ```
 
 ## Vizualization
-- Let's look at the probability map for test subject 01:
+- Here's the probability map for test subject 01:
 
-```{r viz_01}
+```{r viz_01, echo=FALSE}
 les_mask = default_ts[[1]]
 ortho2(ts_t1s$test01, les_mask)
 ```
 
 ## Thresholding
 - To get a final estimated segmentation, we must choose a cutoff to binarize the OASIS probability maps.
-- The `binary` argument in the `oasis_predict` function is FALSE by default, resulting in the output being the probability map
-- Setting binary=TRUE will return the thresholded version, using the input to the `threshold` argument (default = 0.16).
+- The `binary` argument in the `oasis_predict` function is FALSE by default, resulting in the output being the probability map.
+- Setting `binary=TRUE` will return the thresholded version, using the input to the `threshold` argument (default = 0.16).
 - In practice, we might want to use a grid search over thresholds and cross validation to choose the cutoff.
+
+## Vizualization
+- Here's the binary mask for test subject 01, using the default 0.16 threshold:
+
+```{r viz_01, echo=FALSE}
+les_mask[les_mask<.16] = 0
+les_mask[les_mask!=0] = 1
+ortho2(ts_t1s$test01, les_mask, col.y="orange")
+```
 
 ## Default OASIS Model
 - To evaluate how the default model performs, we need to compare the predictions to a gold standard.
@@ -125,40 +131,41 @@ default_tr = lapply(tr_files,
 ## Default OASIS Model Results
 - Here's the T1 volume for training subject 05 with the OASIS segmentation overlayed.
 
-```{r over_05_run}
+```{r over_05_run, echo=FALSE}
 les_mask = default_tr[[5]]
 ortho2(tr_t1s$training05, les_mask, col.y = "orange")
 ```
 
 ## Default OASIS Model Results
-- Let's see how well OASIS corresponds with the gold standard manual segmentations for the training subjects.
+- The average dice coeffients (over the two gold standards) for the training subjects are: 0.49, 0.69, 0.43, 0.29, 0.26.
 
-```{r table1}
-tbls = lapply(1:5, function(x) table(c(tr_golds[[x]]), c(default_tr[[x]])))
-lapply(tbls, function(x) (2*x[2,2])/(2*x[2,2] + x[1,2] + x[2,1]))
+```{r table1, echo=FALSE, eval=FALSE}
+dice = function(x){
+	return((2*x[2,2])/(2*x[2,2] + x[1,2] + x[2,1]))
+}
+tbls_df = lapply(1:5, function(x) table(c(tr_golds[[x]]), c(default_tr[[x]])))
+lapply(tbls_df, function(x) dice(x))
 ```
 
 ## Improving Results
+- The default model is picking up a lot of false positives in the lower brain and spinal chord (check this)
 - We might improve the results by re-training the OASIS model using our five training subjects.
-- To retrain the model using new data, binary masks of `gold standard’ lesion segmentations are needed and should be in T1 space.
+- To retrain the model using new data, binary masks of gold standard lesion segmentations are needed and should be in T1 space.
 
 
 ## Making OASIS data frames
 - OASIS requires a particular data frame format
-- OASIS has an option to preprocess your data for you (preproc)
-- OASIS has an option to normalize the intensities of your data for you using a whole-brain normalization (normalize)
+- Includes an option to preprocess your data (`preproc`)
+- Includes an option to normalize the intensities of your data using whole-brain normalization (`normalize`)
 - `make_df()` below is a helper function
 
 ```{r oasis_df_show, eval=FALSE}
-library(oasis)
 make_df = function(x){
   res = oasis_train_dataframe(
-      flair=tr_flairs[[x]], t1=tr_t1s[[x]], 
-      t2=tr_t2s[[x]], pd=tr_pds[[x]], 
-      gold_standard=tr_golds[[x]], 
+      flair=tr_flairs[[x]], t1=tr_t1s[[x]], t2=tr_t2s[[x]],
+      pd=tr_pds[[x]], gold_standard=tr_golds[[x]], 
       brain_mask=tr_masks[[x]], 
-      preproc=FALSE, normalize=TRUE, 
-      return_preproc=FALSE)
+      preproc=FALSE, normalize=TRUE, return_preproc=FALSE)
   return(res$oasis_dataframe)
 }
 oasis_dfs = lapply(1:5, make_df)
@@ -172,12 +179,30 @@ oasis_dfs = lapply(1:5, make_df)
 model = do.call("oasis_training", oasis_dfs)
 ```
 
+## OASIS model object
+- `model` is an object of type `glm`
+- We see the covariates used and assosicated coefficients when we print the model:
 
-```{r trained_predict_run, eval=TRUE, echo=FALSE}
-trained_ts = lapply(ts_files, 
-	function(x) readnii(x["Trained_OASIS"]))
-trained_tr = lapply(tr_files, 
-	function(x) readnii(x["Trained_OASIS"]))
+```{r oasis_model_show2}
+print(model)
 ```
+
+## Trained OASIS Model Results
+- The average dice coeffients (over the two gold standards) for the training subjects are: 0.64, 0.71, 0.62, 0.36, 0.36.
+
+
+```{r table2, echo=FALSE, eval=FALSE}
+trained_tr = lapply(tr_files, 
+	function(x){
+		img = readnii(x["Trained_OASIS"])
+		img[img>.16] = 1
+		img[img<1] = 0
+		return(img)
+	})
+
+tbls_tr = lapply(1:5, function(x) table(c(tr_golds[[x]]), c(trained_tr[[x]])))
+lapply(tbls_tr, function(x) dice(x))
+```
+
 
 ## References {.smaller}
