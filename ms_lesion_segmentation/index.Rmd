@@ -94,7 +94,7 @@ ortho2(ts_t1s$test01, les_mask)
 ## Vizualization
 - Here's the binary mask for test subject 01, using the default 0.16 threshold:
 
-```{r viz_01, echo=FALSE}
+```{r viz_02, echo=FALSE}
 les_mask[les_mask<.16] = 0
 les_mask[les_mask!=0] = 1
 ortho2(ts_t1s$test01, les_mask, col.y="orange")
@@ -184,7 +184,7 @@ model = do.call("oasis_training", oasis_dfs)
 - We see the covariates used and assosicated coefficients when we print the model:
 
 ```{r oasis_model_show2}
-print(model)
+print(ms.lesion::ms_model)
 ```
 
 ## Trained OASIS Model Results
