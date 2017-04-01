@@ -72,11 +72,13 @@ https://github.com/muschellij2/rneuro/blob/master/ms_rstudio_droplet.sh
 
 ## Installing R: Local
 
-If you want to install 
+If you want to install things locally:
 
 * You can install the latest R from [http://cran.r-project.org/](http://cran.r-project.org/)
 
 * [Install RStudio](https://www.rstudio.com/products/rstudio/download/)
+
+* Directions for a local setup is http://johnmuschelli.com/imaging_in_r/installing_everything_locally/
 
 
 # Introduction to R
