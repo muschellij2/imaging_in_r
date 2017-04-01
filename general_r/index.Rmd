@@ -139,7 +139,6 @@ max(t1)
 
 Note, although `t1_copy` was copied from `t1`, they are not linked - if you change values in `t1_copy`, values in `t1` are unchanged.
 
-
 ## Writing Images out
 
 We now can write out this modified `t1_copy` image:
@@ -147,6 +146,34 @@ We now can write out this modified `t1_copy` image:
 writenii(nim = t1_copy, 
          filename = "training01_mprage_under400.nii.gz")
 file.exists("training01_mprage_under400.nii.gz")
+```
+
+
+## Vectorizing a `nifti`
+
+To convert a `nifti` to a `vector`, you can simply use the `c()` function:
+
+```{r vec_nifti, cache=FALSE}
+vals = c(t1)
+class(vals)
+```
+
+Note an `array` can be reconstructed by using `array(vals, dim = dim(t1))` and will be in the correct order as the way R creates vectors and arrays.  
+
+## Histogram
+
+From these values we can do all the standard plotting/manipulations of data.  For example, let's do a marginal density of the values:
+
+```{r dens}
+plot(density(vals))
+```
+
+## Histogram
+
+You can also pass in a mask to most standard functions:
+
+```{r dens_with_mask}
+plot(density(t1, mask = t1 > 0))
 ```
 
 ## File helpers

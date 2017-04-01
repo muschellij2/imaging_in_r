@@ -14,20 +14,16 @@ library(extrantsr)
 all_files = get_image_filenames_list_by_subject(
   group = "training", 
   type = "coregistered")
-files = all_files$training05
+files = all_files$training05 # NOT training subject 1!
 t1 = readnii(files["MPRAGE"])
 mask = readnii(files["Brain_Mask"])
-# t1s = lapply(files, function(x) readnii(x["MPRAGE"]))
-# t1 = t1s[[5]]
-# masks = lapply(files, function(x) readnii(x["Brain_Mask"]))
-# mask = masks[[5]]
 
 ## ----window, echo = FALSE------------------------------------------------
 # t1 = robust_window(t1, probs = c(0, 0.9999))
 # t1 = window_img(t1, window = c(0, 300))
 
 ## ----hist_vals-----------------------------------------------------------
-hist(t1, mask = mask, breaks = 2000)
+hist(t1, mask = mask, breaks = 2000); text(x = 800, y = 3000, "outliers!")
 
 ## ----which_big-----------------------------------------------------------
 ortho2(t1, t1 > 400, xyz = xyz(t1 > 400))

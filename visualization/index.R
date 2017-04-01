@@ -36,12 +36,26 @@ t1
 library(ms.lesion)
 files = get_image_filenames_list_by_subject()
 length(files); names(files); 
-head(files$training01)
+
+## ---- eval = FALSE-------------------------------------------------------
+## head(files$training01)
+
+## ---- echo = FALSE-------------------------------------------------------
+f = files$training01
+f = strsplit(f, "/")
+f = sapply(f, function(x){
+  ind = which(x == "library")
+  x = x[ind:length(x)]
+  x = paste(x, collapse = "/")
+})
+head(f)
+rm(list = "f")
 
 ## ------------------------------------------------------------------------
 files = files$training01
 t1_fname = files["MPRAGE"]
 t1 = readnii(t1_fname)
+t1
 
 ## ----ortho---------------------------------------------------------------
 oro.nifti::orthographic(t1)
@@ -64,11 +78,14 @@ ortho2(t1, zlim = quantile(t1, probs = c(0, 0.999)))
 ## ----robust, echo = TRUE-------------------------------------------------
 rt1 = robust_window(t1)
 
+## ----qmask---------------------------------------------------------------
+qmask = t1 > quantile(t1, 0.9)
+
 ## ----ortho_nona----------------------------------------------------------
-orthographic(rt1, y = t1 > quantile(t1, 0.9))
+orthographic(rt1, y = qmask)
 
 ## ----ortho2_nona---------------------------------------------------------
-ortho2(rt1, y = t1 > quantile(t1, 0.9))
+ortho2(rt1, y = qmask)
 
 ## ----mask----------------------------------------------------------------
 mask = extrantsr::oMask(t1)
@@ -95,10 +112,10 @@ oro.nifti::slice(t1, z = c(60, 80))
 image(t1, z = 125, plot.type = "single", plane = "sagittal")
 
 ## ----one_slice_overlay---------------------------------------------------
-overlay(t1, y = t1 > quantile(t1, 0.9), z = 80, plot.type = "single")
+overlay(t1, y = qmask, z = 80, plot.type = "single")
 
 ## ----one_slice_overlay_right---------------------------------------------
-overlay(t1, y = t1 > quantile(t1, 0.9), z = 80, plot.type = "single", NA.y = TRUE)
+overlay(t1, y = qmask, z = 80, plot.type = "single", NA.y = TRUE)
 
 ## ----dd, cache=FALSE-----------------------------------------------------
 reduced = dropEmptyImageDimensions(t1)
@@ -107,14 +124,4 @@ dim(reduced)
 
 ## ----plot_red------------------------------------------------------------
 ortho2(reduced)
-
-## ----vec, cache=FALSE----------------------------------------------------
-vals = c(t1)
-class(vals)
-
-## ----dens----------------------------------------------------------------
-plot(density(vals))
-
-## ----dens_with_mask------------------------------------------------------
-plot(density(t1, mask = t1 > 0))
 

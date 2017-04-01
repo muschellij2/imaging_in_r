@@ -1,6 +1,5 @@
 ---
 title: "Tissue-Class Segmentation"
-author: "Kristin Linn"
 output:
   ioslides_presentation:
     widescreen: yes
@@ -38,13 +37,9 @@ library(extrantsr)
 all_files = get_image_filenames_list_by_subject(
   group = "training", 
   type = "coregistered")
-files = all_files$training05
+files = all_files$training05 # NOT training subject 1!
 t1 = readnii(files["MPRAGE"])
 mask = readnii(files["Brain_Mask"])
-# t1s = lapply(files, function(x) readnii(x["MPRAGE"]))
-# t1 = t1s[[5]]
-# masks = lapply(files, function(x) readnii(x["Brain_Mask"]))
-# mask = masks[[5]]
 ```
 
 ```{r window, echo = FALSE}
@@ -57,18 +52,19 @@ mask = readnii(files["Brain_Mask"])
 - These methods can be skewed by large outliers.
 
 ```{r hist_vals}
-hist(t1, mask = mask, breaks = 2000)
+hist(t1, mask = mask, breaks = 2000); text(x = 800, y = 3000, "outliers!")
 ```
 
 ## Where are the outliers
 
-We see some values that may have been improperly segmentated: 
+We see some values that may have be improperly segmented: 
 
 ```{r which_big}
 ortho2(t1, t1 > 400, xyz = xyz(t1 > 400))
 ```
 
 ## Tissue Segmentation using FSL FAST
+
 - FAST is based on a hidden Markov random field model and an Expectation-Maximization algorithm.
 - It jointly produces a bias field corrected image and a probabilistic tissue segmentation.
 - More robust to noise and outliers than finite mixture model-based methods that do not incorporate spatial information.
@@ -171,13 +167,14 @@ ortho2(t1, robust_fast == 1, col.y = alpha("red", 0.5), text = "CSF")
 
 ## FAST Results
 
-- overall the results look good
-  - not much difference after dampening outliers using `robust_window`
+- Overall the results look good
+    - Not much difference after dampening outliers using `robust_window`
 - FAST is robust to noise
 
 ## Tissue Segmentation using ANTsR, extrantsr
 
-- Uses Atropos [@avants2011open]
+- Uses Atropos [@avants2011open] 
+    - 3D K-means clustering + a Markov random field
 
 ```{r otropos_show, eval = FALSE}
 t1_otropos = otropos(a = t1, x = mask) # using original data
@@ -215,6 +212,13 @@ ortho2(t1, t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 ```
 
 
+## Default Atropos Results
+
+- Overall the results do not look good
+    - We will use `robust_window`
+- The k-means clustering is affected by large outliers
+
+
 ## Tissue Segmentation using ANTsR, extrantsr
 
 
@@ -246,6 +250,13 @@ ortho2(t1, robust_t1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 ```{r otropos_csf_robust}
 ortho2(t1, robust_t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 ```
+
+## Robust Atropos Results
+
+- Overall the results look like they reasonably separate the classes
+    - No ground truth
+    - Better than running Atropos on the raw data
+- The k-means clustering can be aided by Winsorizing these large outliers
 
 
 ### Estimating the Volume of Each Class
