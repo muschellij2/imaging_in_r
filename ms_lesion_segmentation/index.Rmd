@@ -13,20 +13,10 @@ library(methods)
 knitr::opts_chunk$set(echo = TRUE, comment = "", cache=TRUE)
 ```
 
-## Background
-- Multiple sclerosis is a chronic disease of the central nervous system (brain, spinal chord, optic nerves)
-- Symptoms can include blurred vision, loss of balance, poor coordination, slurred speech, tremors, numbness, extreme fatigue, problems with memory and concentration, paralysis, and blindness.
-- Affects more than 2.3 million worldwide.
-- Affects more women than men (approximately 2:1)
-
-
-## Background
-- Multiple sclerosis lesions in the brain are areas of active inflamation, demylenation, or permanent tissue damage. 
-- MRI is well-suited for assessing lesion burden (volume and patterns) because lesions appear as hyperintensities on FLAIR, T2-w, and PD images and as hypointensities on T1-w images.
-- Obtaining manual lesion segmentations is often resource intensive, so accurate and efficient methods for automatic segmentation are necessary for scalability and research progress.
-
 
 ## Goals of this tutorial
+
+- Obtaining manual lesion segmentations is often resource intensive, so accurate and efficient methods for automatic segmentation are necessary for scalability and research progress.
 - Apply OASIS [@sweeney2013oasis], an automatic lesion segmentation model, to obtain predicted lesion probability maps.
 - Compare the results using the default OASIS settings to those obtained after re-training the model using our data.
 

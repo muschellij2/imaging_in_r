@@ -10,7 +10,7 @@ bibliography: ../refs.bib
 
 ```{r setup, include=FALSE, message = FALSE}
 library(methods)
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, comment = "")
 library(ggplot2)
 library(ms.lesion)
 library(neurobase)
@@ -135,11 +135,22 @@ t1 = neurobase::readnii("training01_01_mprage.nii.gz")
 ```
 
 
+
+## Multiple Sclerosis
+
+- Multiple sclerosis is a chronic disease of the central nervous system (brain, spinal chord, optic nerves)
+- Symptoms can include blurred vision, loss of balance, poor coordination, slurred speech, tremors, numbness, extreme fatigue, problems with memory and concentration, paralysis, and blindness.
+- Multiple sclerosis lesions in the brain are areas of active inflammation, demylenation, or permanent tissue damage. 
+    - lesions are primarily in the white matter
+- MRI is well-suited for assessing lesion burden (volume and patterns) because lesions appear as hyperintensities on FLAIR, T2-w, and PD images and as hypointensities on T1-w images.
+
 ## `ms.lesion` Package
 
 The `ms.lesion` package was made for this course.  It has all the data we will work with and the outputs from the analyses.  
 
 The main function we will use is `get_image_filenames_list_by_subject`.  It returns a `list` of filenames of the images for the 5 training and 3 test subjects from the MS lesion challenge 2016 (http://iacl.ece.jhu.edu/index.php/MSChallenge)
+
+- The full data is available at https://smart-stats-tools.org. 
 
 ## `ms.lesion` Package
 
@@ -195,8 +206,7 @@ Large intensities can "dampen" the viewing of an image.
 ortho2(t1)
 ```
 
-
-## Bright values 
+--- 
 
 We see a faint outline of the image, but this single large value affects how we view the image.  The function `robust_window` calculates quantiles of an image, by default the 0 (min) and 99.9th quantile, and sets values outside of this range to that quantile.  
 
