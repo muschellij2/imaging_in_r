@@ -39,32 +39,30 @@ plot_boxplots = function(vals,
   boxplot(boxplots, main = main)
 }
 
-## ----t1viz, warning=FALSE, message=FALSE---------------------------------
-plot_densities(dens)
+## ----t1viz, warning=FALSE, message=FALSE, echo = FALSE-------------------
+plot_densities(dens, main = "Distribution of all Voxels in Brain Mask")
 
-## ----t1viz1, warning=FALSE, message=FALSE, echo = FALSE------------------
+## ----threeway, warning=FALSE, message=FALSE, echo = FALSE, fig.height = 4, fig.width = 10----
 csf_vals = mapply(function(t1, mask){
   mask_vals(t1, mask == 1)
 }, t1s, tissues, SIMPLIFY = FALSE)
 csf_dens = lapply(csf_vals, density)
-plot_densities(csf_dens, main = "CSF")
 
-## ----t1viz2, warning=FALSE, message=FALSE, echo = FALSE------------------
-gm_vals = mapply(function(t1, mask){
-  mask_vals(t1, mask == 2)
-}, t1s, tissues, SIMPLIFY = FALSE)
-gm_dens = lapply(gm_vals, density)
-plot_densities(gm_dens, main = "Gray Matter")
-
-## ----t1viz3, warning=FALSE, message=FALSE, echo = FALSE------------------
 wm_vals = mapply(function(t1, mask){
   mask_vals(t1, mask == 3)
 }, t1s, tissues, SIMPLIFY = FALSE)
 wm_dens = lapply(wm_vals, density)
-plot_densities(wm_dens, main = "White Matter")
 
-## ----wm_raw_box, echo = FALSE--------------------------------------------
-plot_boxplots(wm_vals, main = "White Matter")
+gm_vals = mapply(function(t1, mask){
+  mask_vals(t1, mask == 2)
+}, t1s, tissues, SIMPLIFY = FALSE)
+gm_dens = lapply(gm_vals, density)
+
+par(mfrow = c(1, 3))
+plot_densities(csf_dens, main = "CSF")
+plot_densities(gm_dens, main = "Gray Matter")
+plot_densities(wm_dens, main = "White Matter")
+par(mfrow = c(1, 1))
 
 ## ----wbViz, echo=FALSE, warning=FALSE, message=FALSE---------------------
 t1_norm = mapply(function(img, mask){
@@ -123,10 +121,8 @@ plot_densities(wm_norm_dens,
                main = "White Matter After")
 
 ## ----ws_show, eval=FALSE, warning = FALSE, message = FALSE, results='hide'----
-## ind = whitestripe(img = t1, type = "T1",
-## 	stripped = TRUE)$whitestripe.ind
+## ind = whitestripe(img = t1, type = "T1", stripped = TRUE)$whitestripe.ind
 ## ws_t1 = whitestripe_norm(t1, indices = ind)
-## }
 
 ## ----ws, echo=FALSE, warning = FALSE, message = FALSE, results='hide'----
 ws_norm = function(t1) {
