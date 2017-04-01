@@ -1,6 +1,6 @@
 ## ----setup, include=FALSE, message = FALSE-------------------------------
 library(methods)
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, comment = "")
 library(ggplot2)
 library(ms.lesion)
 library(neurobase)
