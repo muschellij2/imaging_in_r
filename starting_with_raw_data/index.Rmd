@@ -1,6 +1,5 @@
 ---
 title: "Starting with Raw Data"
-author: "John Muschelli"
 output:
   ioslides_presentation:
     widescreen: yes

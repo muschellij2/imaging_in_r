@@ -1,7 +1,5 @@
 ---
-title: "Registration of Images"
-author: "John Muschelli"
-date: "`r Sys.Date()`"
+title: "Image Registration"
 output:
   ioslides_presentation:
     widescreen: yes
@@ -88,8 +86,8 @@ Image taken from [http://cnl.web.arizona.edu/imageprops.htm](http://cnl.web.ariz
 The `registration` function from `extrantsr` can register 2 images.  The main arguments are:
 
 - `filename` - either `nifti` object or filename of image to be registered (moving)
-- `template.file` - either `nifti` object or filename of target image 
-- `typeofTransform` - transformation of moving to fixed image (Rigid/Affine)
+- `template.file` - either `nifti` object or filename of target image (fixed)
+- `typeofTransform` - transformation of moving to fixed image (Rigid/Affine/SyN)
 - `interpolator` - how are voxels averaged in `fixed` space
 
 It can also perform bias correction if `correct = TRUE`.
@@ -100,8 +98,10 @@ For example, if we wanted to register the FLAIR to the T1 image, we would run:
 
 ```{r eval = FALSE}
 library(extrantsr)
-reg = registration(filename = files["FLAIR"], template.file = files["MPRAGE"],
-                   typeofTransform = "Rigid", interpolator = "linear")
+reg = registration(filename = files["FLAIR"], 
+                   template.file = files["MPRAGE"],
+                   typeofTransform = "Rigid", 
+                   interpolator = "linear")
 ```
 
 The output in `reg` would contain the transformed image and paths to the estimated transformations.  
@@ -114,8 +114,9 @@ The output in `reg` would contain the transformed image and paths to the estimat
 
 ## Within-visit co-registration framework
 
-First, we will register scans within a visit to the T1 of that visit:
 <img src="Reg_Figure_Option1_short_within.png" style="width: 100%; display: block; margin: auto;">
+
+We will register scans within a visit to the T1 of that visit.
 
 
 ## Wrapper function to perform preprocessing
@@ -123,19 +124,20 @@ We would like to perform registration within a visit.  The `extrantsr` function 
 
 1.  Inhomogeneity correction (N3 or N4)
 2.  Registration of the files to the first filename (T1)
-3.  Skull_stripping (if desired, we will perform this after)
+3.  Skull_stripping using BET if desired
+    - W will apply our MALF masks later
 
 
-## Registration within a Visit
+## Registration within a visit
 
-The function `within_visit_registration` takes in:
+The function `within_visit_registration` arguments take in:
 
 - `fixed` image - the image to be registered to
 - `moving` images - images to register to the `fixed`
 - `typeofTransform` - transformation of moving to fixed image (Rigid/Affine)
 - `interpolator` - how are voxels averaged in `fixed` space
 
-and outputs a list of transformations and output filenames
+and outputs a list of transformations (`fwdtransforms`) and output filenames (`outfile`)
 
 
 ## Register to the T1 image
@@ -181,7 +183,7 @@ out = lapply(out, window_img, window = c(-4, 4))
 
 ## Checking Registration
 
-```{r multi_overlay}
+```{r multi_overlay, echo = FALSE}
 multi_overlay(out)
 ```
 
@@ -197,19 +199,24 @@ double_ortho(robust_window(xout$MPRAGE), robust_window(xout$T2 ))
 ```
 
 
-
-
 ## Coregistration within a visit results
 
 - Overall, there seems to be good overlap after registration 
 - Although we ran the registration on the raw data, it is usually beneficial to do inhomogeneity correction before registration.
+    - just set `correct = TRUE` or pass in the bias-corrected images
 
 
 
 ## Applying a Brain mask to all registered images
-Now that the images are in the same space as the T1, if we skull-strip the T1 image, we can apply this mask to those images to extract brain tissues.
+Now that the images are in the same space as the T1, if we skull-strip the T1 image (we did with MALF), we can apply this mask to those images to extract brain tissues using the `mask_img` command:
 
-```{r bet_t1}
+```{r bet_t1_show, echo = TRUE, eval = FALSE}
+mask = readnii("../output/training01_01_mprage_mask.nii.gz")
+masked_imgs = lapply(out, mask_img, sub_mask)
+```
+
+
+```{r bet_t1, echo = FALSE}
 mask = readnii("../output/training01_01_mprage_mask.nii.gz")
 sub_mask = applyEmptyImageDimensions(mask, inds = dd$inds)
 masked_imgs = lapply(xout, mask_img, sub_mask)
@@ -218,7 +225,7 @@ masked_imgs = lapply(xout, mask_img, sub_mask)
 ## Result 
 
 ```{r mimgs_2}
-orthographic(masked_imgs[[2]])
+orthographic(masked_imgs$FLAIR)
 ```
 
 ## Overview of Functions

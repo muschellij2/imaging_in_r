@@ -1,6 +1,6 @@
 ## ----setup, include=FALSE, message = FALSE-------------------------------
 library(methods)
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, comment = "")
 library(methods)
 library(ggplot2)
 library(ms.lesion)
@@ -14,9 +14,6 @@ library(neurobase)
 files = get_image_filenames_list_by_subject()$training01
 t1_fname = files["MPRAGE"]
 t1 = readnii(t1_fname)
-
-## ------------------------------------------------------------------------
-ortho2(t1)
 
 ## ------------------------------------------------------------------------
 ortho2(robust_window(t1))
@@ -33,11 +30,12 @@ ratio = t1 / bc_t1; ortho2(t1, ratio)
 
 ## ----making_scales-------------------------------------------------------
 library(scales)
-q = quantile(ratio[ ratio != 0], probs = seq(0, 1, by = 0.1), na.rm = TRUE)
+q = quantile(ratio[ (ratio < 0.999 | ratio > 1.0001) & ratio != 0 ], probs = seq(0, 1, by = 0.1), na.rm = TRUE)
 q = unique(q)
 # get a diverging gradient palette
-fcol = scales::div_gradient_pal(low = "blue", mid = "orange", high = "red") 
-colors =  scales::alpha(fcol(seq(0,1, length = length(q) - 1)), 0.5)
+# fcol = scales::div_gradient_pal(low = "blue", mid = "orange", high = "red") 
+fcol = scales::brewer_pal(type = "div", palette = "Spectral")(10)
+colors =  scales::alpha(gradient_n_pal(fcol)(seq(0,1, length = length(q) - 1)), 0.5)
 
 ## ----better_ratio_plot---------------------------------------------------
 ortho2(t1, ratio, col.y = colors, ybreaks = q, ycolorbar = TRUE)

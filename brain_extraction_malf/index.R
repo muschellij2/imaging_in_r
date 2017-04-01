@@ -8,16 +8,8 @@ library(neurobase)
 files = get_image_filenames_list_by_subject()$training01
 t1_fname = files["MPRAGE"]
 t1 = readnii(t1_fname)
+rt1 = robust_window(t1);
 red0.5 = scales::alpha("red", 0.5)
-
-## ----t1_plot-------------------------------------------------------------
-ortho2(t1)
-
-## ----t1_plot_hist--------------------------------------------------------
-hist(t1[ t1 > 0], breaks = 200)
-
-## ----t1_robust-----------------------------------------------------------
-rt1 = robust_window(t1); hist(rt1[ rt1 > 0], breaks = 200)
 
 ## ----t1_plot_robust------------------------------------------------------
 ortho2(rt1)
