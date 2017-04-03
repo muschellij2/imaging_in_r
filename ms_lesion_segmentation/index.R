@@ -15,7 +15,8 @@ tr_t2s = lapply(tr_files, function(x) readnii(x["T2"]))
 tr_flairs = lapply(tr_files, function(x) readnii(x["FLAIR"]))
 tr_pds = lapply(tr_files, function(x) readnii(x["PD"]))
 tr_masks = lapply(tr_files, function(x) readnii(x["Brain_Mask"]))
-tr_golds = lapply(tr_files, function(x) readnii(x["mask2"]))
+tr_golds1 = lapply(tr_files, function(x) readnii(x["mask1"]))
+tr_golds2 = lapply(tr_files, function(x) readnii(x["mask2"]))
 ts_t1s = lapply(ts_files, function(x) readnii(x["MPRAGE"]))
 ts_t2s = lapply(ts_files, function(x) readnii(x["T2"]))
 ts_flairs = lapply(ts_files, function(x) readnii(x["FLAIR"]))
@@ -23,10 +24,11 @@ ts_pds = lapply(ts_files, function(x) readnii(x["PD"]))
 ts_masks = lapply(ts_files, function(x) readnii(x["Brain_Mask"]))
 
 ## ----over_show_run, echo=FALSE-------------------------------------------
-les_mask = tr_golds$training05
+les_mask = tr_golds2$training05
 ortho2(tr_t1s$training05, les_mask, col.y = "orange")
 
 ## ----default_predict_ts_show, eval=FALSE---------------------------------
+## library(oasis)
 ## default_predict_ts = function(x){
 ##   res = oasis_predict(
 ##       flair=ts_flairs[[x]], t1=ts_t1s[[x]],
@@ -44,6 +46,7 @@ default_ts = lapply(ts_files,
 
 ## ----viz_01, echo=FALSE--------------------------------------------------
 les_mask = default_ts[[1]]
+les_mask[les_mask<.05] = 0
 ortho2(ts_t1s$test01, les_mask)
 
 ## ----viz_02, echo=FALSE--------------------------------------------------
@@ -80,14 +83,16 @@ ortho2(tr_t1s$training05, les_mask, col.y = "orange")
 ## dice = function(x){
 ## 	return((2*x[2,2])/(2*x[2,2] + x[1,2] + x[2,1]))
 ## }
-## tbls_df = lapply(1:5, function(x) table(c(tr_golds[[x]]), c(default_tr[[x]])))
-## lapply(tbls_df, function(x) dice(x))
+## tbls_df1 = lapply(1:5, function(x) table(c(tr_golds1[[x]]), c(default_tr[[x]])))
+## tbls_df2 = lapply(1:5, function(x) table(c(tr_golds2[[x]]), c(default_tr[[x]])))
+## 
+## lapply(mapply(function(x, y){c(dice(x), dice(y))}, tbls_df1, tbls_df2, SIMPLIFY=FALSE), mean)
 
 ## ----oasis_df_show, eval=FALSE-------------------------------------------
 ## make_df = function(x){
 ##   res = oasis_train_dataframe(
 ##       flair=tr_flairs[[x]], t1=tr_t1s[[x]], t2=tr_t2s[[x]],
-##       pd=tr_pds[[x]], gold_standard=tr_golds[[x]],
+##       pd=tr_pds[[x]], gold_standard=tr_golds2[[x]],
 ##       brain_mask=tr_masks[[x]],
 ##       preproc=FALSE, normalize=TRUE, return_preproc=FALSE)
 ##   return(res$oasis_dataframe)
@@ -109,6 +114,9 @@ print(ms.lesion::ms_model)
 ## 		return(img)
 ## 	})
 ## 
-## tbls_tr = lapply(1:5, function(x) table(c(tr_golds[[x]]), c(trained_tr[[x]])))
-## lapply(tbls_tr, function(x) dice(x))
+## tbls_tr1 = lapply(1:5, function(x) table(c(tr_golds1[[x]]), c(trained_tr[[x]])))
+## tbls_tr2 = lapply(1:5, function(x) table(c(tr_golds2[[x]]), c(trained_tr[[x]])))
+## 
+## lapply(mapply(function(x, y){c(dice(x), dice(y))}, tbls_tr1, tbls_tr2, SIMPLIFY=FALSE), mean)
+## 
 

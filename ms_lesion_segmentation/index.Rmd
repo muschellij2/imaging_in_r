@@ -14,9 +14,12 @@ knitr::opts_chunk$set(echo = TRUE, comment = "", cache=TRUE)
 ```
 
 
-## Goals of this tutorial
+## Background
 
 - Obtaining manual lesion segmentations is often resource intensive, so accurate and efficient methods for automatic segmentation are necessary for scalability and research progress.
+
+## Goals of this tutorial
+
 - Apply OASIS [@sweeney2013oasis], an automatic lesion segmentation model, to obtain predicted lesion probability maps.
 - Compare the results using the default OASIS settings to those obtained after re-training the model using our data.
 
@@ -44,23 +47,24 @@ ts_masks = lapply(ts_files, function(x) readnii(x["Brain_Mask"]))
 ```
 
 ## Visualization
-- Here's the T1 volume for training subject 05 with the ‘gold standard’ manual lesion segmentation overlayed.
+- Here's the T1 volume for training subject 05 with a ‘gold standard’ manual lesion segmentation overlayed.
 
 ```{r over_show_run, echo=FALSE}
-les_mask = tr_golds$training05
+les_mask = tr_golds2$training05
 ortho2(tr_t1s$training05, les_mask, col.y = "orange")
 ```
 
 ## MS Lesion Segmentation with OASIS
 - OASIS is Automated Statistical Inference for Segmentation [@sweeney2013oasis]
 - The OASIS algorithm takes FLAIR, T1, T2, and PD images from patients with multiple sclerosis (MS) and produces OASIS probability maps of MS lesion presence, which can be thresholded into a binary lesion segmentation.
-- OASIS uses logistic regression of the labels on the images, smoothed versions of the images, and some interaction terms
+- OASIS is based on a logistic regression of the gold standard labels on the images, smoothed versions of the images, and some interaction terms.
 
 ## Default OASIS Model
-- The OASIS library comes with default parameters that can be used to generate probability maps for new test subjects
+- The OASIS library comes with default parameters that can be used to generate probability maps for new test subjects.
 - Here we apply the function `oasis_predict` with the default model to obtain OASIS probability maps for the test subjects.
 
 ```{r default_predict_ts_show, eval=FALSE}
+library(oasis)
 default_predict_ts = function(x){
   res = oasis_predict(
       flair=ts_flairs[[x]], t1=ts_t1s[[x]], 
@@ -83,6 +87,7 @@ default_ts = lapply(ts_files,
 
 ```{r viz_01, echo=FALSE}
 les_mask = default_ts[[1]]
+les_mask[les_mask<.05] = 0
 ortho2(ts_t1s$test01, les_mask)
 ```
 
@@ -151,14 +156,15 @@ lapply(mapply(function(x, y){c(dice(x), dice(y))}, tbls_df1, tbls_df2, SIMPLIFY=
 ```
 
 ## Improving Results
-- The default model is picking up a lot of false positives in the lower brain and spinal chord (check this)
+- The default model is picking up a lot of false positives in the spinal chord. 
 - We might improve the results by re-training the OASIS model using our five training subjects.
 - To retrain the model using new data, binary masks of gold standard lesion segmentations are needed and should be in T1 space.
 
 
 ## Making OASIS data frames
 - OASIS requires a particular data frame format
-- Includes an option to preprocess your data (`preproc`)
+- Includes an option to preprocess your data (`preproc`), which does (1) inhomogeneity correction using `fsl_biascorrect`
+and (2) rigid coregistration using `flirt` to the T1 space.
 - Includes an option to normalize the intensities of your data using whole-brain normalization (`normalize`)
 - `make_df()` below is a helper function
 
@@ -166,7 +172,7 @@ lapply(mapply(function(x, y){c(dice(x), dice(y))}, tbls_df1, tbls_df2, SIMPLIFY=
 make_df = function(x){
   res = oasis_train_dataframe(
       flair=tr_flairs[[x]], t1=tr_t1s[[x]], t2=tr_t2s[[x]],
-      pd=tr_pds[[x]], gold_standard=tr_golds[[x]], 
+      pd=tr_pds[[x]], gold_standard=tr_golds2[[x]], 
       brain_mask=tr_masks[[x]], 
       preproc=FALSE, normalize=TRUE, return_preproc=FALSE)
   return(res$oasis_dataframe)
