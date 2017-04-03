@@ -6,9 +6,9 @@ LIST += brain_extraction_malf
 LIST += segmentation
 LIST += coregistration
 LIST += intensity_normalization
-# LIST += ms_lesion_segmentation
 LIST += starting_with_raw_data
 LIST += installing_everything_locally
+LIST += ms_lesion_segmentation
 
 all:
 	for fol in $(LIST) ; do \
