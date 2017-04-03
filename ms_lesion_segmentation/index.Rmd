@@ -53,11 +53,8 @@ tr_golds = tr_golds1
 - Here's the T1 volume for training subject 05 with a ‘gold standard’ manual lesion segmentation overlayed.
 
 ```{r over_show_run, echo=FALSE}
-<<<<<<< HEAD
 les_mask = tr_golds2$training05
-ortho2(tr_t1s$training05, les_mask, col.y = "orange")
-=======
-les_mask = tr_golds$training05
+
 # john code for choosing z-slice with highest # of voxels
 w = which(les_mask > 0, arr.ind = TRUE)
 w = as.data.frame(w, stringsAsFactors = FALSE)
@@ -69,7 +66,6 @@ keep_dim = keep_dim$dim3
 w = w[ w$dim3 %in% keep_dim, ]
 xyz = floor(colMeans(w))
 ortho2(tr_t1s$training05, les_mask, xyz = xyz, col.y = "orange")
->>>>>>> fbad9d8fb52da8aa535c6445e33c385801374b87
 ```
 
 ## MS Lesion Segmentation with OASIS
