@@ -27,6 +27,7 @@ library(neurobase)
 library(fslr)
 library(scales)
 library(oasis)
+library(dplyr)
 tr_files = get_image_filenames_list_by_subject(group = "training", type = "coregistered")
 ts_files = get_image_filenames_list_by_subject(group = "test", type = "coregistered")
 tr_t1s = lapply(tr_files, function(x) readnii(x["MPRAGE"]))
@@ -41,6 +42,8 @@ ts_t2s = lapply(ts_files, function(x) readnii(x["T2"]))
 ts_flairs = lapply(ts_files, function(x) readnii(x["FLAIR"]))
 ts_pds = lapply(ts_files, function(x) readnii(x["PD"]))
 ts_masks = lapply(ts_files, function(x) readnii(x["Brain_Mask"]))
+# John added for code to work
+tr_golds = tr_golds1
 ```
 
 ## Visualization
@@ -48,11 +51,21 @@ ts_masks = lapply(ts_files, function(x) readnii(x["Brain_Mask"]))
 
 ```{r over_show_run, echo=FALSE}
 les_mask = tr_golds$training05
-ortho2(tr_t1s$training05, les_mask, col.y = "orange")
+# john code for choosing z-slice with highest # of voxels
+w = which(les_mask > 0, arr.ind = TRUE)
+w = as.data.frame(w, stringsAsFactors = FALSE)
+keep_dim = w %>% group_by(dim3) %>% 
+  tally() %>% 
+  arrange(desc(n)) %>% 
+  ungroup %>% slice(1) 
+keep_dim = keep_dim$dim3
+w = w[ w$dim3 %in% keep_dim, ]
+xyz = floor(colMeans(w))
+ortho2(tr_t1s$training05, les_mask, xyz = xyz, col.y = "orange")
 ```
 
 ## MS Lesion Segmentation with OASIS
-- OASIS is Automated Statistical Inference for Segmentation [@sweeney2013oasis]
+- OASIS is Automated Statistical Inference for Segmentation [w@sweeney2013oasis]
 - The OASIS algorithm takes FLAIR, T1, T2, and PD images from patients with multiple sclerosis (MS) and produces OASIS probability maps of MS lesion presence, which can be thresholded into a binary lesion segmentation.
 - OASIS uses logistic regression of the labels on the images, smoothed versions of the images, and some interaction terms
 
@@ -65,7 +78,7 @@ default_predict_ts = function(x){
   res = oasis_predict(
       flair=ts_flairs[[x]], t1=ts_t1s[[x]], 
       t2=ts_t2s[[x]], pd=ts_pds[[x]], 
-      brain_mask=ts_masks[[x]], 
+      brain_mask = ts_masks[[x]], 
       preproc=FALSE, normalize=TRUE, 
       model=oasis::oasis_model)
   return(res)
