@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE, comment = "")
 
 ## Reading in the image
 
-Again we will read in the `training01_01_mprage.nii.gz` file, and assign it to an object called `t1`
+Again we will read in the `training01_01_mprage.nii.gz` file, and assign it to an object called `t1`:
 ```{r}
 library(neurobase)
 t1 = readnii("training01_01_mprage.nii.gz")

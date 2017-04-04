@@ -18,8 +18,8 @@ knitr::opts_chunk$set(echo = TRUE, comment = "")
 In this tutorial we will discuss performing brain segmentation using:
 
 - the brain extraction tool (BET) [@smith_fast_2002] in `FSL` [@jenkinson_fsl_2012]
-    - with and without bias correction
-- a multi-atlas approach, called "multi-atlas label fusion" with the `malf` command. 
+    - without bias correction (method 1) and with (method 2)
+- a multi-atlas approach, called "multi-atlas label fusion" with the `malf` command (method 3). 
 - (extra slides) a robust version using a wrapper function in `extrantsr`, `fslbet_robust`
 
 
@@ -36,7 +36,7 @@ rt1 = robust_window(t1);
 red0.5 = scales::alpha("red", 0.5)
 ```
 
-## Robust T1 image: high intensity values
+## T1-weighted MPRAGE Image
 
 ```{r t1_plot_robust}
 ortho2(rt1)
@@ -48,7 +48,7 @@ Here we will use FSL's Brain Extraction Tool (BET) to extract the brain tissue f
 
 - 2nd and 98th percentiles are calculated.  (98th - 2nd) * 10% + 2nd percentile used to threshold out background
 - From non-thresholded voxels - calculate center of gravity (COG)
-- Calculate radius of brain and median intensity of all points within "spherical brain"
+- Calculate radius of brain and median intensity of all points within "spherical brain" (used in last step)
 - Perform region growing and iterating to get brain surface
 - Smooth surface
 - Use median intensity to shrink surface to the "real" surface
@@ -56,9 +56,11 @@ Here we will use FSL's Brain Extraction Tool (BET) to extract the brain tissue f
 
 ## Attempt 1: Brain Extraction of T1 image using BET
 
-`fslr::fslbet` - takes in a filename/nifti
-
-  - additional options can be passed to FSL command in using `opts`
+`fslr` - wraps FSL commands to use in R
+    - registration, image manipulation
+    
+`fslr::fslbet` - takes in a filename/nifti and calls FSL `bet` function
+    - additional options can be passed to FSL command in using `opts`
 
 ```{r t1_naive_ss, cache = FALSE, message = FALSE, warning = FALSE}
 library(fslr)
@@ -67,7 +69,7 @@ ss = fslbet(infile = t1_fname)
 
 ## FSL BET Results - Missing Brain Tissues (Posterior)
 
-```{r t1_naive_plot_ss}
+```{r t1_naive_plot_ss, echo = FALSE}
 ortho2(robust_window(ss))
 ```
 
@@ -107,16 +109,31 @@ Figure from Multi-Atlas Skull Stripping method paper [@mass]:
 
 ## Attempt 3: Brain Extraction of T1 image using MALF
 
+<div class="columns-2">
+Figure from Multi-Atlas Skull Stripping method paper [@mass]:
+
+<img src="malf_figure.jpg" style="width: 40%; display: block; margin: auto;">
+
+- Register templates to an image using the T1 for that subject
+- Apply transformation to the label/mask
+- Average each voxel over all templates
+    - there are "smarter" (e.g. weighted) ways
+- `malf.templates` package has templates provided by Neuromorphometrics, Inc. (http://Neuromorphometrics.com/) form MICCAI 2012 Challenge on Multi-atlas Labelling [@bennett2012miccai]
+    - hand segmentations of the brain and brain structures
+
+</div>
+
+
+## Attempt 3: Brain Extraction of T1 image using MALF
+
 Multi-Atlas Fusion:
 
 - Register templates to an image using the T1 for that subject
 - Apply transformation to the label/mask
 - Average each voxel over all templates
-  - there are "smarter" (e.g. weighted) ways
-  
+    - there are "smarter" (e.g. weighted) ways
 - `malf.templates` package has templates provided by Neuromorphometrics, Inc. (http://Neuromorphometrics.com/) form MICCAI 2012 Challenge on Multi-atlas Labelling [@bennett2012miccai]
-
-  - hand segmentations of the brain and brain structures
+    - hand segmentations of the brain and brain structures
 
 
 ## MALF - use `extrantsr::malf`
@@ -166,7 +183,7 @@ ortho2(bc_img, ss > 0, col.y = red0.5)
 
 ## Processed Results Available in `ms.lesion`
 
-In the `ms.lesion` package, we have the brain masks for each subject located in the `coregistered` folder.  You can access this data using the `type = "coregistered"`
+In the `ms.lesion` package, we have the brain masks for each subject located in the `coregistered` folder.  You can access this data using the `type = "coregistered"`:
 
 ```{r, echo = TRUE, eval = FALSE}
 files = get_image_filenames_list_by_subject(
@@ -188,14 +205,14 @@ print(dd)
 ## Conclusions from the MS data
 
 - FSL BET can perform brain extraction (additional ex shows when it works)
-  - it did not work sufficiently here
-  - there are options you can change for performance
+    - It did not work sufficiently here
+    - There are options you can change for performance
 - Bias-correction before brain extraction is a good idea
-    - especially if the method depends on intensities
+    - Especially if the method depends on intensities
 - MALF/MASS is a good option, but needs templates and is computationally expensive
     - weighted templates or local weighting is done in other software (not discussed)
     
-
+# Extra Slides are showing additional BET options
 
 ## Additional Example
 
@@ -278,11 +295,11 @@ ortho2(dropEmptyImageDimensions(ss))
 ## Conclusions 
 
 - Brain extraction allows you to analyze the brain only
-  - Important for tissue segmentation/registration
+    - Important for tissue segmentation/registration
 - BET may work (look at your data!)
-  - Should bias correct first 
-  - May need to remove neck
-  - High values may affect results - may need to remove/Winsorize them
+    - Should bias correct first 
+    - May need to remove neck
+    - High values may affect results - may need to remove/Winsorize them
 
 
 
