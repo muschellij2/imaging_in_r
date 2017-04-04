@@ -36,11 +36,11 @@ mat = rbind(
   )
 mat = data.frame(mat, stringsAsFactors = FALSE)
 colnames(mat) = c("link", "title")
-mat$link = paste0("http://johnmuschelli.com/imaging_in_r/", mat$link, "/")
-mat$slides = paste0("[Slides](", paste0(mat$link, "index.html"), ")")
-mat$pdf_slides = paste0("[PDF Slides](", paste0(mat$link, "index.pdf"), ")")
-mat$rcode = paste0("[R Code](", paste0(mat$link, "index.R"), ")")
-mat$source = paste0("[Source](", paste0(mat$link, "index.Rmd"), ")")
+# mat$link = paste0("http://johnmuschelli.com/imaging_in_r/", mat$link)
+mat$slides = paste0("[Slides](", paste0(mat$link, "/index.html"), ")")
+mat$pdf_slides = paste0("[PDF Slides](", paste0(mat$link, "/index.pdf"), ")")
+mat$rcode = paste0("[R Code](", paste0(mat$link, "/index.R"), ")")
+mat$source = paste0("[Source](", paste0(mat$link, "/index.Rmd"), ")")
 # mat = mat[, c("title", "slides", "rcode", "source")]
 # mat$links = paste(mat$slides, mat$rcode, mat$source)
 # mat$x = ""
