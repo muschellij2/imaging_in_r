@@ -18,7 +18,7 @@ ortho2(rt1)
 library(fslr)
 ss = fslbet(infile = t1_fname)
 
-## ----t1_naive_plot_ss----------------------------------------------------
+## ----t1_naive_plot_ss, echo = FALSE--------------------------------------
 ortho2(robust_window(ss))
 
 ## ----t1_ss_plot----------------------------------------------------------
