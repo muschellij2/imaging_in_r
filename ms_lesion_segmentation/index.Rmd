@@ -10,7 +10,7 @@ bibliography: ../refs.bib
 
 ```{r setup, include=FALSE}
 library(methods)
-knitr::opts_chunk$set(echo = TRUE, comment = "", cache=TRUE)
+knitr::opts_chunk$set(echo = TRUE, comment = "", cache=TRUE, warning = FALSE)
 ```
 
 
@@ -69,7 +69,7 @@ ortho2(tr_t1s$training05, les_mask, xyz = xyz, col.y = "orange")
 ```
 
 ## MS Lesion Segmentation with OASIS
-- OASIS is Automated Statistical Inference for Segmentation [w@sweeney2013oasis]
+- OASIS is Automated Statistical Inference for Segmentation [@sweeney2013oasis]
 - The OASIS algorithm takes FLAIR, T1, T2, and PD images from patients with multiple sclerosis (MS) and produces OASIS probability maps of MS lesion presence, which can be thresholded into a binary lesion segmentation.
 - OASIS is based on a logistic regression of the gold standard labels on the images, smoothed versions of the images, and some interaction terms.
 

@@ -44,3 +44,12 @@ strong {
     font-weight: bold;
     color: black;
 }
+
+#left_col {
+   float:left;
+   width:50%;
+}
+#right_col {
+   float:right;
+   width:50%;
+}

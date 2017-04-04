@@ -1,6 +1,6 @@
 ## ----setup, include=FALSE------------------------------------------------
 library(methods)
-knitr::opts_chunk$set(echo = TRUE, comment = "", cache=TRUE)
+knitr::opts_chunk$set(echo = TRUE, comment = "", cache=TRUE, warning = FALSE)
 
 ## ----loading, echo=FALSE, message=FALSE----------------------------------
 library(ms.lesion)
