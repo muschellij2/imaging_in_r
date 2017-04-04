@@ -244,12 +244,19 @@ plot_densities(wm_norm_dens,
 
 Procedure
 1. Find white matter area on histogram
+
 2. Estimate mean $\mu_{WS}$ and variance $\sigma_{WS}$ of voxel intensities in that area
+
 3. Normalize with those means/variances:
 $$ T1^{WS} = \frac{T1 - \mu_{WS}}{\sigma_{WS}}$$
 
 - After normalization, NAWM will have a standard normal distribution and units will be in standard deviations of NAWM.
 - Gray matter and CSF distributions may not be comparable after White Stripe.
+
+## White Stripe normalization
+
+![whitestripe](./whitestripe.png)
+
 
 ## White Stripe normalization code
 ```{r ws_show, eval=FALSE, warning = FALSE, message = FALSE, results='hide'}
