@@ -100,40 +100,42 @@ bc_img = robust_window(bc_img)
 bc_bet = fslbet(bc_img); ortho2(bc_img, bc_bet > 0, col.y = red0.5)
 ```
 
-## Attempt 3: Brain Extraction of T1 image using MALF
+<!-- ## Attempt 3: Brain Extraction of T1 image using MALF -->
 
+<!-- Figure from Multi-Atlas Skull Stripping method paper [@mass]: -->
+
+<!-- <img src="malf_figure.jpg" style="width: 40%; display: block; margin: auto;"> -->
+
+
+--- 
+
+<div class="container">
+<div id="left_col">
 Figure from Multi-Atlas Skull Stripping method paper [@mass]:
 
-<img src="malf_figure.jpg" style="width: 40%; display: block; margin: auto;">
-
-
-## Attempt 3: Brain Extraction of T1 image using MALF
-
-<div class="columns-2">
-Figure from Multi-Atlas Skull Stripping method paper [@mass]:
-
-<img src="malf_figure.jpg" style="width: 40%; display: block; margin: auto;">
-
+<img src="malf_figure.jpg" style="width: 80%; display: block; margin: auto;">
+</div>
+<div id="right_col">
 - Register templates to an image using the T1 for that subject
 - Apply transformation to the label/mask
 - Average each voxel over all templates
     - there are "smarter" (e.g. weighted) ways
-- `malf.templates` package has templates provided by Neuromorphometrics, Inc. (http://Neuromorphometrics.com/) form MICCAI 2012 Challenge on Multi-atlas Labelling [@bennett2012miccai]
+- `malf.templates` package has templates provided by Neuromorphometrics, Inc. form [MICCAI 2012 Challenge on Multi-atlas Labeling](http://masiweb.vuse.vanderbilt.edu/workshop2012/index.php/Main_Page) [@bennett2012miccai]
     - hand segmentations of the brain and brain structures
-
+</div>
 </div>
 
 
-## Attempt 3: Brain Extraction of T1 image using MALF
+<!-- ## Attempt 3: Brain Extraction of T1 image using MALF -->
 
-Multi-Atlas Fusion:
+<!-- Multi-Atlas Fusion: -->
 
-- Register templates to an image using the T1 for that subject
-- Apply transformation to the label/mask
-- Average each voxel over all templates
-    - there are "smarter" (e.g. weighted) ways
-- `malf.templates` package has templates provided by Neuromorphometrics, Inc. (http://Neuromorphometrics.com/) form MICCAI 2012 Challenge on Multi-atlas Labelling [@bennett2012miccai]
-    - hand segmentations of the brain and brain structures
+<!-- - Register templates to an image using the T1 for that subject -->
+<!-- - Apply transformation to the label/mask -->
+<!-- - Average each voxel over all templates -->
+<!--     - there are "smarter" (e.g. weighted) ways -->
+<!-- - `malf.templates` package has templates provided by Neuromorphometrics, Inc. (http://Neuromorphometrics.com/) form MICCAI 2012 Challenge on Multi-atlas Labelling [@bennett2012miccai] -->
+<!--     - hand segmentations of the brain and brain structures -->
 
 
 ## MALF - use `extrantsr::malf`
