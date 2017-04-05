@@ -61,7 +61,7 @@ default_ts = lapply(ts_files,
 ## ----viz_01, echo=FALSE--------------------------------------------------
 les_mask = default_ts[[1]]
 les_mask[les_mask<.05] = 0
-ortho2(ts_t1s$test01, les_mask)
+ortho2(ts_t1s$test01, les_mask, xyz = xyz)
 
 ## ----viz_02, echo=FALSE--------------------------------------------------
 les_mask[les_mask<.16] = 0
@@ -93,14 +93,16 @@ default_tr = lapply(tr_files,
 les_mask = default_tr[[5]]
 ortho2(tr_t1s$training05, les_mask, col.y = "orange")
 
-## ----table1, echo=FALSE, eval=FALSE--------------------------------------
-## dice = function(x){
-## 	return((2*x[2,2])/(2*x[2,2] + x[1,2] + x[2,1]))
-## }
-## tbls_df1 = lapply(1:5, function(x) table(c(tr_golds1[[x]]), c(default_tr[[x]])))
-## tbls_df2 = lapply(1:5, function(x) table(c(tr_golds2[[x]]), c(default_tr[[x]])))
-## 
-## lapply(mapply(function(x, y){c(dice(x), dice(y))}, tbls_df1, tbls_df2, SIMPLIFY=FALSE), mean)
+## ----table1, echo=FALSE--------------------------------------------------
+dice = function(x){
+  return((2*x[2,2])/(2*x[2,2] + x[1,2] + x[2,1]))
+}
+tbls_df1 = lapply(1:5, function(x) table(c(tr_golds1[[x]]), c(default_tr[[x]])))
+lapply(tbls_df1, dice)
+
+## ----table2, echo=FALSE--------------------------------------------------
+tbls_df2 = lapply(1:5, function(x) table(c(tr_golds2[[x]]), c(default_tr[[x]])))
+lapply(tbls_df2, dice)
 
 ## ----oasis_df_show, eval=FALSE-------------------------------------------
 ## make_df = function(x){
@@ -119,18 +121,20 @@ ortho2(tr_t1s$training05, les_mask, col.y = "orange")
 ## ----oasis_model_show2---------------------------------------------------
 print(ms.lesion::ms_model)
 
-## ----table2, echo=FALSE, eval=FALSE--------------------------------------
-## trained_tr = lapply(tr_files,
-## 	function(x){
-## 		img = readnii(x["Trained_OASIS"])
-## 		img[img>.16] = 1
-## 		img[img<1] = 0
-## 		return(img)
-## 	})
-## 
-## tbls_tr1 = lapply(1:5, function(x) table(c(tr_golds1[[x]]), c(trained_tr[[x]])))
-## tbls_tr2 = lapply(1:5, function(x) table(c(tr_golds2[[x]]), c(trained_tr[[x]])))
-## 
-## lapply(mapply(function(x, y){c(dice(x), dice(y))}, tbls_tr1, tbls_tr2, SIMPLIFY=FALSE), mean)
-## 
+## ----trained_predict_tr_run, eval=TRUE, echo=FALSE-----------------------
+trained_tr = lapply(tr_files, 
+  function(x){
+    img = readnii(x["Trained_OASIS"])
+    img[img>.16] = 1
+    img[img<1] = 0
+    return(img)
+  })
+
+## ----table3, echo=FALSE--------------------------------------------------
+tbls_tr1 = lapply(1:5, function(x) table(c(tr_golds1[[x]]), c(trained_tr[[x]])))
+lapply(tbls_tr1, dice)
+
+## ----table4, echo=FALSE--------------------------------------------------
+tbls_tr2 = lapply(1:5, function(x) table(c(tr_golds2[[x]]), c(trained_tr[[x]])))
+lapply(tbls_tr2, dice)
 

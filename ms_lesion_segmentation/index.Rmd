@@ -16,7 +16,8 @@ knitr::opts_chunk$set(echo = TRUE, comment = "", cache=TRUE, warning = FALSE)
 
 ## Background
 
-- Obtaining manual lesion segmentations is often resource intensive, so accurate and efficient methods for automatic segmentation are necessary for scalability and research progress.
+- Obtaining manual lesion segmentations is often resource intensive.
+- Accurate and efficient methods for automatic segmentation are necessary for scalability and research progress.
 
 ## Goals of this tutorial
 
@@ -75,6 +76,7 @@ ortho2(tr_t1s$training05, les_mask, xyz = xyz, col.y = "orange")
 
 ## Default OASIS Model
 - The OASIS library comes with default parameters that can be used to generate probability maps for new test subjects.
+- The default model was trained on approximately 100 MS subjects and 30 healthy subjects with manual segmentations.
 - Here we apply the function `oasis_predict` with the default model to obtain OASIS probability maps for the test subjects.
 
 ```{r default_predict_ts_show, eval=FALSE}
@@ -102,13 +104,14 @@ default_ts = lapply(ts_files,
 ```{r viz_01, echo=FALSE}
 les_mask = default_ts[[1]]
 les_mask[les_mask<.05] = 0
-ortho2(ts_t1s$test01, les_mask)
+ortho2(ts_t1s$test01, les_mask, xyz = xyz)
 ```
 
 ## Thresholding
 - To get a final estimated segmentation, we must choose a cutoff to binarize the OASIS probability maps.
 - The `binary` argument in the `oasis_predict` function is FALSE by default, resulting in the output being the probability map.
 - Setting `binary=TRUE` will return the thresholded version, using the input to the `threshold` argument (default = 0.16).
+- 0.16 was obtained via a validation set allowing for a 0.5% false positive rate.
 - In practice, we might want to use a grid search over thresholds and cross validation to choose the cutoff.
 
 ## Vizualization
