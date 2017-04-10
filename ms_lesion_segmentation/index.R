@@ -98,10 +98,10 @@ dice = function(x){
   return((2*x[2,2])/(2*x[2,2] + x[1,2] + x[2,1]))
 }
 tbls_df1 = lapply(1:5, function(x) table(c(tr_golds1[[x]]), c(default_tr[[x]])))
-lapply(tbls_df1, dice)
+dfDice1 = lapply(tbls_df1, dice)
 
 tbls_df2 = lapply(1:5, function(x) table(c(tr_golds2[[x]]), c(default_tr[[x]])))
-lapply(tbls_df2, dice)
+dfDice2 = lapply(tbls_df2, dice)
 
 ## ----oasis_df_show, eval=FALSE-------------------------------------------
 ## make_df = function(x){
@@ -131,8 +131,8 @@ trained_tr = lapply(tr_files,
 
 ## ----table3, echo=FALSE--------------------------------------------------
 tbls_tr1 = lapply(1:5, function(x) table(c(tr_golds1[[x]]), c(trained_tr[[x]])))
-lapply(tbls_tr1, dice)
+trDice1 = lapply(tbls_tr1, dice)
 
 tbls_tr2 = lapply(1:5, function(x) table(c(tr_golds2[[x]]), c(trained_tr[[x]])))
-lapply(tbls_tr2, dice)
+trDice2 = lapply(tbls_tr2, dice)
 
