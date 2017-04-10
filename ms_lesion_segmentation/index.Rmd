@@ -70,9 +70,9 @@ ortho2(tr_t1s$training05, les_mask, xyz = xyz, col.y = "orange")
 ```
 
 ## MS Lesion Segmentation with OASIS
-- OASIS is Automated Statistical Inference for Segmentation [@sweeney2013oasis]
+- OASIS is Automated Statistical Inference for Segmentation [@sweeney2013oasis].
 - The OASIS algorithm takes FLAIR, T1, T2, and PD images from patients with multiple sclerosis (MS) and produces OASIS probability maps of MS lesion presence, which can be thresholded into a binary lesion segmentation.
-- OASIS is based on a logistic regression of the gold standard labels on the images, smoothed versions of the images, and some interaction terms.
+- The OASIS model is based on a logistic regression of the gold standard manual segmentation labels on the images, smoothed versions of the images, and some interaction terms (i.e., supervised learning).
 
 ## Default OASIS Model
 - The OASIS library comes with default parameters that can be used to generate probability maps for new test subjects.
@@ -160,33 +160,32 @@ ortho2(tr_t1s$training05, les_mask, col.y = "orange")
 ```
 
 ## Default OASIS Model Results
-- The dice coeffients for the training subjects compared to rater 1 are: 
+- The dice coeffients for the training subjects compared to raters 1 (left) and 2 (right) are: 
+<div class="columns-2">
 ```{r table1, echo=FALSE}
 dice = function(x){
   return((2*x[2,2])/(2*x[2,2] + x[1,2] + x[2,1]))
 }
 tbls_df1 = lapply(1:5, function(x) table(c(tr_golds1[[x]]), c(default_tr[[x]])))
 lapply(tbls_df1, dice)
-```
 
-- The dice coeffients for the training subjects compared to rater 2 are: 
-```{r table2, echo=FALSE}
 tbls_df2 = lapply(1:5, function(x) table(c(tr_golds2[[x]]), c(default_tr[[x]])))
 lapply(tbls_df2, dice)
 ```
+</div>
 
 ## Improving Results
-- The default model is picking up a lot of false positives in the spinal chord. 
+- The default model is picking up a lot of false positives in the spinal cord. 
 - We might improve the results by re-training the OASIS model using our five training subjects.
-- To retrain the model using new data, binary masks of gold standard lesion segmentations are needed and should be in T1 space.
+- To re-train using new data, binary masks of gold standard lesion segmentations are needed and should be in T1 space.
 
 
 ## Making OASIS data frames
-- OASIS requires a particular data frame format
+- OASIS requires a particular data frame format, which we create using the function `oasis_train_dataframe`.
 - Includes an option to preprocess your data (`preproc`), which does (1) inhomogeneity correction using `fsl_biascorrect`
 and (2) rigid coregistration using `flirt` to the T1 space.
-- Includes an option to normalize the intensities of your data using whole-brain normalization (`normalize`)
-- `make_df()` below is a helper function
+- Includes an option to normalize the intensities of your data using whole-brain normalization (`normalize`).
+- `make_df()` below is a helper function.
 
 ```{r oasis_df_show, eval=FALSE}
 make_df = function(x){
@@ -201,16 +200,16 @@ oasis_dfs = lapply(1:5, make_df)
 ```
 
 ## Training OASIS 
-- The function `oasis_training` takes the data frames we made and fits a logistic regression, where the outcome vector consists of all subjects' voxel-level data (top 85\% in intensity)
-- The function `do.call` is a useful R function that applies the function named in the first argument to all elements of the list specified in the second argument.
+- The function `oasis_training` takes the data frames we made and fits a logistic regression using labels and features from a subset of voxels in each subject's brain mask (top 85\% in FLAIR intensity).
+- The function `do.call` is a useful R function that applies the function named in the first argument to all elements of the list specified in the second argument. 
+- Below, `model` is a `glm` object that stores the estimated parameters from the logistic regression.
 
 ```{r oasis_model_show, eval=FALSE}
-model = do.call("oasis_training", oasis_dfs)
+ms_model = do.call("oasis_training", oasis_dfs)
 ```
 
 ## OASIS model object
-- `model` is an object of type `glm`
-- We see the covariates used and assosicated coefficients when we print the model:
+- By printing the `ms_model` object, we can see the covariates used and assosicated coefficients:
 
 ```{r oasis_model_show2}
 print(ms.lesion::ms_model)
@@ -227,16 +226,15 @@ trained_tr = lapply(tr_files,
   })
 ```
 - Using the same threshold of 0.16.
-- The dice coeffients for the training subjects compared to rater 1 are: 
+- The dice coeffients for the training subjects compared to raters 1 and 2 are: 
+<div class="columns-2">
 ```{r table3, echo=FALSE}
 tbls_tr1 = lapply(1:5, function(x) table(c(tr_golds1[[x]]), c(trained_tr[[x]])))
 lapply(tbls_tr1, dice)
-```
 
-- The dice coeffients for the training subjects compared to rater 2 are: 
-```{r table4, echo=FALSE}
 tbls_tr2 = lapply(1:5, function(x) table(c(tr_golds2[[x]]), c(trained_tr[[x]])))
 lapply(tbls_tr2, dice)
 ```
+</div>
 
 ## References {.smaller}
