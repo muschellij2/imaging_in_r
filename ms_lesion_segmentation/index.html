@@ -244,7 +244,7 @@ default_probs_tr = lapply(1:5, default_predict_tr)</pre>
 <ul>
 <li>OASIS requires a particular data frame format, which we create using the function <code>oasis_train_dataframe</code>.</li>
 <li>Includes an option to preprocess your data (<code>preproc</code>), which does (1) inhomogeneity correction using <code>fsl_biascorrect</code> and (2) rigid coregistration using <code>flirt</code> to the T1 space.</li>
-<li>Includes an option to normalize the intensities of your data using whole-brain normalization (<code>normalize</code>).</li>
+<li>Includes an option to whole-brain intensity normalize (<code>normalize</code>).</li>
 <li><code>make_df()</code> below is a helper function.</li>
 </ul>
 
@@ -269,10 +269,6 @@ oasis_dfs = lapply(1:5, make_df)</pre>
 <pre class = 'prettyprint lang-r'>ms_model = do.call(&quot;oasis_training&quot;, oasis_dfs)</pre>
 
 </article></slide><slide class=''><hgroup><h2>OASIS model object</h2></hgroup><article  id="oasis-model-object">
-
-<ul>
-<li>Printing <code>ms_model</code> lets us see the model coefficients:</li>
-</ul>
 
 <pre class = 'prettyprint lang-r'>print(ms.lesion::ms_model)</pre>
 
@@ -334,6 +330,45 @@ Residual Deviance: 243900   AIC: 243900</pre>
 <td align="right">05</td>
 <td align="right">0.4105148</td>
 <td align="right">0.3563922</td>
+</tr>
+</table>
+
+</article></slide><slide class=''><hgroup><h2>Improvement</h2></hgroup><article  id="improvement">
+
+<ul>
+<li>Percent improvement in dice over the default model:</li>
+</ul>
+
+<table class = 'rmdtable'>
+<tr class="header">
+<th align="right"></th>
+<th align="right">Rater 1</th>
+<th align="right">Rater 2</th>
+</tr>
+<tr class="odd">
+<td align="right">01</td>
+<td align="right">32.9717435</td>
+<td align="right">30.359724</td>
+</tr>
+<tr class="even">
+<td align="right">02</td>
+<td align="right">2.7302493</td>
+<td align="right">3.7048641</td>
+</tr>
+<tr class="odd">
+<td align="right">03</td>
+<td align="right">47.5418144</td>
+<td align="right">43.1816695</td>
+</tr>
+<tr class="even">
+<td align="right">04</td>
+<td align="right">27.2640758</td>
+<td align="right">24.2896848</td>
+</tr>
+<tr class="odd">
+<td align="right">05</td>
+<td align="right">33.1363268</td>
+<td align="right">35.0645052</td>
 </tr>
 </table>
 
