@@ -195,43 +195,41 @@ default_probs_tr = lapply(1:5, default_predict_tr)</pre>
 </article></slide><slide class=''><hgroup><h2>Default OASIS Model Results</h2></hgroup><article  id="default-oasis-model-results-1">
 
 <ul>
-<li>The dice coeffients for the training subjects compared to raters 1 (left) and 2 (right) are:
-
-<div class="columns-2">
-</li>
+<li>The dice coeffients for the training subjects compared to raters 1 (left) and 2 (right) are:</li>
 </ul>
 
-<pre >[[1]]
-[1] 0.4724006
-
-[[2]]
-[1] 0.6900361
-
-[[3]]
-[1] 0.362001
-
-[[4]]
-[1] 0.284585
-
-[[5]]
-[1] 0.3083417</pre>
-
-<pre >[[1]]
-[1] 0.4938917
-
-[[2]]
-[1] 0.6860189
-
-[[3]]
-[1] 0.4316734
-
-[[4]]
-[1] 0.2891665
-
-[[5]]
-[1] 0.2638682</pre>
-
-</div>
+<table class = 'rmdtable'>
+<tr class="header">
+<th align="right"></th>
+<th align="right">Rater 1</th>
+<th align="right">Rater 2</th>
+</tr>
+<tr class="odd">
+<td align="right">01</td>
+<td align="right">0.4724006</td>
+<td align="right">0.4938917</td>
+</tr>
+<tr class="even">
+<td align="right">02</td>
+<td align="right">0.6900361</td>
+<td align="right">0.6860189</td>
+</tr>
+<tr class="odd">
+<td align="right">03</td>
+<td align="right">0.362001</td>
+<td align="right">0.4316734</td>
+</tr>
+<tr class="even">
+<td align="right">04</td>
+<td align="right">0.284585</td>
+<td align="right">0.2891665</td>
+</tr>
+<tr class="odd">
+<td align="right">05</td>
+<td align="right">0.3083417</td>
+<td align="right">0.2638682</td>
+</tr>
+</table>
 
 </article></slide><slide class=''><hgroup><h2>Improving Results</h2></hgroup><article  id="improving-results">
 
@@ -273,7 +271,7 @@ oasis_dfs = lapply(1:5, make_df)</pre>
 </article></slide><slide class=''><hgroup><h2>OASIS model object</h2></hgroup><article  id="oasis-model-object">
 
 <ul>
-<li>By printing the <code>ms_model</code> object, we can see the covariates used and assosicated coefficients:</li>
+<li>Printing <code>ms_model</code> lets us see the model coefficients:</li>
 </ul>
 
 <pre class = 'prettyprint lang-r'>print(ms.lesion::ms_model)</pre>
@@ -303,43 +301,41 @@ Residual Deviance: 243900   AIC: 243900</pre>
 
 <ul>
 <li>Using the same threshold of 0.16.</li>
-<li>The dice coeffients for the training subjects compared to raters 1 and 2 are:
-
-<div class="columns-2">
-</li>
+<li>Dice coeffients for the training subjects:</li>
 </ul>
 
-<pre >[[1]]
-[1] 0.6281593
-
-[[2]]
-[1] 0.7088758
-
-[[3]]
-[1] 0.5341028
-
-[[4]]
-[1] 0.3621744
-
-[[5]]
-[1] 0.4105148</pre>
-
-<pre >[[1]]
-[1] 0.6438359
-
-[[2]]
-[1] 0.711435
-
-[[3]]
-[1] 0.6180772
-
-[[4]]
-[1] 0.3594041
-
-[[5]]
-[1] 0.3563922</pre>
-
-</div>
+<table class = 'rmdtable'>
+<tr class="header">
+<th align="right"></th>
+<th align="right">Rater 1</th>
+<th align="right">Rater 2</th>
+</tr>
+<tr class="odd">
+<td align="right">01</td>
+<td align="right">0.6281593</td>
+<td align="right">0.6438359</td>
+</tr>
+<tr class="even">
+<td align="right">02</td>
+<td align="right">0.7088758</td>
+<td align="right">0.711435</td>
+</tr>
+<tr class="odd">
+<td align="right">03</td>
+<td align="right">0.5341028</td>
+<td align="right">0.6180772</td>
+</tr>
+<tr class="even">
+<td align="right">04</td>
+<td align="right">0.3621744</td>
+<td align="right">0.3594041</td>
+</tr>
+<tr class="odd">
+<td align="right">05</td>
+<td align="right">0.4105148</td>
+<td align="right">0.3563922</td>
+</tr>
+</table>
 
 </article></slide><slide class=''><hgroup><h2>References</h2></hgroup><article  id="references" class="unnumbered smaller">
 
