@@ -192,7 +192,7 @@ dfDice2 = lapply(tbls_df2, dice)
 - OASIS requires a particular data frame format, which we create using the function `oasis_train_dataframe`.
 - Includes an option to preprocess your data (`preproc`), which does (1) inhomogeneity correction using `fsl_biascorrect`
 and (2) rigid coregistration using `flirt` to the T1 space.
-- Includes an option to normalize the intensities of your data using whole-brain normalization (`normalize`).
+- Includes an option to whole-brain intensity normalize (`normalize`).
 - `make_df()` below is a helper function.
 
 ```{r oasis_df_show, eval=FALSE}
@@ -217,7 +217,6 @@ ms_model = do.call("oasis_training", oasis_dfs)
 ```
 
 ## OASIS model object
-- Printing `ms_model` lets us see the model coefficients:
 
 ```{r oasis_model_show2}
 print(ms.lesion::ms_model)
@@ -253,6 +252,17 @@ trDice2 = lapply(tbls_tr2, dice)
 | 04 |  `r trDice1[[4]]`|  `r trDice2[[4]]`|
 | 05 |  `r trDice1[[5]]`|  `r trDice2[[5]]`|
 
+## Improvement
+
+- Percent improvement in dice over the default model:
+
+|   |  Rater 1|  Rater 2|
+|------:|------:|------:|
+| 01 |  `r 100*(trDice1[[1]]-dfDice1[[1]])/dfDice1[[1]]`|  `r 100*(trDice2[[1]]-dfDice2[[1]])/dfDice2[[1]]`|
+| 02 |  `r 100*(trDice1[[2]]-dfDice1[[2]])/dfDice1[[2]]`|  `r 100*(trDice2[[2]]-dfDice2[[2]])/dfDice2[[2]]`|
+| 03 |  `r 100*(trDice1[[3]]-dfDice1[[3]])/dfDice1[[3]]`|  `r 100*(trDice2[[3]]-dfDice2[[3]])/dfDice2[[3]]`|
+| 04 |  `r 100*(trDice1[[4]]-dfDice1[[4]])/dfDice1[[4]]`|  `r 100*(trDice2[[4]]-dfDice2[[4]])/dfDice2[[4]]`|
+| 05 |  `r 100*(trDice1[[5]]-dfDice1[[5]])/dfDice1[[5]]`|  `r 100*(trDice2[[5]]-dfDice2[[5]])/dfDice2[[5]]`|
 
 
 ## References {.smaller}
