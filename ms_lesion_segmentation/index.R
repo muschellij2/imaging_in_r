@@ -100,7 +100,6 @@ dice = function(x){
 tbls_df1 = lapply(1:5, function(x) table(c(tr_golds1[[x]]), c(default_tr[[x]])))
 lapply(tbls_df1, dice)
 
-## ----table2, echo=FALSE--------------------------------------------------
 tbls_df2 = lapply(1:5, function(x) table(c(tr_golds2[[x]]), c(default_tr[[x]])))
 lapply(tbls_df2, dice)
 
@@ -116,7 +115,7 @@ lapply(tbls_df2, dice)
 ## oasis_dfs = lapply(1:5, make_df)
 
 ## ----oasis_model_show, eval=FALSE----------------------------------------
-## model = do.call("oasis_training", oasis_dfs)
+## ms_model = do.call("oasis_training", oasis_dfs)
 
 ## ----oasis_model_show2---------------------------------------------------
 print(ms.lesion::ms_model)
@@ -134,7 +133,6 @@ trained_tr = lapply(tr_files,
 tbls_tr1 = lapply(1:5, function(x) table(c(tr_golds1[[x]]), c(trained_tr[[x]])))
 lapply(tbls_tr1, dice)
 
-## ----table4, echo=FALSE--------------------------------------------------
 tbls_tr2 = lapply(1:5, function(x) table(c(tr_golds2[[x]]), c(trained_tr[[x]])))
 lapply(tbls_tr2, dice)
 

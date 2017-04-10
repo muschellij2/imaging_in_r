@@ -114,9 +114,9 @@
 </article></slide><slide class=''><hgroup><h2>MS Lesion Segmentation with OASIS</h2></hgroup><article  id="ms-lesion-segmentation-with-oasis">
 
 <ul>
-<li>OASIS is Automated Statistical Inference for Segmentation <span class="cite">(Sweeney et al. 2013)</span></li>
+<li>OASIS is Automated Statistical Inference for Segmentation <span class="cite">(Sweeney et al. 2013)</span>.</li>
 <li>The OASIS algorithm takes FLAIR, T1, T2, and PD images from patients with multiple sclerosis (MS) and produces OASIS probability maps of MS lesion presence, which can be thresholded into a binary lesion segmentation.</li>
-<li>OASIS is based on a logistic regression of the gold standard labels on the images, smoothed versions of the images, and some interaction terms.</li>
+<li>The OASIS model is based on a logistic regression of the gold standard manual segmentation labels on the images, smoothed versions of the images, and some interaction terms (i.e., supervised learning).</li>
 </ul>
 
 </article></slide><slide class=''><hgroup><h2>Default OASIS Model</h2></hgroup><article  id="default-oasis-model">
@@ -195,7 +195,10 @@ default_probs_tr = lapply(1:5, default_predict_tr)</pre>
 </article></slide><slide class=''><hgroup><h2>Default OASIS Model Results</h2></hgroup><article  id="default-oasis-model-results-1">
 
 <ul>
-<li>The dice coeffients for the training subjects compared to rater 1 are:</li>
+<li>The dice coeffients for the training subjects compared to raters 1 (left) and 2 (right) are:
+
+<div class="columns-2">
+</li>
 </ul>
 
 <pre >[[1]]
@@ -213,10 +216,6 @@ default_probs_tr = lapply(1:5, default_predict_tr)</pre>
 [[5]]
 [1] 0.3083417</pre>
 
-<ul>
-<li>The dice coeffients for the training subjects compared to rater 2 are:</li>
-</ul>
-
 <pre >[[1]]
 [1] 0.4938917
 
@@ -232,21 +231,23 @@ default_probs_tr = lapply(1:5, default_predict_tr)</pre>
 [[5]]
 [1] 0.2638682</pre>
 
+</div>
+
 </article></slide><slide class=''><hgroup><h2>Improving Results</h2></hgroup><article  id="improving-results">
 
 <ul>
-<li>The default model is picking up a lot of false positives in the spinal chord.</li>
+<li>The default model is picking up a lot of false positives in the spinal cord.</li>
 <li>We might improve the results by re-training the OASIS model using our five training subjects.</li>
-<li>To retrain the model using new data, binary masks of gold standard lesion segmentations are needed and should be in T1 space.</li>
+<li>To re-train using new data, binary masks of gold standard lesion segmentations are needed and should be in T1 space.</li>
 </ul>
 
 </article></slide><slide class=''><hgroup><h2>Making OASIS data frames</h2></hgroup><article  id="making-oasis-data-frames">
 
 <ul>
-<li>OASIS requires a particular data frame format</li>
+<li>OASIS requires a particular data frame format, which we create using the function <code>oasis_train_dataframe</code>.</li>
 <li>Includes an option to preprocess your data (<code>preproc</code>), which does (1) inhomogeneity correction using <code>fsl_biascorrect</code> and (2) rigid coregistration using <code>flirt</code> to the T1 space.</li>
-<li>Includes an option to normalize the intensities of your data using whole-brain normalization (<code>normalize</code>)</li>
-<li><code>make_df()</code> below is a helper function</li>
+<li>Includes an option to normalize the intensities of your data using whole-brain normalization (<code>normalize</code>).</li>
+<li><code>make_df()</code> below is a helper function.</li>
 </ul>
 
 <pre class = 'prettyprint lang-r'>make_df = function(x){
@@ -262,17 +263,17 @@ oasis_dfs = lapply(1:5, make_df)</pre>
 </article></slide><slide class=''><hgroup><h2>Training OASIS</h2></hgroup><article  id="training-oasis">
 
 <ul>
-<li>The function <code>oasis_training</code> takes the data frames we made and fits a logistic regression, where the outcome vector consists of all subjects&#39; voxel-level data (top 85% in intensity)</li>
+<li>The function <code>oasis_training</code> takes the data frames we made and fits a logistic regression using labels and features from a subset of voxels in each subject&#39;s brain mask (top 85% in FLAIR intensity).</li>
 <li>The function <code>do.call</code> is a useful R function that applies the function named in the first argument to all elements of the list specified in the second argument.</li>
+<li>Below, <code>model</code> is a <code>glm</code> object that stores the estimated parameters from the logistic regression.</li>
 </ul>
 
-<pre class = 'prettyprint lang-r'>model = do.call(&quot;oasis_training&quot;, oasis_dfs)</pre>
+<pre class = 'prettyprint lang-r'>ms_model = do.call(&quot;oasis_training&quot;, oasis_dfs)</pre>
 
 </article></slide><slide class=''><hgroup><h2>OASIS model object</h2></hgroup><article  id="oasis-model-object">
 
 <ul>
-<li><code>model</code> is an object of type <code>glm</code></li>
-<li>We see the covariates used and assosicated coefficients when we print the model:</li>
+<li>By printing the <code>ms_model</code> object, we can see the covariates used and assosicated coefficients:</li>
 </ul>
 
 <pre class = 'prettyprint lang-r'>print(ms.lesion::ms_model)</pre>
@@ -302,7 +303,10 @@ Residual Deviance: 243900   AIC: 243900</pre>
 
 <ul>
 <li>Using the same threshold of 0.16.</li>
-<li>The dice coeffients for the training subjects compared to rater 1 are:</li>
+<li>The dice coeffients for the training subjects compared to raters 1 and 2 are:
+
+<div class="columns-2">
+</li>
 </ul>
 
 <pre >[[1]]
@@ -320,10 +324,6 @@ Residual Deviance: 243900   AIC: 243900</pre>
 [[5]]
 [1] 0.4105148</pre>
 
-<ul>
-<li>The dice coeffients for the training subjects compared to rater 2 are:</li>
-</ul>
-
 <pre >[[1]]
 [1] 0.6438359
 
@@ -338,6 +338,8 @@ Residual Deviance: 243900   AIC: 243900</pre>
 
 [[5]]
 [1] 0.3563922</pre>
+
+</div>
 
 </article></slide><slide class=''><hgroup><h2>References</h2></hgroup><article  id="references" class="unnumbered smaller">
 
