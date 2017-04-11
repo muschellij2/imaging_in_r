@@ -259,7 +259,7 @@ ortho2(t1, robust_t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 - The k-means clustering can be aided by Winsorizing these large outliers
 
 
-### Estimating the Volume of Each Class
+## Estimating the Volume of Each Class
 
 We can create a table which will count the number of voxels in each category:
 
@@ -271,7 +271,7 @@ tab_ants
 names(tab_fsl) = names(tab_ants) = c("CSF", "GM", "WM")
 ```
 
-### Estimating the Volume of Each Class
+## Estimating the Volume of Each Class
 
 By multiplying by the voxel resolution (in cubic centimeters), we can get volumes
 
