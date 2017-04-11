@@ -47,7 +47,7 @@ bc_img = robust_window(bc_img)
 ## bc_bet = fslbet(bc_img);
 ## ortho2(bc_img, bc_bet > 0, col.y = red0.5)
 
-## ----bc_bet_run, message = FALSE-----------------------------------------
+## ----bc_bet_run, message = FALSE, echo = FALSE---------------------------
 out_fname = "../output/bc_bet_ss.nii.gz"
 if (!file.exists(out_fname)) {
   bc_bet = fslbet(bc_img); 
@@ -112,7 +112,7 @@ t1 = readnii(t1_fname)
 ## ----kirby21_t1_plot-----------------------------------------------------
 ortho2(robust_window(t1))
 
-## ----kirby21_t1_naive_ss_run, cache = FALSE, message = FALSE-------------
+## ----kirby21_t1_naive_ss_run, cache = FALSE, message = FALSE, echo = FALSE----
 out_fname = "../output/kirby_naive_ss.nii.gz"
 if (!file.exists(out_fname)) {
   ss = fslbet(infile = t1_fname)
@@ -167,8 +167,8 @@ if (!file.exists(outfile)) {
   ss = readnii(outfile)
 }
 
-## ----kirby21_t1_ss_plot_show, cache = TRUE-------------------------------
-ortho2(ss)
+## ----kirby21_t1_ss_plot_show, cache = TRUE, eval = FALSE-----------------
+## ortho2(ss)
 
 ## ----kirby21_t1_ss_plot_run, echo = FALSE, cache = TRUE------------------
 ortho2(dropEmptyImageDimensions(ss))
