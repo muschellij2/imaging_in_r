@@ -34,7 +34,7 @@ t1 = readnii("training01_01_mprage.nii.gz")
 - `data.frame` - 2-dimensional object, can be multiple classes (like Excel spreadsheet)
 - `array` - object of dimensions > 2 of one class.  The data in a `nifti` object is one of these (usually 3-D)
 - `nifti` - an array with header information
-- `list` - a general holder of things (discuss when necessary)
+- `list` - a general holder of things 
 
 
 ---
