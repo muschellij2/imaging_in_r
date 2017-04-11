@@ -58,9 +58,6 @@ head(t1 > 400)
 head(which(t1 > 400, arr.ind = TRUE))
 
 ## ------------------------------------------------------------------------
-head(t1[ t1 > 400 ])
-
-## ------------------------------------------------------------------------
 t1_copy = t1
 t1_copy[ t1_copy > 400] = 400 # changed these values!
 max(t1_copy) # should be 400
@@ -91,7 +88,7 @@ print(l)
 print(l[[1]])
 
 ## ----named_vec-----------------------------------------------------------
-x = c(first =1, third = 14, second = 5)
+x = c(first = 1, third = 14, second = 5)
 print(x)
 x[c("third")]
 

@@ -177,7 +177,7 @@
 </article></slide><slide class=''><hgroup><h2>Arrays</h2></hgroup><article  id="arrays">
 
 <ul>
-<li>Create a 3 x 4 x 3 numeric matrix and assign to variable <code>a</code></li>
+<li>Create a 3 x 4 x 3 numeric array and assign to variable <code>a</code></li>
 </ul>
 
 <pre class = 'prettyprint lang-r'>a = array(1:36, dim = c(3, 4, 3))</pre>
@@ -229,7 +229,7 @@
 
 <pre >[1] 7 8</pre>
 
-</article></slide><slide class=''><hgroup><h2>Subsetting with <code>nifti</code> objects or <code>arrays</code></h2></hgroup><article  id="subsetting-with-nifti-objects-or-arrays">
+</article></slide><slide class=''><hgroup><h2>Subsetting with <code>nifti</code> objects: like <code>arrays</code></h2></hgroup><article  id="subsetting-with-nifti-objects-like-arrays">
 
 <p>The subsetting here is similar to that of arrays, so we will use the <code>t1</code>. Since it&#39;s 3-dimensions the subsetting goes to the 3rd dimension</p>
 
@@ -287,14 +287,6 @@ attr(,&quot;package&quot;)
 [4,]  163  129    1
 [5,]  164  129    1
 [6,]  190  129    1</pre>
-
-</article></slide><slide class=''><hgroup><h2>Working with <code>nifti</code> objects</h2></hgroup><article  id="working-with-nifti-objects-2">
-
-<p>Again, we can use a logical operation. Let&#39;s get the values of the <code>t1</code> greater than 400 (<code>head</code> only prints the first 6 values):</p>
-
-<pre class = 'prettyprint lang-r'>head(t1[ t1 &gt; 400 ])</pre>
-
-<pre >[1] 421 617 617 479 456 404</pre>
 
 </article></slide><slide class=''><hgroup><h2>Working with <code>nifti</code> objects: reassignment</h2></hgroup><article  id="working-with-nifti-objects-reassignment">
 
@@ -381,7 +373,7 @@ print(l)</pre>
 
 <p>If a <code>vector</code> has names, you can also put the - Initialize an empty list and add two elements to it</p>
 
-<pre class = 'prettyprint lang-r'>x = c(first =1, third = 14, second = 5)
+<pre class = 'prettyprint lang-r'>x = c(first = 1, third = 14, second = 5)
 print(x)</pre>
 
 <pre > first  third second 
