@@ -37,8 +37,7 @@ t1 = readnii("training01_01_mprage.nii.gz")
 - `list` - a general holder of things 
 
 
----
-<h3>Vectors</h3>
+## Vectors
 
 - Create a vector of numeric values and assign to variable `v`
 
