@@ -71,8 +71,11 @@ ortho2(tr_t1s$training05, les_mask, xyz = xyz, col.y = "orange")
 
 ## MS Lesion Segmentation with OASIS
 - OASIS is Automated Statistical Inference for Segmentation [@sweeney2013oasis].
-- The OASIS algorithm takes FLAIR, T1, T2, and PD images from patients with multiple sclerosis (MS) and produces OASIS probability maps of MS lesion presence, which can be thresholded into a binary lesion segmentation.
+- OASIS takes FLAIR, T1, T2, and PD images 
+    - produces OASIS probability maps of MS lesion presence
+    - these can be thresholded into a binary lesion segmentation
 - The OASIS model is based on a logistic regression of the gold standard manual segmentation labels on the images, smoothed versions of the images, and some interaction terms (i.e., supervised learning).
+    - Performed well compared to common machine learning models [@sweeney2014comparison]
 
 ## Default OASIS Model
 - The OASIS library comes with default parameters that can be used to generate probability maps for new test subjects.
@@ -108,10 +111,11 @@ ortho2(ts_t1s$test01, les_mask, xyz = xyz)
 ```
 
 ## Thresholding: Getting a binary map 
+
 - To get a final estimated segmentation, we must choose a cutoff to binarize the OASIS probability maps.
 - The `binary` argument in the `oasis_predict` function is FALSE by default, resulting in the output being the probability map.
-- Setting `binary=TRUE` will return the thresholded version, using the input to the `threshold` argument (default = 0.16).
-- 0.16 was obtained via a validation set allowing for a 0.5% false positive rate.
+    - Setting `binary=TRUE` will return the thresholded version, using the input to the `threshold` argument (default = 0.16).
+    - 0.16 was obtained via a validation set allowing for a 0.5% false positive rate.
 - In practice, we might want to use a grid search over thresholds and cross validation to choose the cutoff.
 
 ## Vizualization of binary map
