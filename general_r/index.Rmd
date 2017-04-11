@@ -81,6 +81,32 @@ which(v > 5)
 v[ which(v > 5) ]
 ```
 
+## Lists
+
+- Initialize an empty list and add two elements to it
+
+```{r list}
+l = list()
+l[[1]] = v
+l[[2]] = m
+print(l)
+```
+
+- Subsetting uses double brackets:
+```{r listSub}
+print(l[[1]])
+```
+
+## Lists: `lapply`
+
+With `list`s and vectors, there are `apply` functions.  These apply a function to every element of the list.  In this course, we will use:
+
+- `lapply` - apply function and return the elements as a `list`
+- `sapply` - apply function and return a "simplified" version
+    - if all elements returned are a one-element vector, return a `vector`
+    - if element 5 has 3 elements and element 4 has 4 elements, return a `list`
+- `mapply` - takes in 2 (or more) lists and "links" the two to perform a function requiring arguments from each list 
+    - passing in a list of images and the filenames to write them to
 
 ## Working with `nifti` objects
 
@@ -228,18 +254,5 @@ These work with an image and a number (`img + 2`) or two images of the same dime
     - more on that later
 
 
-## Lists
 
-- Initialize an empty list and add two elements to it
-
-```{r list}
-l = list()
-l[[1]] = v
-l[[2]] = m
-print(l)
-```
-
-- Subsetting:
-```{r listSub}
-print(l[[1]])
-```
+ ## References
