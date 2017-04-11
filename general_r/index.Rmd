@@ -258,9 +258,7 @@ With `list`s and vectors, there are `apply` functions.  These apply a function t
 
 ## File helpers - for constructing filenames
 
-Use `paste` if you want to put strings together with spaces.
-
-Use `paste0` if you want no spaces by default:.
+Use `paste` if you want to put strings together with spaces, `paste0` no spaces by default.
 
 `file.path(directory, filename)` will paste `directory` and `filename` w/file separators (e.g. `/`)
 
