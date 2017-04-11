@@ -7,6 +7,7 @@ output:
 bibliography: ../refs.bib      
 ---
 
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, comment = "", fig.height = 5, fig.width = 5, cache = TRUE)
 options(fsl.path = "/usr/local/fsl/")
@@ -144,7 +145,7 @@ par(mfrow = c(1, 1))
 
 - Let's Z-score each voxel using mean $\mu_{WB}$ and standard deviation $\sigma_{WB}$ computed from all voxels in the brain mask.
 
-$$ T1^{WB} = \frac{T1 - \mu_{WB}}{\sigma_{WB}}$$
+$$ T1_{WB} = \frac{T1 - \mu_{WB}}{\sigma_{WB}}$$
 
 
 - `zscore_img` is a function in `neurobase` that does this.
@@ -248,17 +249,18 @@ Procedure
 2. Estimate mean $\mu_{WS}$ and variance $\sigma_{WS}$ of voxel intensities in that area
 
 3. Normalize with those means/variances:
-$$ T1^{WS} = \frac{T1 - \mu_{WS}}{\sigma_{WS}}$$
+$$ T1_{WS} = \frac{T1 - \mu_{WS}}{\sigma_{WS}}$$
 
 - After normalization, NAWM will have a standard normal distribution and units will be in standard deviations of NAWM.
 - Gray matter and CSF distributions may not be comparable after White Stripe.
 
 ## White Stripe normalization
 
-![whitestripe](./whitestripe.png)
+<img src="whitestripe.png" style="width: 100%; display: block; margin: auto;">
 
 
 ## White Stripe normalization code
+
 ```{r ws_show, eval=FALSE, warning = FALSE, message = FALSE, results='hide'}
 ind = whitestripe(img = t1, type = "T1", stripped = TRUE)$whitestripe.ind
 ws_t1 = whitestripe_norm(t1, indices = ind)
@@ -276,6 +278,7 @@ ws_norm = function(t1) {
 }
 t1_ws_norm = lapply(t1s, ws_norm)
 ```
+
 
 ## WhiteStripe normalized intensities
 

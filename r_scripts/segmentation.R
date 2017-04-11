@@ -100,6 +100,9 @@ if (!file.exists(outfile)) {
   t1seg = readnii(outfile)
 }
 
+## ----atropos_overall-----------------------------------------------------
+double_ortho(t1, t1seg)
+
 ## ----otropos_wm----------------------------------------------------------
 ortho2(t1, t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
 
@@ -115,6 +118,9 @@ ortho2(t1, t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 
 ## ----robust_otropos_run, echo = FALSE------------------------------------
 robust_t1seg = readnii(files["Tissue_Classes"])
+
+## ----atropos_robust_overall----------------------------------------------
+double_ortho(t1, robust_t1seg)
 
 ## ----otropos_wm_robust---------------------------------------------------
 ortho2(t1, robust_t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
@@ -134,6 +140,7 @@ names(tab_fsl) = names(tab_ants) = c("CSF", "GM", "WM")
 
 ## ----volumes-------------------------------------------------------------
 vres = voxres(t1seg, units = "cm")
+print(vres)
 vol_fsl = tab_fsl * vres
 vol_fsl
 vol_ants = tab_ants * vres
