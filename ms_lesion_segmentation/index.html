@@ -115,8 +115,17 @@
 
 <ul>
 <li>OASIS is Automated Statistical Inference for Segmentation <span class="cite">(Sweeney et al. 2013)</span>.</li>
-<li>The OASIS algorithm takes FLAIR, T1, T2, and PD images from patients with multiple sclerosis (MS) and produces OASIS probability maps of MS lesion presence, which can be thresholded into a binary lesion segmentation.</li>
-<li>The OASIS model is based on a logistic regression of the gold standard manual segmentation labels on the images, smoothed versions of the images, and some interaction terms (i.e., supervised learning).</li>
+<li>OASIS takes FLAIR, T1, T2, and PD images
+
+<ul>
+<li>produces OASIS probability maps of MS lesion presence</li>
+<li>these can be thresholded into a binary lesion segmentation</li>
+</ul></li>
+<li>The OASIS model is based on a logistic regression of the gold standard manual segmentation labels on the images, smoothed versions of the images, and some interaction terms (i.e., supervised learning).
+
+<ul>
+<li>Performed well compared to common machine learning models <span class="cite">(Sweeney et al. 2014)</span></li>
+</ul></li>
 </ul>
 
 </article></slide><slide class=''><hgroup><h2>Default OASIS Model</h2></hgroup><article  id="default-oasis-model">
@@ -151,9 +160,12 @@ default_probs_ts = lapply(1:3, default_predict_ts)</pre>
 
 <ul>
 <li>To get a final estimated segmentation, we must choose a cutoff to binarize the OASIS probability maps.</li>
-<li>The <code>binary</code> argument in the <code>oasis_predict</code> function is FALSE by default, resulting in the output being the probability map.</li>
+<li>The <code>binary</code> argument in the <code>oasis_predict</code> function is FALSE by default, resulting in the output being the probability map.
+
+<ul>
 <li>Setting <code>binary=TRUE</code> will return the thresholded version, using the input to the <code>threshold</code> argument (default = 0.16).</li>
 <li>0.16 was obtained via a validation set allowing for a 0.5% false positive rate.</li>
+</ul></li>
 <li>In practice, we might want to use a grid search over thresholds and cross validation to choose the cutoff.</li>
 </ul>
 
@@ -376,7 +388,10 @@ Residual Deviance: 243900   AIC: 243900</pre>
 
 <div id="refs" class="references">
 <div id="ref-sweeney2013oasis">
-<p>Sweeney, Elizabeth M, Russell T Shinohara, Navid Shiee, Farrah J Mateen, Avni A Chudgar, Jennifer L Cuzzocreo, Peter A Calabresi, Dzung L Pham, Daniel S Reich, and Ciprian M Crainiceanu. 2013. “OASIS Is Automated Statistical Inference for Segmentation, with Applications to Multiple Sclerosis Lesion Segmentation in Mri.” <em>NeuroImage: Clinical</em> 2. Elsevier: 402–13.</p></div></div></article></slide>
+<p>Sweeney, Elizabeth M, Russell T Shinohara, Navid Shiee, Farrah J Mateen, Avni A Chudgar, Jennifer L Cuzzocreo, Peter A Calabresi, Dzung L Pham, Daniel S Reich, and Ciprian M Crainiceanu. 2013. “OASIS Is Automated Statistical Inference for Segmentation, with Applications to Multiple Sclerosis Lesion Segmentation in Mri.” <em>NeuroImage: Clinical</em> 2. Elsevier: 402–13.</p></div>
+
+<div id="ref-sweeney2014comparison">
+<p>Sweeney, Elizabeth M, Joshua T Vogelstein, Jennifer L Cuzzocreo, Peter A Calabresi, Daniel S Reich, Ciprian M Crainiceanu, and Russell T Shinohara. 2014. “A Comparison of Supervised Machine Learning Algorithms and Feature Vectors for MS Lesion Segmentation Using Multimodal Structural MRI.” <em>PloS One</em> 9 (4). Public Library of Science: e95753.</p></div></div></article></slide>
 
 
   <slide class="backdrop"></slide>
