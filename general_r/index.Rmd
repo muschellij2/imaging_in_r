@@ -286,11 +286,13 @@ nii.stub(file.path("output_directory", paste0("img", ".nii.gz")), bn = TRUE)
     - registration, inhomogeneity correction, lots of tools
 * `extrantsr` - allows `ANTsR` to work with objects from `oro.nifti` 
 
-## Data Packages we will use
- 
+Data Package we will use
+
 * `ms.lesion` - contains training/testing data of patients with multiple sclerosis (MS)
     - from the MS lesion challenge 2016 (http://iacl.ece.jhu.edu/index.php/MSChallenge)
 
+
+ 
 
 ## Conclusions
 
