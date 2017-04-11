@@ -4,9 +4,9 @@ pre {
   line-height: 24px;
   padding: 10px 0 10px 60px;
   letter-spacing: -1px;
-  margin-bottom: 8px;
-  width: 106%;
-  left: -50px;
+  margin-bottom: 80px;
+  /*width: 106%;*/
+  /*left: -50px;*/
   position: relative;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -52,4 +52,19 @@ strong {
 #right_col {
    float:right;
    width:50%;
+}
+
+
+slides > slide {
+  padding: 10px 60px;
+}
+
+slides > slide > hgroup + article {
+    margin-top: 5px;
+}
+
+slides.layout-widescreen > slide,
+slides.layout-faux-widescreen > slide {
+  margin-left: -600px;
+  width: 1200px;
 }
