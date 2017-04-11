@@ -314,6 +314,8 @@ file.exists(&quot;training01_mprage_under400.nii.gz&quot;)</pre>
 
 <pre >[1] TRUE</pre>
 
+<p>We have seen that <code>file.exists</code> returns <code>TRUE</code> if all files exist (similarly <code>dir.exists</code> for directories).</p>
+
 </article></slide><slide class=''><hgroup><h2>Vectorizing a <code>nifti</code></h2></hgroup><article  id="vectorizing-a-nifti">
 
 <p>To convert a <code>nifti</code> to a <code>vector</code>, you can simply use the <code>c()</code> function:</p>
@@ -420,19 +422,15 @@ l$V</pre>
 
 <p><code>file.path(directory, filename)</code> will paste <code>directory</code> and <code>filename</code> w/file separators (e.g. <code>/</code>)</p>
 
-<pre class = 'prettyprint lang-r'>paste(&quot;img&quot;, &quot;.nii.gz&quot;)</pre>
+<pre class = 'prettyprint lang-r'>c(paste(&quot;img&quot;, &quot;.nii.gz&quot;), paste0(&quot;img&quot;, &quot;.nii.gz&quot;))</pre>
 
-<pre >[1] &quot;img .nii.gz&quot;</pre>
-
-<pre class = 'prettyprint lang-r'>paste0(&quot;img&quot;, &quot;.nii.gz&quot;)</pre>
-
-<pre >[1] &quot;img.nii.gz&quot;</pre>
+<pre >[1] &quot;img .nii.gz&quot; &quot;img.nii.gz&quot; </pre>
 
 <pre class = 'prettyprint lang-r'>file.path(&quot;output_directory&quot;, paste0(&quot;img&quot;, &quot;.nii.gz&quot;))</pre>
 
 <pre >[1] &quot;output_directory/img.nii.gz&quot;</pre>
 
-<p>We have seen that <code>file.exists</code> returns <code>TRUE</code> if all files exist. <code>nii.stub</code> will strip off the nifti extension. If <code>bn = TRUE</code>, it removes the directory as well:</p>
+<p><code>nii.stub</code> will strip off the nifti extension. If <code>bn = TRUE</code>, it removes the directory as well:</p>
 
 <pre class = 'prettyprint lang-r'>nii.stub(file.path(&quot;output_directory&quot;, paste0(&quot;img&quot;, &quot;.nii.gz&quot;)))</pre>
 

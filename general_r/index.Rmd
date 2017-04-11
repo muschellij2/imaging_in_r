@@ -181,6 +181,8 @@ writenii(nim = t1_copy,
 file.exists("training01_mprage_under400.nii.gz")
 ```
 
+We have seen that `file.exists` returns `TRUE` if all files exist (similarly `dir.exists` for directories).  
+
 
 ## Vectorizing a `nifti`
 
@@ -263,12 +265,11 @@ Use `paste` if you want to put strings together with spaces, `paste0` no spaces 
 `file.path(directory, filename)` will paste `directory` and `filename` w/file separators (e.g. `/`)
 
 ```{r}
-paste("img", ".nii.gz")
-paste0("img", ".nii.gz")
+c(paste("img", ".nii.gz"), paste0("img", ".nii.gz"))
 file.path("output_directory", paste0("img", ".nii.gz"))
 ```
 
-We have seen that `file.exists` returns `TRUE` if all files exist.  `nii.stub` will strip off the nifti extension.  If `bn = TRUE`, it removes the directory as well:
+`nii.stub` will strip off the nifti extension.  If `bn = TRUE`, it removes the directory as well:
 
 ```{r}
 nii.stub(file.path("output_directory", paste0("img", ".nii.gz")))
