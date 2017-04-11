@@ -98,9 +98,9 @@ l$V
 
 ## ------------------------------------------------------------------------
 c(paste("img", ".nii.gz"), paste0("img", ".nii.gz"))
-file.path("output_directory", paste0("img", ".nii.gz"))
+x = file.path("output_directory", paste0("img", ".nii.gz")); print(x)
 
 ## ------------------------------------------------------------------------
-nii.stub(file.path("output_directory", paste0("img", ".nii.gz")))
-nii.stub(file.path("output_directory", paste0("img", ".nii.gz")), bn = TRUE)
+nii.stub(x)
+nii.stub(x, bn = TRUE)
 
