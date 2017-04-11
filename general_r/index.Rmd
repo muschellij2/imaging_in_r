@@ -191,7 +191,7 @@ vals = c(t1)
 class(vals)
 ```
 
-Note an `array` can be reconstructed by using `array(vals, dim = dim(t1))` and will be in the correct order as the way R creates vectors and arrays.  
+This is useful for making `data.frame`s (not covered here) when you want to do modeling at a voxel level.
 
 ## Histogram
 
