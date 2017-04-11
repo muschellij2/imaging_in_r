@@ -174,6 +174,26 @@
 [1,]    7   10
 [2,]    8   11</pre>
 
+</article></slide><slide class=''><hgroup><h2>Arrays</h2></hgroup><article  id="arrays">
+
+<ul>
+<li>Create a 3 x 4 x 3 numeric matrix and assign to variable <code>a</code></li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>a = array(1:36, dim = c(3, 4, 3))</pre>
+
+<ul>
+<li>Subsetting - <code>[x,y,z]</code> format:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>dim(a[,4,])</pre>
+
+<pre >[1] 3 3</pre>
+
+<p>This will return an error!</p>
+
+<pre class = 'prettyprint lang-r'>a[,4]</pre>
+
 </article></slide><slide class=''><hgroup><h2>Operators in R</h2></hgroup><article  id="operators-in-r">
 
 <p>These return logical values:</p>
@@ -193,13 +213,13 @@
 
 </article></slide><slide class=''><hgroup><h2>Subsetting with logicals</h2></hgroup><article  id="subsetting-with-logicals">
 
-<p>You can either do subsetting with indices or logical vectors:</p>
+<p>You can also subsetting with logical vectors:</p>
 
 <pre class = 'prettyprint lang-r'>v[ v &gt; 5 ]</pre>
 
 <pre >[1] 7 8</pre>
 
-<p>the <code>which</code> command takes a logical and gets the indices:</p>
+<p>The <code>which</code> command takes a logical and gets the indices of <code>TRUE</code>:</p>
 
 <pre class = 'prettyprint lang-r'>which(v &gt; 5)</pre>
 
@@ -209,7 +229,7 @@
 
 <pre >[1] 7 8</pre>
 
-</article></slide><slide class=''><hgroup><h2>Subsetting with <code>nifti</code> objects</h2></hgroup><article  id="subsetting-with-nifti-objects">
+</article></slide><slide class=''><hgroup><h2>Subsetting with <code>nifti</code> objects or <code>arrays</code></h2></hgroup><article  id="subsetting-with-nifti-objects-or-arrays">
 
 <p>The subsetting here is similar to that of arrays, so we will use the <code>t1</code>. Since it&#39;s 3-dimensions the subsetting goes to the 3rd dimension</p>
 

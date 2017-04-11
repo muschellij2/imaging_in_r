@@ -68,6 +68,23 @@ print(m[1,3])
 print(m[1:2,3:4])
 ```
 
+## Arrays
+
+- Create a 3 x 4 x 3 numeric array and assign to variable `a`
+```{r arr}
+a = array(1:36, dim = c(3, 4, 3))
+```
+
+- Subsetting - `[x,y,z]` format:
+```{r arrSub}
+dim(a[,4,])
+```
+
+This will return an error!
+```{r arrSub_bad, eval = FALSE}
+a[,4]
+```
+
 ## Operators in R
 
 These return logical values:
@@ -96,7 +113,7 @@ v[ which(v > 5) ]
 ```
 
 
-## Subsetting with `nifti` objects
+## Subsetting with `nifti` objects or `arrays`
 
 The subsetting here is similar to that of arrays, so we will use the `t1`. Since it's 3-dimensions the subsetting goes to the 3rd dimension
 ```{r}
