@@ -14,7 +14,7 @@ all:
 	for fol in $(LIST) ; do \
 		pwd && echo $$fol && cp makefile.copy $$fol/makefile && cd $$fol && make all && cd ../; \
 	done
-	Rscript -e "rmarkdown::render('index.Rmd', output_format = 'all')"
+	Rscript -e "rmarkdown::render('index.Rmd')"
 #  
 
 index.html: index.Rmd 
