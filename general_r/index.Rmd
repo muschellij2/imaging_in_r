@@ -270,14 +270,14 @@ Use `paste` if you want to put strings together with spaces, `paste0` no spaces 
 
 ```{r}
 c(paste("img", ".nii.gz"), paste0("img", ".nii.gz"))
-file.path("output_directory", paste0("img", ".nii.gz"))
+x = file.path("output_directory", paste0("img", ".nii.gz")); print(x)
 ```
 
 `nii.stub` will strip off the nifti extension.  If `bn = TRUE`, it removes the directory as well:
 
 ```{r}
-nii.stub(file.path("output_directory", paste0("img", ".nii.gz")))
-nii.stub(file.path("output_directory", paste0("img", ".nii.gz")), bn = TRUE)
+nii.stub(x)
+nii.stub(x, bn = TRUE)
 ```
 
 
