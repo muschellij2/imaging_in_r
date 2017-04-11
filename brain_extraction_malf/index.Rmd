@@ -62,9 +62,20 @@ Here we will use FSL's Brain Extraction Tool (BET) to extract the brain tissue f
 `fslr::fslbet` - takes in a filename/nifti and calls FSL `bet` function
     - additional options can be passed to FSL command in using `opts`
 
-```{r t1_naive_ss, cache = FALSE, message = FALSE, warning = FALSE}
+```{r t1_naive_ss, eval = FALSE, cache = FALSE, message = FALSE, warning = FALSE}
 library(fslr)
 ss = fslbet(infile = t1_fname)
+```
+
+```{r t1_naive_ss_run, cache = FALSE, message = FALSE, warning = FALSE}
+library(fslr)
+out_fname = "../output/naive_ss.nii.gz"
+if (!file.exists(out_fname)) {
+  ss = fslbet(infile = t1_fname)
+  writenii(ss, out_fname)
+} else {
+  ss = readnii(out_fname)
+}
 ```
 
 ## FSL BET Results - Missing Brain Tissues (Posterior)
@@ -96,9 +107,23 @@ bc_img = robust_window(bc_img)
 
 ## BET on N4 Corrected Image Unsatisfactory
 
-```{r bc_bet, message = FALSE}
-bc_bet = fslbet(bc_img); ortho2(bc_img, bc_bet > 0, col.y = red0.5)
+
+```{r bc_bet, eval = FALSE, message = FALSE}
+bc_bet = fslbet(bc_img); 
+ortho2(bc_img, bc_bet > 0, col.y = red0.5)
 ```
+
+```{r bc_bet_run, message = FALSE}
+out_fname = "../output/bc_bet_ss.nii.gz"
+if (!file.exists(out_fname)) {
+  bc_bet = fslbet(bc_img); 
+  writenii(bc_bet, out_fname)
+} else {
+  bc_bet = readnii(out_fname)
+}
+ortho2(bc_img, bc_bet > 0, col.y = red0.5)
+```
+
 
 <!-- ## Attempt 3: Brain Extraction of T1 image using MALF -->
 
@@ -107,7 +132,7 @@ bc_bet = fslbet(bc_img); ortho2(bc_img, bc_bet > 0, col.y = red0.5)
 <!-- <img src="malf_figure.jpg" style="width: 40%; display: block; margin: auto;"> -->
 
 
---- 
+## MALF for Skull Stripping
 
 <div class="container">
 <div id="left_col">
@@ -238,17 +263,52 @@ ortho2(robust_window(t1))
 
 ## Neck messes up BET 
 
-```{r kirby21_t1_naive_ss, cache = FALSE, message = FALSE}
+```{r kirby21_t1_naive_ss_run, cache = FALSE, message = FALSE}
+out_fname = "../output/kirby_naive_ss.nii.gz"
+if (!file.exists(out_fname)) {
+  ss = fslbet(infile = t1_fname)
+  writenii(ss, out_fname)
+} else {
+  ss = readnii(out_fname)
+}
+ortho2(robust_window(ss))
+```
+
+
+```{r kirby21_t1_naive_ss_show, eval = FALSE, cache = FALSE, message = FALSE}
 ss = fslbet(infile = t1_fname); ortho2(robust_window(ss))
 ```
 
 
+
 ## Recommend to Bias Correct first: not fixed
 
-```{r kirby21_bc_bet, message = FALSE}
-bc_img = bias_correct(t1, correction = "N4"); bc_bet = fslbet(bc_img)
+
+```{r kirby21_bc_bet_show, message = FALSE, eval = FALSE}
+bc_img = bias_correct(t1, correction = "N4"); 
+bc_bet = fslbet(bc_img)
 ortho2(robust_window(t1), bc_bet > 0, col.y = red0.5)
 ```
+
+```{r kirby21_bc_bet_run, message = FALSE, echo = FALSE}
+out_fname = "../output/kirby_bc.nii.gz"
+if (!file.exists(out_fname)) {
+  bc_img = bias_correct(t1, correction = "N4"); 
+  writenii(bc_img, out_fname)
+} else {
+  bc_img = readnii(out_fname)
+}
+
+out_fname = "../output/kirby_bc_bet.nii.gz"
+if (!file.exists(out_fname)) {
+  bc_bet = fslbet(bc_img)  
+  writenii(bc_bet, out_fname)
+} else {
+  bc_bet = readnii(out_fname)
+}
+ortho2(robust_window(t1), bc_bet > 0, col.y = red0.5)
+```
+
 
 ## BET with neck removal
 

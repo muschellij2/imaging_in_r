@@ -14,9 +14,19 @@ red0.5 = scales::alpha("red", 0.5)
 ## ----t1_plot_robust------------------------------------------------------
 ortho2(rt1)
 
-## ----t1_naive_ss, cache = FALSE, message = FALSE, warning = FALSE--------
+## ----t1_naive_ss, eval = FALSE, cache = FALSE, message = FALSE, warning = FALSE----
+## library(fslr)
+## ss = fslbet(infile = t1_fname)
+
+## ----t1_naive_ss_run, cache = FALSE, message = FALSE, warning = FALSE----
 library(fslr)
-ss = fslbet(infile = t1_fname)
+out_fname = "../output/naive_ss.nii.gz"
+if (!file.exists(out_fname)) {
+  ss = fslbet(infile = t1_fname)
+  writenii(ss, out_fname)
+} else {
+  ss = readnii(out_fname)
+}
 
 ## ----t1_naive_plot_ss, echo = FALSE--------------------------------------
 ortho2(robust_window(ss))
@@ -33,8 +43,19 @@ bc_fname = "../output/training01_01_mprage_n4.nii.gz"
 bc_img = readnii(bc_fname)
 bc_img = robust_window(bc_img)
 
-## ----bc_bet, message = FALSE---------------------------------------------
-bc_bet = fslbet(bc_img); ortho2(bc_img, bc_bet > 0, col.y = red0.5)
+## ----bc_bet, eval = FALSE, message = FALSE-------------------------------
+## bc_bet = fslbet(bc_img);
+## ortho2(bc_img, bc_bet > 0, col.y = red0.5)
+
+## ----bc_bet_run, message = FALSE-----------------------------------------
+out_fname = "../output/bc_bet_ss.nii.gz"
+if (!file.exists(out_fname)) {
+  bc_bet = fslbet(bc_img); 
+  writenii(bc_bet, out_fname)
+} else {
+  bc_bet = readnii(out_fname)
+}
+ortho2(bc_img, bc_bet > 0, col.y = red0.5)
 
 ## ----t1_malf_ss, echo = TRUE, eval = FALSE-------------------------------
 ## library(malf.templates) # load the data package
@@ -91,11 +112,40 @@ t1 = readnii(t1_fname)
 ## ----kirby21_t1_plot-----------------------------------------------------
 ortho2(robust_window(t1))
 
-## ----kirby21_t1_naive_ss, cache = FALSE, message = FALSE-----------------
-ss = fslbet(infile = t1_fname); ortho2(robust_window(ss))
+## ----kirby21_t1_naive_ss_run, cache = FALSE, message = FALSE-------------
+out_fname = "../output/kirby_naive_ss.nii.gz"
+if (!file.exists(out_fname)) {
+  ss = fslbet(infile = t1_fname)
+  writenii(ss, out_fname)
+} else {
+  ss = readnii(out_fname)
+}
+ortho2(robust_window(ss))
 
-## ----kirby21_bc_bet, message = FALSE-------------------------------------
-bc_img = bias_correct(t1, correction = "N4"); bc_bet = fslbet(bc_img)
+## ----kirby21_t1_naive_ss_show, eval = FALSE, cache = FALSE, message = FALSE----
+## ss = fslbet(infile = t1_fname); ortho2(robust_window(ss))
+
+## ----kirby21_bc_bet_show, message = FALSE, eval = FALSE------------------
+## bc_img = bias_correct(t1, correction = "N4");
+## bc_bet = fslbet(bc_img)
+## ortho2(robust_window(t1), bc_bet > 0, col.y = red0.5)
+
+## ----kirby21_bc_bet_run, message = FALSE, echo = FALSE-------------------
+out_fname = "../output/kirby_bc.nii.gz"
+if (!file.exists(out_fname)) {
+  bc_img = bias_correct(t1, correction = "N4"); 
+  writenii(bc_img, out_fname)
+} else {
+  bc_img = readnii(out_fname)
+}
+
+out_fname = "../output/kirby_bc_bet.nii.gz"
+if (!file.exists(out_fname)) {
+  bc_bet = fslbet(bc_img)  
+  writenii(bc_bet, out_fname)
+} else {
+  bc_bet = readnii(out_fname)
+}
 ortho2(robust_window(t1), bc_bet > 0, col.y = red0.5)
 
 ## ---- eval = FALSE-------------------------------------------------------
