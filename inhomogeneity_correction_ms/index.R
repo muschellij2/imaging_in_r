@@ -28,26 +28,29 @@ bc_t1 = bias_correct(file = t1, correction = "N4")
 ## ----ratio_plot----------------------------------------------------------
 ratio = t1 / bc_t1; ortho2(t1, ratio)
 
-## ----making_scales-------------------------------------------------------
-library(scales)
-q = quantile(ratio[ (ratio < 0.999 | ratio > 1.0001) & ratio != 0 ], probs = seq(0, 1, by = 0.1), na.rm = TRUE)
-q = unique(q)
-# get a diverging gradient palette
-# fcol = scales::div_gradient_pal(low = "blue", mid = "orange", high = "red") 
-fcol = scales::brewer_pal(type = "div", palette = "Spectral")(10)
-colors =  scales::alpha(gradient_n_pal(fcol)(seq(0,1, length = length(q) - 1)), 0.5)
-
-## ----better_ratio_plot---------------------------------------------------
-ortho2(t1, ratio, col.y = colors, ybreaks = q, ycolorbar = TRUE)
-
 ## ----ratio_hist_plot, echo = FALSE---------------------------------------
 hist(ratio, breaks = 200)
 
 ## ----ratio_hist_plot_no1-------------------------------------------------
-hist(ratio[ratio < 0.999 | ratio > 1.0001], breaks = 200)
+in_mask = (ratio < 0.999 | ratio > 1.0001) & ratio != 0
+hist(ratio, mask = in_mask, breaks = 200)
+
+## ----making_scales-------------------------------------------------------
+library(scales)
+q = quantile(ratio[ in_mask ], na.rm = TRUE,
+             probs = seq(0, 1, by = 0.1) )
+q = unique(q)
+# get a diverging gradient palette
+fcol = scales::brewer_pal(type = "div", palette = "Spectral")(10)
+ # need one fewer color than breaks/quantiles
+colors = gradient_n_pal(fcol)(seq(0,1, length = length(q) - 1))
+colors =  scales::alpha(colors, 0.5)
+
+## ----better_ratio_plot---------------------------------------------------
+ortho2(t1, ratio, col.y = colors, ybreaks = q, ycolorbar = TRUE)
 
 ## ----make_df-------------------------------------------------------------
-df = which(ratio < 0.999 | ratio > 1.0001, arr.ind = TRUE)
+df = which(in_mask, arr.ind = TRUE)
 df = cbind(df, value = ratio[df])
 df = data.frame(df, stringsAsFactors = FALSE)
 df$location = cut(df$dim3, breaks = c(0, 38, 76, 115),

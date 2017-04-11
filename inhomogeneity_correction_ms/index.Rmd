@@ -155,7 +155,7 @@ ortho2(t1, ratio, col.y = colors, ybreaks = q, ycolorbar = TRUE)
 We would like to see how the ratio changes in different areas of the brain.  Here we make a `data.frame` of voxel location and intensity.  We cut the location into the bottom, middle, and top of the brain:
 
 ```{r make_df}
-df = which(ratio < 0.999 | ratio > 1.0001, arr.ind = TRUE)
+df = which(in_mask, arr.ind = TRUE)
 df = cbind(df, value = ratio[df])
 df = data.frame(df, stringsAsFactors = FALSE)
 df$location = cut(df$dim3, breaks = c(0, 38, 76, 115),
