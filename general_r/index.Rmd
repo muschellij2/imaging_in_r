@@ -183,7 +183,9 @@ writenii(nim = t1_copy,
 file.exists("training01_mprage_under400.nii.gz")
 ```
 
-We have seen that `file.exists` returns `TRUE` if a file exists (similarly `dir.exists` for directories).  
+We have seen that `file.exists` returns `TRUE` if a file exists 
+    - useful in conjunction with `all`: `all(file.exists(VECTOR_OF_FILES))`
+    - similarly, `dir.exists` for directories
 
 
 ## Vectorizing a `nifti`
