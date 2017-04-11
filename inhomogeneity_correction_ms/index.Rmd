@@ -64,7 +64,7 @@ where $v$ is the given image, $u$ is the uncorrupted image, $f$ is the bias fiel
 The data is log-transformed and assuming a noise-free scenario, we have:
 
 $$
-log(v(x)) = log(u(x)) + log( f(x) )
+\log(v(x)) = \log(u(x)) + \log( f(x) )
 $$
 
 - N4 uses a B-spline approximation of the bias field
@@ -97,28 +97,6 @@ Here we take the ratio of the images and overlay it on the original image:
 ratio = t1 / bc_t1; ortho2(t1, ratio)
 ```
 
-## Visualizing Bias Field Correction
-
-Here we would like to change the colors to something more descriptive.  Here we will use a diverging palette and map colors to the quantiles of the ratio image:
-
-```{r making_scales}
-library(scales)
-q = quantile(ratio[ (ratio < 0.999 | ratio > 1.0001) & ratio != 0 ], probs = seq(0, 1, by = 0.1), na.rm = TRUE)
-q = unique(q)
-# get a diverging gradient palette
-# fcol = scales::div_gradient_pal(low = "blue", mid = "orange", high = "red") 
-fcol = scales::brewer_pal(type = "div", palette = "Spectral")(10)
-colors =  scales::alpha(gradient_n_pal(fcol)(seq(0,1, length = length(q) - 1)), 0.5)
-```
-
-## Visualizing Bias Field Correction
-
-Now we put those breaks into `ortho2` to plot it:
-
-```{r better_ratio_plot}
-ortho2(t1, ratio, col.y = colors, ybreaks = q, ycolorbar = TRUE)
-```
-
 
 ## Histogram of Ratio Values
 
@@ -141,8 +119,35 @@ hist(ratio, breaks = 200)
 Removing these, we can see what the distribution of ratios look like (most are below 1):
 
 ```{r ratio_hist_plot_no1}
-hist(ratio[ratio < 0.999 | ratio > 1.0001], breaks = 200)
+in_mask = (ratio < 0.999 | ratio > 1.0001) & ratio != 0
+hist(ratio, mask = in_mask, breaks = 200)
 ```
+
+
+## Visualizing Bias Field Correction
+
+Here we would like to change the colors of the ratio to something more descriptive.  Here we will use a diverging palette and map colors to the quantiles of the ratio image:
+
+```{r making_scales}
+library(scales)
+q = quantile(ratio[ in_mask ], na.rm = TRUE,
+             probs = seq(0, 1, by = 0.1) )
+q = unique(q)
+# get a diverging gradient palette
+fcol = scales::brewer_pal(type = "div", palette = "Spectral")(10)
+ # need one fewer color than breaks/quantiles
+colors = gradient_n_pal(fcol)(seq(0,1, length = length(q) - 1))
+colors =  scales::alpha(colors, 0.5)
+```
+
+## Visualizing Bias Field Correction
+
+Now we put those breaks into `ortho2` to plot it:
+
+```{r better_ratio_plot}
+ortho2(t1, ratio, col.y = colors, ybreaks = q, ycolorbar = TRUE)
+```
+
 
 
 ## Visualizing Bias Field Correction
