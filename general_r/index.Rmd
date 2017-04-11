@@ -255,4 +255,4 @@ These work with an image and a number (`img + 2`) or two images of the same dime
 
 
 
- ## References
+## References

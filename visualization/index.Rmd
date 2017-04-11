@@ -98,7 +98,7 @@ t1 <- readnii("training01_01_mprage.nii.gz")
 There are no differences in these 2 commands, but just personal preference.
 
 
----
+## `nifti` images
 
 By default, if you simply pass the object, it is printed, we can also do `print(t1)`:
 ```{r}
@@ -219,7 +219,7 @@ High intensities can "dampen" the viewing of an image.
 ortho2(t1)
 ```
 
---- 
+## Brightening up the image
 
 We see a faint outline of the image, but this single large value affects how we view the image.  The function `robust_window` calculates quantiles of an image, by default the 0 (min) and 99.9th quantile, and sets values outside of this range to that quantile.  
 
