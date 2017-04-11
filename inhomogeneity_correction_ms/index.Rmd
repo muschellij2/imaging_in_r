@@ -32,18 +32,32 @@ Let's read in the T1 image from a MS lesion data set:
 ```{r}
 library(ms.lesion)
 library(neurobase)
-files = get_image_filenames_list_by_subject()$training01
+all_files = get_image_filenames_list_by_subject()
+print(names(all_files))
+files = all_files$training01
+print(names(files))
 t1_fname = files["MPRAGE"]
 t1 = readnii(t1_fname)
 ```
 
+- `get_image_filenames_list_by_subject` - returns a list, we subset by a subject ID
+- `files` is a named vector of filenames, we subset by the modality
+- `t1` is a `nifti` object
 
 ## Image Data
 
 It's hard to see bias fields, but sometimes they can be seen visually.
 
-```{r}
+```{r ortho2_show}
 ortho2(robust_window(t1))
+```
+
+## Image Data: Lightbox
+
+It's hard to see bias fields, but sometimes they can be seen visually.
+
+```{r lightbox}
+image(robust_window(t1), useRaster = TRUE)
 ```
 
 
@@ -56,7 +70,11 @@ $$
 v(x) = u(x)f(x) + n(x)
 $$
 
-where $v$ is the given image, $u$ is the uncorrupted image, $f$ is the bias field, and $n$ is the noise (assumed to be independent and Gaussian) and $x$ is a location in the image.
+- $v$ is the given image
+- $u$ is the uncorrupted image
+- $f$ is the bias field 
+- $n$ is the noise (assumed to be independent and Gaussian)
+- $x$ is a location in the image
 
 
 ## N4 Inhomogeneity Correction
@@ -77,9 +95,18 @@ $$
 Here we will use the `bias_correct` function in `extrantsr`, which calls `n4BiasFieldCorrection` from `ANTsR`.  
 
 You can pass in the image:
-```{r, message = FALSE}
+```{r bc_show, message = FALSE, eval = FALSE}
 library(extrantsr)
 bc_t1 = bias_correct(file = t1, correction = "N4")
+```
+
+```{r bc_run, echo = FALSE}
+out_fname = "../output/training01_01_mprage_n4.nii.gz"
+if (!file.exists(out_fname)) {
+  bc_t1 = bias_correct(file = t1, correction = "N4")
+} else {
+  bc_t1 = readnii(out_fname)
+}
 ```
 
 or the filename:
@@ -126,18 +153,23 @@ hist(ratio, mask = in_mask, breaks = 200)
 
 ## Visualizing Bias Field Correction
 
-Here we would like to change the colors of the ratio to something more descriptive.  Here we will use a diverging palette and map colors to the quantiles of the ratio image:
+Here we would like to change the colors of the ratio to something more descriptive.
+
+Here we will use a diverging palette and map colors to the quantiles of the ratio image:
 
 ```{r making_scales}
 library(scales)
-q = quantile(ratio[ in_mask ], na.rm = TRUE,
+
+# get the quantiles
+quants = quantile(ratio[ in_mask ], na.rm = TRUE,
              probs = seq(0, 1, by = 0.1) )
-q = unique(q)
+quants = unique(quants)
+
 # get a diverging gradient palette
 fcol = scales::brewer_pal(type = "div", palette = "Spectral")(10)
  # need one fewer color than breaks/quantiles
-colors = gradient_n_pal(fcol)(seq(0,1, length = length(q) - 1))
-colors =  scales::alpha(colors, 0.5)
+colors = gradient_n_pal(fcol)(seq(0,1, length = length(quants) - 1))
+colors = scales::alpha(colors, 0.5) # colors are created
 ```
 
 ## Visualizing Bias Field Correction
@@ -145,7 +177,7 @@ colors =  scales::alpha(colors, 0.5)
 Now we put those breaks into `ortho2` to plot it:
 
 ```{r better_ratio_plot}
-ortho2(t1, ratio, col.y = colors, ybreaks = q, ycolorbar = TRUE)
+ortho2(t1, ratio, col.y = colors, ybreaks = quants, ycolorbar = TRUE)
 ```
 
 
@@ -178,13 +210,10 @@ ggplot(df, aes(x = value, colour = location)) + geom_line(stat = "density")
 - Inhomogeneity can cause problems for other methods/segmentation
 - Corrections try to make tissues of the same class to have similar intensities
 - You may also want to run corrections after skull stripping on the brain only
-    - we will do this in the brain extraction lecture
+    - this is possible with the result after the brain extraction lecture
     - correction before skull-stripping may be necessary and can improve after correction
 
 
-```{r saving_out, echo = FALSE}
-writenii(bc_t1, filename = "../output/training01_01_mprage_n4.nii.gz")
-```
 
 ## References
 
