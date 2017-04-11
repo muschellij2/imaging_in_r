@@ -198,6 +198,53 @@ Vectors
 
 <pre >[1] 7 8</pre>
 
+</article></slide><slide class=''><hgroup><h2>Lists</h2></hgroup><article  id="lists">
+
+<ul>
+<li>Initialize an empty list and add two elements to it</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>l = list()
+l[[1]] = v
+l[[2]] = m
+print(l)</pre>
+
+<pre >[[1]]
+[1] 1 4 3 7 8
+
+[[2]]
+     [,1] [,2] [,3] [,4]
+[1,]    1    4    7   10
+[2,]    2    5    8   11
+[3,]    3    6    9   12</pre>
+
+<ul>
+<li>Subsetting uses double brackets:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>print(l[[1]])</pre>
+
+<pre >[1] 1 4 3 7 8</pre>
+
+</article></slide><slide class=''><hgroup><h2>Lists: <code>lapply</code></h2></hgroup><article  id="lists-lapply">
+
+<p>With <code>list</code>s and vectors, there are <code>apply</code> functions. These apply a function to every element of the list. In this course, we will use:</p>
+
+<ul>
+<li><code>lapply</code> - apply function and return the elements as a <code>list</code></li>
+<li><code>sapply</code> - apply function and return a &quot;simplified&quot; version
+
+<ul>
+<li>if all elements returned are a one-element vector, return a <code>vector</code></li>
+<li>if element 5 has 3 elements and element 4 has 4 elements, return a <code>list</code></li>
+</ul></li>
+<li><code>mapply</code> - takes in 2 (or more) lists and &quot;links&quot; the two to perform a function requiring arguments from each list
+
+<ul>
+<li>passing in a list of images and the filenames to write them to</li>
+</ul></li>
+</ul>
+
 </article></slide><slide class=''><hgroup><h2>Working with <code>nifti</code> objects</h2></hgroup><article  id="working-with-nifti-objects">
 
 <p>The subsetting here is similar to that of arrays, so we will use the <code>t1</code>. Since it&#39;s 3-dimensions the subsetting goes to the 3rd dimension</p>
@@ -388,33 +435,7 @@ class(vals)</pre>
 </ul></li>
 </ul>
 
-</article></slide><slide class=''><hgroup><h2>Lists</h2></hgroup><article  id="lists">
-
-<ul>
-<li>Initialize an empty list and add two elements to it</li>
-</ul>
-
-<pre class = 'prettyprint lang-r'>l = list()
-l[[1]] = v
-l[[2]] = m
-print(l)</pre>
-
-<pre >[[1]]
-[1] 1 4 3 7 8
-
-[[2]]
-     [,1] [,2] [,3] [,4]
-[1,]    1    4    7   10
-[2,]    2    5    8   11
-[3,]    3    6    9   12</pre>
-
-<ul>
-<li>Subsetting:</li>
-</ul>
-
-<pre class = 'prettyprint lang-r'>print(l[[1]])</pre>
-
-<pre >[1] 1 4 3 7 8</pre>
+<p>## References</p>
 
 <div id="refs" class="references">
 <div id="ref-landman2011multi">
