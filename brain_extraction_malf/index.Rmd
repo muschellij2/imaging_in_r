@@ -113,7 +113,7 @@ bc_bet = fslbet(bc_img);
 ortho2(bc_img, bc_bet > 0, col.y = red0.5)
 ```
 
-```{r bc_bet_run, message = FALSE}
+```{r bc_bet_run, message = FALSE, echo = FALSE}
 out_fname = "../output/bc_bet_ss.nii.gz"
 if (!file.exists(out_fname)) {
   bc_bet = fslbet(bc_img); 
@@ -245,14 +245,12 @@ print(dd)
 
 FSL BET did not work in the previous data set.  It works in many cases, though.  We will look at a subject from the kirby21 dataset [@landman2011multi].
 
-## Kirby21 
 
 ```{r}
 library(kirby21.t1)
 t1_fname = get_t1_filenames()[1]
 t1 = readnii(t1_fname)
 ```
-
 
 ## T1 image has the neck!
 
@@ -263,7 +261,7 @@ ortho2(robust_window(t1))
 
 ## Neck messes up BET 
 
-```{r kirby21_t1_naive_ss_run, cache = FALSE, message = FALSE}
+```{r kirby21_t1_naive_ss_run, cache = FALSE, message = FALSE, echo = FALSE}
 out_fname = "../output/kirby_naive_ss.nii.gz"
 if (!file.exists(out_fname)) {
   ss = fslbet(infile = t1_fname)
@@ -346,7 +344,7 @@ if (!file.exists(outfile)) {
 }
 ```
 
-```{r kirby21_t1_ss_plot_show, cache = TRUE}
+```{r kirby21_t1_ss_plot_show, cache = TRUE, eval = FALSE}
 ortho2(ss)
 ```
 
