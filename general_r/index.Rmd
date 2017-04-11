@@ -146,19 +146,23 @@ Again, we can use a logical operation.  Let's get the values of the `t1` greater
 head(t1[ t1 > 400 ])
 ```
 
-## Working with `nifti` objects
-
 The operation results in a `nifti` object, and if we look at the values, they are logical:
 ```{r}
 class(t1 > 400)
 head(t1 > 400)
 ```
+
 ## `which` with `nifti` objects
 
 The `which` function works to get indices, but you can pass the `arr.ind = TRUE` argument to get "array" indices:
 
 ```{r}
 head(which(t1 > 400, arr.ind = TRUE))
+```
+
+But can get the "vector" indices as well:
+```{r}
+head(which(t1 > 400, arr.ind = FALSE))
 ```
 
 ## Working with `nifti` objects: reassignment 
@@ -308,6 +312,3 @@ Data Package we will use
 - We have briefly covered subsetting and image manipulation
     - more on that later
 
-
-
-## References
