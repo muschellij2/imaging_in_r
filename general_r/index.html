@@ -261,8 +261,6 @@ t1[1, , ] # returns a 2-d matrix</pre>
 
 <pre >[1] 421 617 617 479 456 404</pre>
 
-</article></slide><slide class=''><hgroup><h2>Working with <code>nifti</code> objects</h2></hgroup><article  id="working-with-nifti-objects-1">
-
 <p>The operation results in a <code>nifti</code> object, and if we look at the values, they are logical:</p>
 
 <pre class = 'prettyprint lang-r'>class(t1 &gt; 400)</pre>
@@ -288,6 +286,12 @@ attr(,&quot;package&quot;)
 [4,]  163  129    1
 [5,]  164  129    1
 [6,]  190  129    1</pre>
+
+<p>But can get the &quot;vector&quot; indices as well:</p>
+
+<pre class = 'prettyprint lang-r'>head(which(t1 &gt; 400, arr.ind = FALSE))</pre>
+
+<pre >[1] 32866 32867 32868 32931 32932 32958</pre>
 
 </article></slide><slide class=''><hgroup><h2>Working with <code>nifti</code> objects: reassignment</h2></hgroup><article  id="working-with-nifti-objects-reassignment">
 
@@ -484,9 +488,7 @@ l$V</pre>
 <ul>
 <li>more on that later</li>
 </ul></li>
-</ul>
-
-</article></slide><slide class=''><hgroup><h2>References</h2></hgroup><article  id="references"></article></slide>
+</ul></article></slide>
 
 
   <slide class="backdrop"></slide>
