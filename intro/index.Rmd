@@ -167,7 +167,8 @@ More information
 * Integrated R help and documentation
 * Searchable command history
 
-## RStudio/R Console ![Console](r-rstudio-1-3-console.png)
+## RStudio/R Console <img src="r-rstudio-1-3-console.png" style="width: 95%; display: block; margin: auto;"> 
+<!-- ![Console]() -->
 
 ## RStudio/R Console
 
@@ -176,7 +177,8 @@ More information
 * Code is **not saved** on your disk
 
 
-## Source/Editor ![Script](r-rstudio-1-3-script.png)
+## Source/Editor <img src="r-rstudio-1-3-script.png" style="width: 95%; display: block; margin: auto;"> 
+<!-- ![Script](r-rstudio-1-3-script.png) -->
 
 ## Source
 
@@ -186,7 +188,8 @@ More information
 
 In a .R file (we call a script), code is saved on your disk
 
-## Workspace/Environment ![Workspace](r-rstudio-1-ggplot-point-2.png)
+## Workspace/Environment <img src="r-rstudio-1-ggplot-point-2.png" style="width: 95%; display: block; margin: auto;"> 
+<!-- ![Workspace]() -->
 
 ## Workspace/Environment
 

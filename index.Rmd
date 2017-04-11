@@ -44,7 +44,7 @@ mat$source = paste0("[Source](", paste0(mat$link, "/index.Rmd"), ")")
 # mat = mat[, c("title", "slides", "rcode", "source")]
 # mat$links = paste(mat$slides, mat$rcode, mat$source)
 # mat$x = ""
-mat = mat[, c("title", "pdf_slides", "slides", "rcode", "source")]
+mat = mat[, c("title", "slides", "pdf_slides", "rcode", "source")]
 # mat = mat[, c("links"), drop = FALSE]
 # pander(mat, split.cells = c("0%", "70%", "10%", "10%", "10%"),
 #        justify = c('left', 'center', 'center', "center"))
