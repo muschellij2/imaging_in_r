@@ -97,7 +97,7 @@ t1 = robust_window(t1)
 double_ortho(t1, mask)
 
 ## ----all_slices----------------------------------------------------------
-image(t1, z = 80)
+image(t1, z = 80) # look at average brightness over each slice
 
 ## ----one_slice-----------------------------------------------------------
 image(t1, z = 80, plot.type = "single")
@@ -118,10 +118,15 @@ overlay(t1, y = qmask, z = 80, plot.type = "single")
 overlay(t1, y = qmask, z = 80, plot.type = "single", NA.y = TRUE)
 
 ## ----dd, cache=FALSE-----------------------------------------------------
-reduced = dropEmptyImageDimensions(t1)
-dim(t1)
-dim(reduced)
+reduced_mask = dropEmptyImageDimensions(qmask)
+dim(qmask)
+dim(reduced_mask)
 
-## ----plot_red------------------------------------------------------------
-ortho2(reduced)
+## ----plot_red_mask-------------------------------------------------------
+ortho2(reduced_mask)
+
+## ----dd_get, cache=FALSE-------------------------------------------------
+keep_inds = getEmptyImageDimensions(qmask)
+reduced_img = applyEmptyImageDimensions(t1, inds = keep_inds)
+ortho2(reduced_mask)
 

@@ -31,7 +31,7 @@ There are multiple imaging formats.  We will use NIfTI:
     - had a `hdr` file (header) and `img` file (data)
 
 
-# An Imaging into to R
+# Imaging Packages in R
 
 ## What is a package?
 
@@ -289,7 +289,7 @@ t1 = robust_window(t1)
 
 ## Double viewing images
 
-We can view the original T1 alongside the estimated mask:
+We can view the original T1 alongside the estimated mask (useful for checking registration):
 
 ```{r double_ortho}
 double_ortho(t1, mask)
@@ -299,15 +299,19 @@ double_ortho(t1, mask)
 
 We may want to view a single slice of an image.  The `oro.nifti::image` function can be used here.  Note, `graphics::image` exists and `oro.nifti::image` both exist.  
 
+Let's look at `?image`
+
+</br>
+
 The `oro.nifti::image` allows you to just write `image(nifti_object)`, which performs operations and calls functions using `graphics::image`.  
 
-This allows the user to use a "generic" version of `image`, which `oro.nifti` adapted specifically for `nifti` objects.  You can see the help for this function in `?image.nifti`.
+This allows the user to use a "generic" version of `image`, which `oro.nifti` adapted specifically for `nifti` objects.  You can see the help for this `nifti`-specific function in `?image.nifti`.
 
 ## Plotter
 
 Let's **try** to plot an image of the $80^{th}$ slice of the T1 image:
 ```{r all_slices}
-image(t1, z = 80)
+image(t1, z = 80) # look at average brightness over each slice
 ```
 
 ## Bad Plot
@@ -360,18 +364,40 @@ overlay(t1, y = qmask, z = 80, plot.type = "single", NA.y = TRUE)
 
 ## Dropping empty dimensions
 
-In some instances, there are extraneous slices to an image.  For example, in the Eve template image we read in, it is just the brain.  Areas of the skull and extracranial tissue are removed, but the slices remain so that the brain image and the original image are in the same space with the same dimensions.  For plotting or further analyses, we can drop these empty dimensions using the `neurobase::dropEmptyImageDimensions` function or `drop_empty_dim` shorthand function.  
+In some instances, there are extraneous slices to an image.  For example, in the Eve template image we read in, it is just the brain.  Areas of the skull and extracranial tissue are removed, but the slices remain so that the brain image and the original image are in the same space with the same dimensions.  For plotting or further analyses, we can drop these empty dimensions using the `neurobase::dropEmptyImageDimensions` function. 
+
+
 By default, if one `nifti` is passed to the function and `keep_ind = FALSE`, then the return is a `nifti` object. 
 
 ```{r dd, cache=FALSE}
-reduced = dropEmptyImageDimensions(t1)
-dim(t1)
-dim(reduced)
+reduced_mask = dropEmptyImageDimensions(qmask)
+dim(qmask)
+dim(reduced_mask)
 ```
 
 ## Plotting the Reduced Image
 
-```{r plot_red}
-ortho2(reduced)
+```{r plot_red_mask}
+ortho2(reduced_mask)
 ```
+
+## Dropping empty dimensions
+
+Many times, you want to get empty dimensions from some sort of mask/region of interest, then apply that dropping procedure to an image you want to visualize
+
+```{r dd_get, cache=FALSE}
+keep_inds = getEmptyImageDimensions(qmask)
+reduced_img = applyEmptyImageDimensions(t1, inds = keep_inds)
+ortho2(reduced_mask)
+```
+
+## Conclusions
+
+- `ortho2` - show orthographic images (and with overlays)
+- `image` - shows multiple slices of an image (by default)
+- `slice` - shows only specified slices
+- `overlay` - similar to `image` but with an overlay
+- `double_ortho` - similar to `ortho2` but side-by-side
+- `robust_window` - good for setting high values to not so high
+- the `*EmptyImageDimensions` functions are good for removes "extraneous" slices for zooming in
 

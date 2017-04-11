@@ -69,6 +69,20 @@ print(m[1,3])
 print(m[1:2,3:4])
 ```
 
+## Operators in R
+
+These return logical values:
+
+- Comparison: `>`, `>=`, `<`, `<=`, `==` (equals), `!=` (not equal)
+- Logical: `!` - not, `&` - and, `|` - or (a "pipe")
+
+These return numeric values:
+
+- Arithmetic: `+`, `-`, `*`, `/`, `^` - exponents
+- Standard math functions: `log`, `abs`, `sqrt`
+- There are many more
+
+
 ## Subsetting with logicals 
 
 You can either do subsetting with indices or logical vectors:
@@ -81,34 +95,8 @@ which(v > 5)
 v[ which(v > 5) ]
 ```
 
-## Lists
 
-- Initialize an empty list and add two elements to it
-
-```{r list}
-l = list()
-l[[1]] = v
-l[[2]] = m
-print(l)
-```
-
-- Subsetting uses double brackets:
-```{r listSub}
-print(l[[1]])
-```
-
-## Lists: `lapply`
-
-With `list`s and vectors, there are `apply` functions.  These apply a function to every element of the list.  In this course, we will use:
-
-- `lapply` - apply function and return the elements as a `list`
-- `sapply` - apply function and return a "simplified" version
-    - if all elements returned are a one-element vector, return a `vector`
-    - if element 5 has 3 elements and element 4 has 4 elements, return a `list`
-- `mapply` - takes in 2 (or more) lists and "links" the two to perform a function requiring arguments from each list 
-    - passing in a list of images and the filenames to write them to
-
-## Working with `nifti` objects
+## Subsetting with `nifti` objects
 
 The subsetting here is similar to that of arrays, so we will use the `t1`. Since it's 3-dimensions the subsetting goes to the 3rd dimension
 ```{r}
@@ -120,6 +108,19 @@ t1[5, 4, ] # returns a vector of numbers (1-d)
 t1[, 4, ] # returns a 2-d matrix
 t1[1, , ] # returns a 2-d matrix
 ```
+
+
+## Operations with `nifti` objects
+
+These work with an image and a number (`img + 2`) or two images of the same dimensions `img1 + img2`.
+
+- Comparison: `>`, `>=`, `<`, `<=`, `==` (equals), `!=` (not equal)
+- Logical: `!` - not, `&` - and, `|` - or (a "pipe")
+- Arithmetic: `+`, `-`, `*`, `/`, `^` - exponents
+- Standard math functions: `log`, `abs`, `sqrt`
+
+
+
 
 ## Working with `nifti` objects
 
@@ -202,7 +203,56 @@ You can also pass in a mask to most standard functions:
 plot(density(t1, mask = t1 > 0))
 ```
 
-## File helpers
+
+## Lists
+
+- Initialize an empty list and add two elements to it
+
+```{r list}
+l = list()
+l[[1]] = v
+l[[2]] = m
+print(l)
+```
+
+- Subsetting uses double brackets:
+```{r listSub}
+print(l[[1]])
+```
+
+## Subsetting by name
+
+If a `vector` has names, you can also put the 
+- Initialize an empty list and add two elements to it
+
+```{r named_vec}
+x = c(first =1, third = 14, second = 5)
+print(x)
+x[c("third")]
+```
+
+If a `list` has names, you can subset with the `$`
+
+- Subsetting uses double brackets:
+```{r named_lst}
+names(l) = c("V", "m")
+l$V
+```
+
+## Lists: `lapply`
+
+With `list`s and vectors, there are `apply` functions.  These apply a function to every element of the list.  In this course, we will use:
+
+- `lapply` - apply function and return the elements as a `list`
+- `sapply` - apply function and return a "simplified" version
+    - if all elements returned are a one-element vector, return a `vector`
+    - if element 5 has 3 elements and element 4 has 4 elements, return a `list`
+- `mapply` - takes in 2 (or more) lists and "links" the two to perform a function requiring arguments from each list 
+    - passing in a list of images and the filenames to write them to
+
+
+
+## File helpers - for constructing filenames
 
 Use `paste` if you want to put strings together with spaces:
 
@@ -215,15 +265,6 @@ paste("img", ".nii.gz")
 paste0("img", ".nii.gz")
 file.path("output_directory", paste0("img", ".nii.gz"))
 ```
-
-## Operations with `nifti` objects
-
-- Comparison: `>`, `>=`, `<`, `<=`, `==` (equals), `!=` (not equal)
-- Logical: `!` - not, `&` - and, `|` - or (a "pipe")
-- Arithmetic: `+`, `-`, `*`, `/`, `^` - exponents
-- Standard math functions: `log`, `abs`, `sqrt`
-
-These work with an image and a number (`img + 2`) or two images of the same dimensions `img1 + img2`.
 
 
 ## Main Packages we will use
@@ -240,8 +281,6 @@ These work with an image and a number (`img + 2`) or two images of the same dime
  
 * `ms.lesion` - contains training/testing data of patients with multiple sclerosis (MS)
     - from the MS lesion challenge 2016 (http://iacl.ece.jhu.edu/index.php/MSChallenge)
-* `kirby21.t1` - scan-rescan data for 3 subjects from @landman2011multi
-    - https://www.nitrc.org/projects/multimodal
 
 
 ## Conclusions
