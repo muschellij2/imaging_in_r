@@ -84,11 +84,12 @@ These return numeric values:
 
 ## Subsetting with logicals 
 
-You can either do subsetting with indices or logical vectors:
+You can also subsetting with logical vectors:
 ```{r}
 v[ v > 5 ]
 ```
-the `which` command takes a logical and gets the indices:
+
+The `which` command takes a logical and gets the indices of `TRUE`:
 ```{r}
 which(v > 5)
 v[ which(v > 5) ]
