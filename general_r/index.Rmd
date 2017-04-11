@@ -113,7 +113,7 @@ v[ which(v > 5) ]
 ```
 
 
-## Subsetting with `nifti` objects or `arrays`
+## Subsetting with `nifti` objects: like `arrays`
 
 The subsetting here is similar to that of arrays, so we will use the `t1`. Since it's 3-dimensions the subsetting goes to the 3rd dimension
 ```{r}
@@ -136,9 +136,6 @@ These work with an image and a number (`img + 2`) or two images of the same dime
 - Arithmetic: `+`, `-`, `*`, `/`, `^` - exponents
 - Standard math functions: `log`, `abs`, `sqrt`
 
-
-
-
 ## Working with `nifti` objects
 
 Again, we can use a logical operation.  Let's get the values of the `t1` greater than 400 (`head` only prints the first 6 values):
@@ -160,14 +157,6 @@ The `which` function works to get indices, but you can pass the `arr.ind = TRUE`
 
 ```{r}
 head(which(t1 > 400, arr.ind = TRUE))
-```
-
-## Working with `nifti` objects
-
-Again, we can use a logical operation.  Let's get the values of the `t1` greater than 400 (`head` only prints the first 6 values):
-
-```{r}
-head(t1[ t1 > 400 ])
 ```
 
 ## Working with `nifti` objects: reassignment 
@@ -243,7 +232,7 @@ If a `vector` has names, you can also put the
 - Initialize an empty list and add two elements to it
 
 ```{r named_vec}
-x = c(first =1, third = 14, second = 5)
+x = c(first = 1, third = 14, second = 5)
 print(x)
 x[c("third")]
 ```
