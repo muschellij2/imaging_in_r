@@ -24,7 +24,7 @@ ts_flairs = lapply(ts_files, function(x) readnii(x["FLAIR"]))
 ts_pds = lapply(ts_files, function(x) readnii(x["PD"]))
 ts_masks = lapply(ts_files, function(x) readnii(x["Brain_Mask"]))
 # John added for code to work
-tr_golds = tr_golds1
+tr_golds = tr_golds2
 
 ## ----over_show_run, echo=FALSE-------------------------------------------
 les_mask = tr_golds2$training05
