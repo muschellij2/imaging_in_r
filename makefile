@@ -17,8 +17,8 @@ all:
 	Rscript -e "rmarkdown::render('index.Rmd', output_format = 'all')"
 #  
 
-index.html index.pdf: index.Rmd 
-	Rscript -e "rmarkdown::render('index.Rmd', output_format = 'all')"
+index.html: index.Rmd 
+	Rscript -e "rmarkdown::render('index.Rmd')"
 
 clean: 
 	rm index.html
