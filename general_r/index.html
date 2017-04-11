@@ -416,11 +416,11 @@ l$V</pre>
 
 </article></slide><slide class=''><hgroup><h2>File helpers - for constructing filenames</h2></hgroup><article  id="file-helpers---for-constructing-filenames">
 
-<p>Use <code>paste</code> if you want to put strings together with spaces:</p>
+<p>Use <code>paste</code> if you want to put strings together with spaces.</p>
 
-<p>Use <code>paste0</code> if you want no spaces by default:</p>
+<p>Use <code>paste0</code> if you want no spaces by default:.</p>
 
-<p><code>file.path(directory, filename)</code> will paste <code>directory</code> and <code>filename</code> with file separators (e.g. <code>/</code>)</p>
+<p><code>file.path(directory, filename)</code> will paste <code>directory</code> and <code>filename</code> w/file separators (e.g. <code>/</code>)</p>
 
 <pre class = 'prettyprint lang-r'>paste(&quot;img&quot;, &quot;.nii.gz&quot;)</pre>
 
@@ -433,6 +433,16 @@ l$V</pre>
 <pre class = 'prettyprint lang-r'>file.path(&quot;output_directory&quot;, paste0(&quot;img&quot;, &quot;.nii.gz&quot;))</pre>
 
 <pre >[1] &quot;output_directory/img.nii.gz&quot;</pre>
+
+<p>We have seen that <code>file.exists</code> returns <code>TRUE</code> if all files exist. <code>nii.stub</code> will strip off the nifti extension. If <code>bn = TRUE</code>, it removes the directory as well:</p>
+
+<pre class = 'prettyprint lang-r'>nii.stub(file.path(&quot;output_directory&quot;, paste0(&quot;img&quot;, &quot;.nii.gz&quot;)))</pre>
+
+<pre >[1] &quot;output_directory/img&quot;</pre>
+
+<pre class = 'prettyprint lang-r'>nii.stub(file.path(&quot;output_directory&quot;, paste0(&quot;img&quot;, &quot;.nii.gz&quot;)), bn = TRUE)</pre>
+
+<pre >[1] &quot;img&quot;</pre>
 
 </article></slide><slide class=''><hgroup><h2>Main Packages we will use</h2></hgroup><article  id="main-packages-we-will-use">
 

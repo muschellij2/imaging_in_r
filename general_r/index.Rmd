@@ -256,20 +256,25 @@ With `list`s and vectors, there are `apply` functions.  These apply a function t
 - `mapply` - takes in 2 (or more) lists and "links" the two to perform a function requiring arguments from each list 
     - passing in a list of images and the filenames to write them to
 
-
-
 ## File helpers - for constructing filenames
 
-Use `paste` if you want to put strings together with spaces:
+Use `paste` if you want to put strings together with spaces.
 
-Use `paste0` if you want no spaces by default:
+Use `paste0` if you want no spaces by default:.
 
-`file.path(directory, filename)` will paste `directory` and `filename` with file separators (e.g. `/`)
+`file.path(directory, filename)` will paste `directory` and `filename` w/file separators (e.g. `/`)
 
 ```{r}
 paste("img", ".nii.gz")
 paste0("img", ".nii.gz")
 file.path("output_directory", paste0("img", ".nii.gz"))
+```
+
+We have seen that `file.exists` returns `TRUE` if all files exist.  `nii.stub` will strip off the nifti extension.  If `bn = TRUE`, it removes the directory as well:
+
+```{r}
+nii.stub(file.path("output_directory", paste0("img", ".nii.gz")))
+nii.stub(file.path("output_directory", paste0("img", ".nii.gz")), bn = TRUE)
 ```
 
 

@@ -101,3 +101,7 @@ paste("img", ".nii.gz")
 paste0("img", ".nii.gz")
 file.path("output_directory", paste0("img", ".nii.gz"))
 
+## ------------------------------------------------------------------------
+nii.stub(file.path("output_directory", paste0("img", ".nii.gz")))
+nii.stub(file.path("output_directory", paste0("img", ".nii.gz")), bn = TRUE)
+
