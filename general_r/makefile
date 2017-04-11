@@ -1,6 +1,6 @@
 all: index.html index.R index.pdf
 	
-index.html index.pdf: index.Rmd 
+index.html: index.Rmd 
 	Rscript -e "rmarkdown::render('index.Rmd')"
 
 index.R: index.Rmd
