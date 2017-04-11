@@ -104,6 +104,5 @@ c(paste("img", ".nii.gz"), paste0("img", ".nii.gz"))
 x = file.path("output_directory", paste0("img", ".nii.gz")); print(x)
 
 ## ------------------------------------------------------------------------
-nii.stub(x)
-nii.stub(x, bn = TRUE)
+c(nii.stub(x), nii.stub(x, bn = TRUE))
 

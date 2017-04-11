@@ -281,8 +281,7 @@ x = file.path("output_directory", paste0("img", ".nii.gz")); print(x)
 `nii.stub` will strip off the nifti extension.  If `bn = TRUE`, it removes the directory as well:
 
 ```{r}
-nii.stub(x)
-nii.stub(x, bn = TRUE)
+c(nii.stub(x), nii.stub(x, bn = TRUE))
 ```
 
 
@@ -291,7 +290,7 @@ nii.stub(x, bn = TRUE)
 * `oro.nifti` - reading/writing NIfTI images
 * `neurobase` - extends `oro.nifti` and provides helpful imaging functions
 * `fslr` - wraps FSL commands to use in R
-    - registration, image manipulation
+    - registration, image manipulation, skull stripping
 * `ANTsR` - wrapper for Advanced normalization tools (ANTs) code 
     - registration, inhomogeneity correction, lots of tools
 * `extrantsr` - allows `ANTsR` to work with objects from `oro.nifti` 
@@ -310,6 +309,7 @@ Data Package we will use
 - We will be using `nifti` objects
     - They are special 3-dimensional arrays
     - Contain numbers or logicals
+- `readnii` and `writenii` are used for reading/writing `nifti` objects to NIfTI files
 - We have briefly covered subsetting and image manipulation
     - more on that later
 

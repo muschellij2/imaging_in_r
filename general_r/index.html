@@ -442,13 +442,9 @@ l$V</pre>
 
 <p><code>nii.stub</code> will strip off the nifti extension. If <code>bn = TRUE</code>, it removes the directory as well:</p>
 
-<pre class = 'prettyprint lang-r'>nii.stub(x)</pre>
+<pre class = 'prettyprint lang-r'>c(nii.stub(x), nii.stub(x, bn = TRUE))</pre>
 
-<pre >[1] &quot;output_directory/img&quot;</pre>
-
-<pre class = 'prettyprint lang-r'>nii.stub(x, bn = TRUE)</pre>
-
-<pre >[1] &quot;img&quot;</pre>
+<pre >[1] &quot;output_directory/img&quot; &quot;img&quot;                 </pre>
 
 </article></slide><slide class=''><hgroup><h2>Main Packages we will use</h2></hgroup><article  id="main-packages-we-will-use">
 
@@ -458,7 +454,7 @@ l$V</pre>
 <li><code>fslr</code> - wraps FSL commands to use in R
 
 <ul>
-<li>registration, image manipulation</li>
+<li>registration, image manipulation, skull stripping</li>
 </ul></li>
 <li><code>ANTsR</code> - wrapper for Advanced normalization tools (ANTs) code
 
@@ -488,6 +484,7 @@ l$V</pre>
 <li>They are special 3-dimensional arrays</li>
 <li>Contain numbers or logicals</li>
 </ul></li>
+<li><code>readnii</code> and <code>writenii</code> are used for reading/writing <code>nifti</code> objects to NIfTI files</li>
 <li>We have briefly covered subsetting and image manipulation
 
 <ul>
