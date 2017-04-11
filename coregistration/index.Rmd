@@ -17,11 +17,11 @@ options(fsl.outputtype = "NIFTI_GZ")
 
 ## Overview 
 In this tutorial we will discuss performing co-registration of the multiple imaging modalities to the T1-weighted image.
-## Loading Data
 
 ```{r t1}
 library(ms.lesion)
 library(neurobase)
+library(extrantsr)
 files = get_image_filenames_list_by_subject()$training01
 t1_fname = files["MPRAGE"]
 t1 = readnii(t1_fname)
@@ -108,7 +108,7 @@ The output in `reg` would contain the transformed image and paths to the estimat
 
 
 
-## Longitudinal Framework for Registration
+## A Longitudinal Framework for Registration
 
 <img src="Reg_Figure_Option1_short.png" style="width: 100%; display: block; margin: auto;">
 
@@ -123,9 +123,11 @@ We will register scans within a visit to the T1 of that visit.
 We would like to perform registration within a visit.  The `extrantsr` function `preprocess_mri_within` will do the following steps:
 
 1.  Inhomogeneity correction (N3 or N4)
+    - Could also use images from previous lecture
 2.  Registration of the files to the first filename (T1)
 3.  Skull_stripping using BET if desired
-    - W will apply our MALF masks later
+    - We will set this to `FALSE`
+    - We will apply our MALF masks later
 
 
 ## Registration within a visit
@@ -181,15 +183,6 @@ out = lapply(xout, zscore_img, mask = dd$outimg)
 out = lapply(out, window_img, window = c(-4, 4))
 ```
 
-## Checking Registration
-
-```{r multi_overlay, echo = FALSE}
-multi_overlay(out)
-```
-
-
-## Checking Registration
-
 ```{r reg_plot_ortho2_show, eval = FALSE}
 double_ortho(out$MPRAGE, out$T2 )
 ```
@@ -199,22 +192,31 @@ double_ortho(robust_window(xout$MPRAGE), robust_window(xout$T2 ))
 ```
 
 
+
+## Checking Registration
+
+The `multi_overlay` function takes in a list of images and then plots one slice across modalities:
+
+```{r multi_overlay, echo = TRUE}
+multi_overlay(out)
+```
+
+
+
 ## Coregistration within a visit results
 
 - Overall, there seems to be good overlap after registration 
-- Although we ran the registration on the raw data, it is usually beneficial to do inhomogeneity correction before registration.
+- It is usually beneficial to do inhomogeneity correction before registration.
     - just set `correct = TRUE` or pass in the bias-corrected images
 
+**Applying a Brain mask to all registered images**
 
-
-## Applying a Brain mask to all registered images
 Now that the images are in the same space as the T1, if we skull-strip the T1 image (we did with MALF), we can apply this mask to those images to extract brain tissues using the `mask_img` command:
 
 ```{r bet_t1_show, echo = TRUE, eval = FALSE}
-mask = readnii("../output/training01_01_mprage_mask.nii.gz")
-masked_imgs = lapply(out, mask_img, sub_mask)
+mask = readnii("../output/training01_01_mprage_mask.nii.gz") # MALF mask 
+masked_imgs = lapply(out, mask_img, mask)
 ```
-
 
 ```{r bet_t1, echo = FALSE}
 mask = readnii("../output/training01_01_mprage_mask.nii.gz")
@@ -222,24 +224,31 @@ sub_mask = applyEmptyImageDimensions(mask, inds = dd$inds)
 masked_imgs = lapply(xout, mask_img, sub_mask)
 ```
 
-## Result 
+## Masked FLAIR Result 
 
 ```{r mimgs_2}
 orthographic(masked_imgs$FLAIR)
 ```
 
+## Masked T2 Result 
+
+```{r mimgs_T2}
+orthographic(masked_imgs$T2)
+```
+
 ## Overview of Functions
 
 - Registration within a subject can be done in R
-    - `registration` wraps around the reading/writing of images and applying transformations
-    - `double_ortho` and `ortho2` can provide some basic visual checks to assess registration quality
+    - `registration` wraps around the reading/writing of images and applying transformations (uses `ANTsR` functions)
+    - `double_ortho`, `ortho2`, and `multi_overlay` can provide some basic visual checks to assess registration quality
     - `preprocess_mri_within` and `preprocess_mri_across` are general wrapper functions to process MRI data
 - Once images are registered in the same space, operations can be applied to all the images, such as:
     - Masking with a brain mask
     - Transforming images to new spaces with one modality
 
 ## Co-registration Overview 
-- Co-registration requires fewer degrees of freedom (usually 6)
+
+- Co-registration requires a few degrees of freedom (usually 6)
     - sequences from the same individual/brain are more alike than images from different subjects
 
 - Example analyses that do not require a reference template 

@@ -17,16 +17,17 @@ knitr::opts_chunk$set(
 ```
 
 ## Image segmentation 
+
 - We are often interested in subdividing or segmenting the brain into meaningful biological regions of interest (ROIs) for an analysis.
 - Examples: tissue segmentation, segmentation of gray matter structures, segmentation of pathology (MS lesions, tumors, ...)
 
-## Goals of this tutorial
+
 - Perform tissue segmentation in R using FSL and ANTs.
 - Discuss multi-atlas label fusion techniques for segmentation.
 - Perform automatic MS lesion segmentation using OASIS.
 
 ## Loading Data
-- Let's read in the training T1s and brain mask for subject 05.
+- Let's read in the training T1s and brain mask for subject 05 (not 01!).
 
 ```{r loading}
 library(ms.lesion)
@@ -65,13 +66,12 @@ ortho2(t1, t1 > 400, xyz = xyz(t1 > 400))
 
 ## Tissue Segmentation using FSL FAST
 
-- FAST is based on a hidden Markov random field model and an Expectation-Maximization algorithm.
+- FAST is based on a hidden Markov random field model and an Expectation-Maximization algorithm [@fast].
 - It jointly produces a bias field corrected image and a probabilistic tissue segmentation.
 - More robust to noise and outliers than finite mixture model-based methods that do not incorporate spatial information.
 
 
-## Tissue Segmentation using FSL FAST
-- The `fslr` function fast calls fast from FSL [@fast].  The `--nobias` option tells FSL to not perform inhomogeneity correction (was already performed in `ANTsR`). 
+The `fslr` function `fast` calls fast from FSL.  The `--nobias` option tells FSL to not perform inhomogeneity correction (N4 already performed in `ANTsR`). 
 
 ```{r fast_show, eval = FALSE}
 t1file = files["MPRAGE"]
@@ -92,7 +92,7 @@ if (!file.exists(outfile)) {
 }
 ```
 
-## Results
+## FAST Results
 
 FAST assumes three tissue classes and produces an image with the three labels, ordered by increasing within-class mean intensities. In a T1 image, this results in:
 
@@ -100,26 +100,26 @@ FAST assumes three tissue classes and produces an image with the three labels, o
 * Level 2: Gray Matter
 * Level 3: White Matter
 
-## White Matter
+## FAST: White Matter
 
 ```{r fast_wm_nonrobust}
 ortho2(t1, t1fast == 3, col.y = alpha("red", 0.5), text = "White Matter")
 ```
 
-## Gray Matter
+## FAST: Gray Matter
 
 ```{r fast_gm_nonrobust}
 ortho2(t1, t1fast == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 ```
 
-## CSF
+## FAST: CSF
 
 ```{r fast_csf_nonrobust}
 ortho2(t1, t1fast == 1, col.y = alpha("red", 0.5), text = "CSF")
 ```
 
 
-## Windowing
+## Removing large values: Is there an effect?
 
 ```{r fast_better_show, eval = FALSE}
 rb = robust_window(t1)
@@ -147,19 +147,19 @@ multi_overlay(L, z = 58, text = names(L), text.x = 0.5, text.y = 1.4,
 ```
 
 
-## White Matter
+## FAST with Window: White Matter
 
 ```{r fast_wm}
 ortho2(t1, robust_fast == 3, col.y = alpha("red", 0.5), text = "White Matter")
 ```
 
-## Gray Matter
+## FAST with Window: Gray Matter
 
 ```{r fast_gm}
 ortho2(t1, robust_fast == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 ```
 
-## CSF
+## FAST with Window: CSF
 
 ```{r fast_csf}
 ortho2(t1, robust_fast == 1, col.y = alpha("red", 0.5), text = "CSF")
@@ -193,19 +193,23 @@ if (!file.exists(outfile)) {
 }
 ```
 
-## White Matter
+```{r atropos_overall}
+double_ortho(t1, t1seg)
+```
+
+## Atropos: White Matter
 
 ```{r otropos_wm}
 ortho2(t1, t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
 ```
 
-## Gray Matter
+## Atropos: Gray Matter
 
 ```{r otropos_gm}
 ortho2(t1, t1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 ```
 
-## CSF
+## Atropos: CSF
 
 ```{r otropos_csf}
 ortho2(t1, t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
@@ -219,7 +223,7 @@ ortho2(t1, t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 - The k-means clustering is affected by large outliers
 
 
-## Tissue Segmentation using ANTsR, extrantsr
+## Atropos using Windowing
 
 
 ```{r robust_otropos_show, eval = FALSE}
@@ -231,27 +235,30 @@ robust_t1seg = robust_t1_otropos$segmentation
 robust_t1seg = readnii(files["Tissue_Classes"])
 ```
 
+```{r atropos_robust_overall}
+double_ortho(t1, robust_t1seg)
+```
 
 
-## White Matter
+## Atropos with Window: White Matter
 
 ```{r otropos_wm_robust}
 ortho2(t1, robust_t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
 ```
 
-## Gray Matter
+## Atropos with Window: Gray Matter
 
 ```{r otropos_gm_robust}
 ortho2(t1, robust_t1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 ```
 
-## CSF
+## Atropos with Window: CSF
 
 ```{r otropos_csf_robust}
 ortho2(t1, robust_t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 ```
 
-## Robust Atropos Results
+## Atropos with Window Results
 
 - Overall the results look like they reasonably separate the classes
     - No ground truth
@@ -273,10 +280,11 @@ names(tab_fsl) = names(tab_ants) = c("CSF", "GM", "WM")
 
 ## Estimating the Volume of Each Class
 
-By multiplying by the voxel resolution (in cubic centimeters), we can get volumes
+By multiplying by the voxel resolution (in cubic centimeters) using the `voxres` function, we can get volumes
 
 ```{r volumes}
 vres = voxres(t1seg, units = "cm")
+print(vres)
 vol_fsl = tab_fsl * vres
 vol_fsl
 vol_ants = tab_ants * vres

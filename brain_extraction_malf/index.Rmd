@@ -67,7 +67,7 @@ library(fslr)
 ss = fslbet(infile = t1_fname)
 ```
 
-```{r t1_naive_ss_run, cache = FALSE, message = FALSE, warning = FALSE}
+```{r t1_naive_ss_run, echo = FALSE, cache = FALSE, message = FALSE, warning = FALSE}
 library(fslr)
 out_fname = "../output/naive_ss.nii.gz"
 if (!file.exists(out_fname)) {
@@ -80,7 +80,7 @@ if (!file.exists(out_fname)) {
 
 ## FSL BET Results - Missing Brain Tissues (Posterior)
 
-```{r t1_naive_plot_ss, echo = FALSE}
+```{r t1_naive_plot_ss}
 ortho2(robust_window(ss))
 ```
 
@@ -105,12 +105,8 @@ bc_img = readnii(bc_fname)
 bc_img = robust_window(bc_img)
 ```
 
-## BET on N4 Corrected Image Unsatisfactory
-
-
 ```{r bc_bet, eval = FALSE, message = FALSE}
-bc_bet = fslbet(bc_img); 
-ortho2(bc_img, bc_bet > 0, col.y = red0.5)
+bc_bet = fslbet(bc_img); ortho2(bc_img, bc_bet > 0, col.y = red0.5)
 ```
 
 ```{r bc_bet_run, message = FALSE, echo = FALSE}
@@ -166,7 +162,9 @@ Figure from Multi-Atlas Skull Stripping method paper [@mass]:
 ## MALF - use `extrantsr::malf`
 
 - Function requires arguments: `template.images` (T1-weighted images in this case) and `template.structs` (labels/structures/masks, brain masks here)
-- Performs non-linear registration using Symmetric Normalization (`SyN`) [@avants_symmetric_2008], a form of diffeomorphic registration:
+- We will use the `extrantsr::malf` function
+    - Performs non-linear registration using Symmetric Normalization (`SyN`) [@avants_symmetric_2008], a form of diffeomorphic registration:
+    - combines the template structures
 
 
 ```{r t1_malf_ss, echo = TRUE, eval = FALSE}
@@ -216,7 +214,9 @@ In the `ms.lesion` package, we have the brain masks for each subject located in 
 files = get_image_filenames_list_by_subject(
   type = "coregistered")$training01
 files["Brain_Mask"]
+brain_mask = readnii(files["Brain_Mask"])
 ```
+
 ```{r, echo = FALSE}
 files = get_image_filenames_list_by_subject(
   type = "coregistered")$training01
@@ -226,6 +226,16 @@ ind = which(dd == "library")
 dd = dd[seq(ind, length(dd))]
 dd = paste(dd, collapse = "/")
 print(dd)
+```
+
+```{r, echo = FALSE, eval = TRUE}
+cofiles = get_image_filenames_list_by_subject(
+  type = "coregistered")$training01
+brain_mask = readnii(cofiles["Brain_Mask"])
+```
+
+```{r, echo = FALSE, eval = TRUE}
+ortho2(t1, brain_mask > 0, col.y = red0.5)
 ```
 
 

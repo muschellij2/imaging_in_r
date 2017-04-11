@@ -18,7 +18,7 @@ ortho2(rt1)
 ## library(fslr)
 ## ss = fslbet(infile = t1_fname)
 
-## ----t1_naive_ss_run, cache = FALSE, message = FALSE, warning = FALSE----
+## ----t1_naive_ss_run, echo = FALSE, cache = FALSE, message = FALSE, warning = FALSE----
 library(fslr)
 out_fname = "../output/naive_ss.nii.gz"
 if (!file.exists(out_fname)) {
@@ -28,7 +28,7 @@ if (!file.exists(out_fname)) {
   ss = readnii(out_fname)
 }
 
-## ----t1_naive_plot_ss, echo = FALSE--------------------------------------
+## ----t1_naive_plot_ss----------------------------------------------------
 ortho2(robust_window(ss))
 
 ## ----t1_ss_plot----------------------------------------------------------
@@ -44,8 +44,7 @@ bc_img = readnii(bc_fname)
 bc_img = robust_window(bc_img)
 
 ## ----bc_bet, eval = FALSE, message = FALSE-------------------------------
-## bc_bet = fslbet(bc_img);
-## ortho2(bc_img, bc_bet > 0, col.y = red0.5)
+## bc_bet = fslbet(bc_img); ortho2(bc_img, bc_bet > 0, col.y = red0.5)
 
 ## ----bc_bet_run, message = FALSE, echo = FALSE---------------------------
 out_fname = "../output/bc_bet_ss.nii.gz"
@@ -93,6 +92,7 @@ ortho2(bc_img, ss > 0, col.y = red0.5)
 ## files = get_image_filenames_list_by_subject(
 ##   type = "coregistered")$training01
 ## files["Brain_Mask"]
+## brain_mask = readnii(files["Brain_Mask"])
 
 ## ---- echo = FALSE-------------------------------------------------------
 files = get_image_filenames_list_by_subject(
@@ -103,6 +103,14 @@ ind = which(dd == "library")
 dd = dd[seq(ind, length(dd))]
 dd = paste(dd, collapse = "/")
 print(dd)
+
+## ---- echo = FALSE, eval = TRUE------------------------------------------
+cofiles = get_image_filenames_list_by_subject(
+  type = "coregistered")$training01
+brain_mask = readnii(cofiles["Brain_Mask"])
+
+## ---- echo = FALSE, eval = TRUE------------------------------------------
+ortho2(t1, brain_mask > 0, col.y = red0.5)
 
 ## ------------------------------------------------------------------------
 library(kirby21.t1)
