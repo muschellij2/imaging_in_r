@@ -56,7 +56,11 @@ knitr::kable(mat)
 All materials for this course are located at: 
 https://github.com/muschellij2/imaging_in_r
 
+
 You can download by clicking "Clone or download" (in green), then Download as Zip.  We will also have USB drives loaded with the code.
+
+We have created a [function cheatsheet](https://github.com/muschellij2/neuro_backend/raw/master/cheatsheet/function_cheatsheet.pdf) for all the functions we will call during the course.
+
 
 ## Additional Tutorials
 
