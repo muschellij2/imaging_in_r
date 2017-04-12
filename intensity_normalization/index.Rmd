@@ -3,13 +3,14 @@ title: "Intensity Normalization"
 output:
   ioslides_presentation:
     widescreen: yes
+    css: ../styles.css
   beamer_presentation: default    
 bibliography: ../refs.bib      
 ---
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, comment = "", fig.height = 5, fig.width = 5, cache = TRUE)
+knitr::opts_chunk$set(echo = TRUE, comment = "", fig.height = 5.5, fig.width = 5.5, cache = TRUE)
 options(fsl.path = "/usr/local/fsl/")
 options(fsl.outputtype = "NIFTI_GZ")
 ```
@@ -256,7 +257,7 @@ $$ T1_{WS} = \frac{T1 - \mu_{WS}}{\sigma_{WS}}$$
 
 ## White Stripe normalization
 
-<img src="whitestripe.png" style="width: 100%; display: block; margin: auto;">
+<img src="whitestripe.png" style="width: 60%; display: block; margin: auto;">
 
 
 ## White Stripe normalization code
