@@ -134,8 +134,6 @@ You can also be explicit about which package you are using with the `::` operato
 t1 = neurobase::readnii("training01_01_mprage.nii.gz")
 ```
 
-
-
 ## Multiple Sclerosis
 
 - Multiple sclerosis is a chronic disease of the central nervous system (brain, spinal chord, optic nerves)
@@ -185,14 +183,6 @@ t1 = readnii(t1_fname)
 t1
 ```
 
-
-## Orthographic view
-
-The `oro.nifti::orthographic` function displays `nifti` objects in 3 different planes.  
-
-```{r ortho}
-oro.nifti::orthographic(t1)
-```
 
 ## Orthographic view with additions
 
