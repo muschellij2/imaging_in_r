@@ -1,5 +1,5 @@
 ---
-title: "General R (and Writing Images)"
+title: "General R (Reading and Writing Images)"
 output:
   ioslides_presentation:
     widescreen: yes
@@ -13,19 +13,12 @@ library(methods)
 knitr::opts_chunk$set(echo = TRUE, comment = "")
 ```
 
-## Reading in the image
-
-Again we will read in the `training01_01_mprage.nii.gz` file, and assign it to an object called `t1`:
-```{r}
-library(neurobase)
-t1 = readnii("training01_01_mprage.nii.gz")
-```
-
 ## Data Classes
 
 - Numeric - numbers (e.g. 1, 3.673)
 - Character - strings or words (`"hey"`, `"I'm a string"`) in either single or double quotes
 - Logicals - `TRUE` or `FALSE` - all capital letters and are **not** in quotes. 
+
 
 ## Data Types
 
@@ -37,46 +30,54 @@ t1 = readnii("training01_01_mprage.nii.gz")
 - `list` - a general holder of things 
 
 
-## Vectors
+## Initializing 
 
-- Create a vector of numeric values and assign to variable `v`
-
+- Use `c()` to create a vector of numeric values: 
 ```{r vec}
 v = c(1, 4, 3, 7, 8)
+print(v)
+```
+- Shortcut for sequential numeric vector:
+```{r vec2}
+w = 1:5
+print(w)
+```
+- Create a 3 x 4 numeric matrix and assign to variable `m`
+```{r mat}
+m = matrix(1:12, nrow = 3)
+print(m)
+```
+- Create a 3 x 4 x 3 numeric array and assign to variable `a`
+```{r arr}
+a = array(1:36, dim = c(3, 4, 3))
 ```
 
-- Subsetting (first index is `1`, not zero):
+## Subsetting 
+
+- Subsetting a vector (first index is `1`, not zero):
 ```{r vecSub}
+print(v)
 print(v[4])
 print(v[1:3])
 print(v[c(1,3,5)])
 ```
 
+## Subsetting 
 
-## Matrices
-
-- Create a 3 x 4 numeric matrix and assign to variable `m`
-```{r mat}
-m = matrix(1:12, nrow = 3)
-```
-
-- Subsetting - `[row,column]` format, if `row` or `column` missing then all values:
+- Subsetting a matrix - `[row,column]` format, if `row` or `column` missing then all values:
 ```{r matSub}
+print(m)
 print(m[,4])
 print(m[2,])
 print(m[1,3])
 print(m[1:2,3:4])
 ```
 
-## Arrays
-
-- Create a 3 x 4 x 3 numeric array and assign to variable `a`
-```{r arr}
-a = array(1:36, dim = c(3, 4, 3))
-```
+## Subsetting 
 
 - Subsetting - `[x,y,z]` format:
 ```{r arrSub}
+print(a[1,1,1])
 dim(a[,4,])
 ```
 
@@ -87,13 +88,6 @@ a[,4]
 
 ## Operators in R
 
-These return logical values:
-
-- Comparison: `>`, `>=`, `<`, `<=`, `==` (equals), `!=` (not equal)
-- Logical: `!` - not, `&` - and, `|` - or (a "pipe")
-- `all`: test all values `TRUE` and `any` (are any)
-
-
 These return numeric values:
 
 - Arithmetic: `+`, `-`, `*`, `/`, `^` - exponents
@@ -101,12 +95,28 @@ These return numeric values:
 - There are many more
 
 
-## Subsetting with logicals 
-
-You can also subsetting with logical vectors:
-```{r}
-v[ v > 5 ]
+```{r add_vw}
+print(v + 4)
+print(v + w)
+print(sqrt(w^2))
 ```
+
+## Operators in R
+
+These return logical values:
+
+- Comparison: `>`, `>=`, `<`, `<=`, `==` (equals), `!=` (not equal)
+- Logical: `!` - not, `&` - and, `|` - or (a "pipe")
+- `all`: test all values `TRUE` and `any` (are any)
+
+```{r true}
+print(!FALSE)
+print(TRUE | FALSE)
+print(FALSE & FALSE)
+```
+
+
+## Subsetting with logicals 
 
 The `which` command takes a logical and gets the indices of `TRUE`:
 ```{r}
@@ -114,6 +124,21 @@ which(v > 5)
 v[ which(v > 5) ]
 ```
 
+Or directly pass in a vector of logicals:
+```{r}
+v[ v > 5 ]
+```
+
+This method will be useful later when we are working with images.
+
+
+## Reading in an image
+
+We will read in the `training01_01_mprage.nii.gz` file, and assign it to an object called `t1`:
+```{r}
+library(neurobase)
+t1 = readnii("training01_01_mprage.nii.gz")
+```
 
 ## Subsetting with `nifti` objects: like `arrays`
 
@@ -126,8 +151,8 @@ t1[5, 4, 3]
 t1[5, 4, ] # returns a vector of numbers (1-d)
 t1[, 4, ] # returns a 2-d matrix
 t1[1, , ] # returns a 2-d matrix
+t1[t1 < 500] # using logicals
 ```
-
 
 ## Operations with `nifti` objects
 
@@ -137,6 +162,7 @@ These work with an image and a number (`img + 2`) or two images of the same dime
 - Logical: `!` - not, `&` - and, `|` - or (a "pipe")
 - Arithmetic: `+`, `-`, `*`, `/`, `^` - exponents
 - Standard math functions: `log`, `abs`, `sqrt`
+
 
 ## Working with `nifti` objects
 
@@ -220,6 +246,8 @@ You can also pass in a mask to most standard functions:
 plot(density(t1, mask = t1 > 0))
 ```
 
+## --- Stop here ----
+- Put lists elsewhere
 
 ## Lists
 
