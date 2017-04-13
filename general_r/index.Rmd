@@ -13,6 +13,8 @@ library(methods)
 knitr::opts_chunk$set(echo = TRUE, comment = "")
 ```
 
+# R Basics 
+
 ## Data Classes
 
 - Numeric - numbers (e.g. 1, 3.673)
@@ -30,7 +32,7 @@ knitr::opts_chunk$set(echo = TRUE, comment = "")
 - `list` - a general holder of things 
 
 
-## Initializing 
+## Initializing: vectors 
 
 - Use `c()` to create a vector of numeric values: 
 ```{r vec}
@@ -42,7 +44,39 @@ print(v)
 w = 1:5
 print(w)
 ```
+
+## Help
+
+- To see the documentation for a function, use the `?` symbol before the name of the function.  This is a shortcut for the `help` command:
+- For example, to see documentation for `c`:
+
+```{r help, eval = FALSE}
+?c
+help(topic = "c")
+```
+- To search for help files, use a double `??` or `help.search`:
+
+```{r help2, eval = FALSE}
+??c
+help.search(pattern = "c")
+```
+
+## Some Details
+
+- R is case sensitive (e.g. `y` and `Y` are different)
+- Commands separated by new line or by a colon (;)
+- Use `#` to comment
+
+You can also be explicit about which package you are using with the `::` operator, where the syntax is `package::function()`:
+
+```{r colon_twice, eval=FALSE}
+utils::help("c")
+```
+
+## Initializing: matrices and arrays
+
 - Create a 3 x 4 numeric matrix and assign to variable `m`
+    - note items are added column-wise 
 ```{r mat}
 m = matrix(1:12, nrow = 3)
 print(m)
@@ -50,9 +84,10 @@ print(m)
 - Create a 3 x 4 x 3 numeric array and assign to variable `a`
 ```{r arr}
 a = array(1:36, dim = c(3, 4, 3))
+dim(a)
 ```
 
-## Subsetting 
+## Subsetting: vectors
 
 - Subsetting a vector (first index is `1`, not zero):
 ```{r vecSub}
@@ -62,7 +97,7 @@ print(v[1:3])
 print(v[c(1,3,5)])
 ```
 
-## Subsetting 
+## Subsetting: matrices
 
 - Subsetting a matrix - `[row,column]` format, 
 ```{r matSub}
@@ -76,7 +111,7 @@ print(m[2,])
 print(m[1:2,3:4])
 ```
 
-## Subsetting 
+## Subsetting: arrays
 
 - Subsetting - `[x,y,z]` format:
 ```{r arrSub}
@@ -97,7 +132,6 @@ These return numeric values:
 - Standard math functions: `log`, `abs`, `sqrt`
 - There are many more
 
-
 ```{r add_vw}
 print(v + 4)
 print(v + w)
@@ -110,7 +144,7 @@ These return logical values:
 
 - Comparison: `>`, `>=`, `<`, `<=`, `==` (equals), `!=` (not equal)
 - Logical: `!` - not, `&` - and, `|` - or (a "pipe")
-- `all`: test all values `TRUE` and `any` (are any)
+- `all()`: function to test all values `TRUE` and `any()`: (are any)
 
 ```{r true}
 print(!FALSE)
@@ -135,12 +169,53 @@ v[ v > 5 ]
 This method will be useful later when we are working with images.
 
 
-## Reading in an image
+# Imaging Packages in R
 
-We will read in the `training01_01_mprage.nii.gz` file, and assign it to an object called `t1`:
-```{r}
+## Some packages we will use
+
+All packages we will discuss are loaded on the RStudio Server:
+
+* `oro.nifti` - reading/writing NIfTI images
+    - made the `nifti` object: like an array - but with header information
+* `neurobase` - extends `oro.nifti` and provides helpful imaging functions
+
+Let's load them:
+
+```{r, message=FALSE}
+library(oro.nifti)
 library(neurobase)
+```
+
+## Reading in NIfTI images: assignment
+
+We will use the `readnii` function (from `neurobase`) to read in a `nifti` object (this is an `R` object).
+
+Here we read in the `training01_01_mprage.nii.gz` file, and assign it to an object called `t1`
+```{r}
 t1 = readnii("training01_01_mprage.nii.gz")
+```
+
+Now, an object `t1` is in memory/the workspace.
+
+## Reading in NIfTI images: assignment
+
+In `R`, you can assign using the equals `=` or arrow `<-` (aka assigment operator).
+
+The above command is equivalent to:
+
+```{r, eval = FALSE}
+t1 <- readnii("training01_01_mprage.nii.gz")
+```
+
+There are no differences in these 2 commands, but just personal preference.
+
+
+## `nifti` images
+
+By default, if you simply pass the object, it is printed, we can also do `print(t1)`:
+```{r}
+class(t1)
+t1
 ```
 
 ## Subsetting with `nifti` objects: like `arrays`
@@ -167,7 +242,7 @@ These work with an image and a number (`img + 2`) or two images of the same dime
 - Standard math functions: `log`, `abs`, `sqrt`
 
 ```{r adding_t1}
-t1 + t1 + 2
+t1 + t1 + 2 # still a nifti
 ```
 
 
@@ -176,10 +251,10 @@ t1 + t1 + 2
 Again, we can use a logical operation.  Let's get the values of the `t1` greater than 400 (`head` only prints the first 6 values):
 
 ```{r}
-head(t1[ t1 > 400 ])
+head(t1[ t1 > 400 ]) # produces a vector of numbers
 ```
 
-The operation results in a `nifti` object, and if we look at the values, they are logical:
+The `t1 > 400` creates a `nifti` object with all logical values:
 ```{r}
 class(t1 > 400) # still a nifti
 head(t1 > 400) # values are now logical vs. numeric
@@ -223,7 +298,6 @@ file.exists("training01_mprage_under400.nii.gz")
 We have seen that `file.exists` returns `TRUE` if a file exists 
 
 - useful in conjunction with `all`: `all(file.exists(VECTOR_OF_FILES))`
-- similarly, `dir.exists` for directories
 
 
 ## Vectorizing a `nifti`
@@ -236,6 +310,8 @@ class(vals)
 ```
 
 This is useful for making `data.frame`s (not covered here) when you want to do modeling at a voxel level.
+
+If you do `array(c(t1), dim = dim(t1))`, this will put things back "in order" into an array.
 
 ## Histogram
 
@@ -252,6 +328,54 @@ You can also pass in a mask to most standard functions:
 ```{r dens_with_mask}
 plot(density(t1, mask = t1 > 0))
 ```
+
+
+## File helpers - for constructing filenames
+
+Use `paste` if you want to put strings together with spaces, `paste0` no spaces by default.
+
+`file.path(directory, filename)` will paste `directory` and `filename` w/file separators (e.g. `/`)
+
+```{r}
+c(paste("img", ".nii.gz"), paste0("img", ".nii.gz"))
+x = file.path("output_directory", paste0("img", ".nii.gz")); print(x)
+```
+
+`nii.stub` will strip off the nifti extension.  If `bn = TRUE`, it removes the directory as well:
+
+```{r}
+c(nii.stub(x), nii.stub(x, bn = TRUE))
+```
+
+
+## Main Packages we will use
+
+* `oro.nifti` - reading/writing NIfTI images
+* `neurobase` - extends `oro.nifti` and provides helpful imaging functions
+* `fslr` - wraps FSL commands to use in R
+    - registration, image manipulation, skull stripping
+* `ANTsR` - wrapper for Advanced normalization tools (ANTs) code 
+    - registration, inhomogeneity correction, lots of tools
+* `extrantsr` - allows `ANTsR` to work with objects from `oro.nifti` 
+
+Data Package we will use
+
+* `ms.lesion` - contains training/testing data of patients with multiple sclerosis (MS)
+    - from the MS lesion challenge 2016 (http://iacl.ece.jhu.edu/index.php/MSChallenge)
+
+
+ 
+
+## Conclusions
+
+- We have (briefly) covered some R data classes and types to get you started
+- We will be using `nifti` objects
+    - They are special 3-dimensional arrays
+    - Contain numbers or logicals
+- `readnii` and `writenii` are used for reading/writing `nifti` objects to NIfTI files
+- We have briefly covered subsetting and image manipulation
+    - more on that later
+
 
 ## --- Stop here ----
 - Put lists elsewhere
@@ -301,50 +425,4 @@ With `list`s and vectors, there are `apply` functions.  These apply a function t
     - if element 5 has 3 elements and element 4 has 4 elements, return a `list`
 - `mapply` - takes in 2 (or more) lists and "links" the two to perform a function requiring arguments from each list 
     - passing in a list of images and the filenames to write them to
-
-## File helpers - for constructing filenames
-
-Use `paste` if you want to put strings together with spaces, `paste0` no spaces by default.
-
-`file.path(directory, filename)` will paste `directory` and `filename` w/file separators (e.g. `/`)
-
-```{r}
-c(paste("img", ".nii.gz"), paste0("img", ".nii.gz"))
-x = file.path("output_directory", paste0("img", ".nii.gz")); print(x)
-```
-
-`nii.stub` will strip off the nifti extension.  If `bn = TRUE`, it removes the directory as well:
-
-```{r}
-c(nii.stub(x), nii.stub(x, bn = TRUE))
-```
-
-
-## Main Packages we will use
-
-* `oro.nifti` - reading/writing NIfTI images
-* `neurobase` - extends `oro.nifti` and provides helpful imaging functions
-* `fslr` - wraps FSL commands to use in R
-    - registration, image manipulation, skull stripping
-* `ANTsR` - wrapper for Advanced normalization tools (ANTs) code 
-    - registration, inhomogeneity correction, lots of tools
-* `extrantsr` - allows `ANTsR` to work with objects from `oro.nifti` 
-
-Data Package we will use
-
-* `ms.lesion` - contains training/testing data of patients with multiple sclerosis (MS)
-    - from the MS lesion challenge 2016 (http://iacl.ece.jhu.edu/index.php/MSChallenge)
-
-
- 
-
-## Conclusions
-
-- We have (briefly) covered some R data classes and types to get you started
-- We will be using `nifti` objects
-    - They are special 3-dimensional arrays
-    - Contain numbers or logicals
-- `readnii` and `writenii` are used for reading/writing `nifti` objects to NIfTI files
-- We have briefly covered subsetting and image manipulation
-    - more on that later
 
