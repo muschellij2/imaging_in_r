@@ -225,3 +225,6 @@ In this course, we will be using NIfTI images, and will be using `readnii` to re
 
 
 
+## Website
+
+http://johnmuschelli.com/imaging_in_r
