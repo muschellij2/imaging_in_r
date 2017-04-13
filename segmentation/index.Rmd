@@ -21,10 +21,12 @@ knitr::opts_chunk$set(
 - We are often interested in subdividing or segmenting the brain into meaningful biological regions of interest (ROIs) for an analysis.
 - Examples: tissue segmentation, segmentation of gray matter structures, segmentation of pathology (MS lesions, tumors, ...)
 
+## Goals
 
 - Perform tissue segmentation in R using FSL and ANTs.
-- Discuss multi-atlas label fusion techniques for segmentation.
-- Perform automatic MS lesion segmentation using OASIS.
+- Vizualize results
+- Estimate volume of each tissue class
+
 
 ## Loading Data
 - Let's read in the training T1s and brain mask for subject 05 (not 01!).
@@ -33,8 +35,8 @@ knitr::opts_chunk$set(
 library(ms.lesion)
 library(neurobase)
 library(fslr)
-library(scales)
 library(extrantsr)
+library(scales)
 all_files = get_image_filenames_list_by_subject(
   group = "training", 
   type = "coregistered")
