@@ -92,16 +92,6 @@ http://johnmuschelli.com/rstudio_server.html
 The code to make the server is located at:
 https://github.com/muschellij2/rneuro/blob/master/ms_rstudio_droplet.sh
 
-## Installing R: Local
-
-If you want to install things locally:
-
-* You can install the latest R from [http://cran.r-project.org/](http://cran.r-project.org/)
-
-* [Install RStudio](https://www.rstudio.com/products/rstudio/download/)
-
-* Directions for a local setup is http://johnmuschelli.com/imaging_in_r/installing_everything_locally/
-
 
 # Introduction to R
 
@@ -109,12 +99,11 @@ If you want to install things locally:
 
 - R is a language and environment for statistical computing and graphics
 
-- R is the open source implementation of the S language, which was developed by Bell laboratories
+- R was implemented over the S language, which was developed by Bell laboratories
 
 - R is both open source and open development
 
 (source: http://www.r-project.org/)
-
 
 
 ## Why R?
@@ -135,11 +124,9 @@ If you want to install things locally:
 
     * "Programming" oriented
     
-    * Minimal interface
+    * Minimal interface - without an IDE
     
 * Little centralized support, relies on online community and package developers
-
-* Annoying to update
 
 * Slower, and more memory intensive, than the more traditional programming languages (C, Java, Perl, Python)
 
