@@ -308,7 +308,7 @@ print(m)</pre>
 <pre class = 'prettyprint lang-r'>t1[5, 4, ] # returns a vector of numbers (1-d)
 t1[, 4, ] # returns a 2-d matrix
 t1[1, , ] # returns a 2-d matrix
-t1[t1 &lt; 500] # using logicals</pre>
+t1[t1 &lt; 500] # using logicals - all logical - same dimension</pre>
 
 </article></slide><slide class=''><hgroup><h2>Operations with <code>nifti</code> objects</h2></hgroup><article  id="operations-with-nifti-objects">
 
@@ -321,6 +321,21 @@ t1[t1 &lt; 500] # using logicals</pre>
 <li>Standard math functions: <code>log</code>, <code>abs</code>, <code>sqrt</code></li>
 </ul>
 
+<pre class = 'prettyprint lang-r'>t1 + t1 + 2</pre>
+
+<pre >NIfTI-1 format
+  Type            : nifti
+  Data Type       : 4 (INT16)
+  Bits per Pixel  : 16
+  Slice Code      : 0 (Unknown)
+  Intent Code     : 0 (None)
+  Qform Code      : 1 (Scanner_Anat)
+  Sform Code      : 1 (Scanner_Anat)
+  Dimension       : 256 x 256 x 120
+  Pixel Dimension : 0.83 x 0.83 x 1.17
+  Voxel Units     : mm
+  Time Units      : sec</pre>
+
 </article></slide><slide class=''><hgroup><h2>Working with <code>nifti</code> objects</h2></hgroup><article  id="working-with-nifti-objects">
 
 <p>Again, we can use a logical operation. Let&#39;s get the values of the <code>t1</code> greater than 400 (<code>head</code> only prints the first 6 values):</p>
@@ -331,13 +346,13 @@ t1[t1 &lt; 500] # using logicals</pre>
 
 <p>The operation results in a <code>nifti</code> object, and if we look at the values, they are logical:</p>
 
-<pre class = 'prettyprint lang-r'>class(t1 &gt; 400)</pre>
+<pre class = 'prettyprint lang-r'>class(t1 &gt; 400) # still a nifti</pre>
 
 <pre >[1] &quot;nifti&quot;
 attr(,&quot;package&quot;)
 [1] &quot;oro.nifti&quot;</pre>
 
-<pre class = 'prettyprint lang-r'>head(t1 &gt; 400)</pre>
+<pre class = 'prettyprint lang-r'>head(t1 &gt; 400) # values are now logical vs. numeric</pre>
 
 <pre >[1] FALSE FALSE FALSE FALSE FALSE FALSE</pre>
 
