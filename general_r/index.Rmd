@@ -84,7 +84,7 @@ print(a[1,1,1])
 dim(a[,4,])
 ```
 
-This will return an error!
+This will return an error - need to specify all dims:
 ```{r arrSub_bad, eval = FALSE}
 a[,4]
 ```
