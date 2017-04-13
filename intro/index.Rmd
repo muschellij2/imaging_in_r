@@ -130,21 +130,6 @@ https://github.com/muschellij2/rneuro/blob/master/ms_rstudio_droplet.sh
 
 * Slower, and more memory intensive, than the more traditional programming languages (C, Java, Perl, Python)
 
-
-# R essentially is a command line with a set of functions loaded
-
-## Working with R
-
-* The R Console "interprets" whatever you type
-    * Can act as a calculator
-    * Creating variables/objects
-    * Applying functions
-
-* "Analysis" Script + Interactive Exploration
-    * Static copy of what you did (reproducability)
-    * Try things out interactively, then add to your script
-
-
 ## What comes with R
 
 * R revolves around functions
@@ -161,7 +146,6 @@ install.packages("oro.nifti")
 ```
 
 `install.packages` is a function, `"oro.nifti"` is a character string.
-
 
 ## Loading Packages
 
@@ -188,6 +172,21 @@ RStudio is an Integrated Development Environment (IDE) for R (made by RStudio th
     * See [Rcmdr](https://cran.r-project.org/web/packages/Rcmdr/index.html) or [Radiant](http://vnijs.github.io/radiant/) 
 
 * All snapshots in these slides are taken from http://ayeimanol-r.net/2013/04/21/289/
+
+
+# R essentially is a command line with a set of functions loaded
+
+## Working with R
+
+* The R Console "interprets" whatever you type
+    * Can act as a calculator
+    * Creating variables/objects
+    * Applying functions
+
+* "Analysis" Script + Interactive Exploration
+    * Static copy of what you did (reproducability)
+    * Try things out interactively, then add to your script
+
 
 ## RStudio/R Console
 

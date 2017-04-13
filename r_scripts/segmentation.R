@@ -9,8 +9,8 @@ knitr::opts_chunk$set(
 library(ms.lesion)
 library(neurobase)
 library(fslr)
-library(scales)
 library(extrantsr)
+library(scales)
 all_files = get_image_filenames_list_by_subject(
   group = "training", 
   type = "coregistered")
