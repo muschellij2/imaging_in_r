@@ -32,101 +32,33 @@ t1
 ## ----colon_twice, eval=FALSE---------------------------------------------
 ## t1 = neurobase::readnii("training01_01_mprage.nii.gz")
 
-## ------------------------------------------------------------------------
-library(ms.lesion)
-files = get_image_filenames_list_by_subject()
-length(files); names(files); 
-
-## ---- eval = FALSE-------------------------------------------------------
-## head(files$training01)
-
-## ---- echo = FALSE-------------------------------------------------------
-f = files$training01
-f = strsplit(f, "/")
-f = sapply(f, function(x){
-  ind = which(x == "library")
-  x = x[ind:length(x)]
-  x = paste(x, collapse = "/")
-})
-head(f)
-rm(list = "f")
-
-## ------------------------------------------------------------------------
-files = files$training01
-t1_fname = files["MPRAGE"]
-t1 = readnii(t1_fname)
-t1
-
-## ----ortho---------------------------------------------------------------
-oro.nifti::orthographic(t1)
-
 ## ----ortho2--------------------------------------------------------------
 neurobase::ortho2(t1)
 
-## ----ortho2_noorient-----------------------------------------------------
-neurobase::ortho2(t1, add.orient = FALSE)
-
-## ----eve2, cache=FALSE---------------------------------------------------
-ortho2(t1)
+## ----histog, echo = FALSE------------------------------------------------
+hist(c(t1))
 
 ## ----ortho2_rob----------------------------------------------------------
 ortho2(robust_window(t1))
 
-## ----ortho2_zlim---------------------------------------------------------
-ortho2(t1, zlim = quantile(t1, probs = c(0, 0.999)))
-
-## ----robust, echo = TRUE-------------------------------------------------
-rt1 = robust_window(t1)
-
-## ----qmask---------------------------------------------------------------
-qmask = t1 > quantile(t1, 0.9)
+## ----ortho2_noorient-----------------------------------------------------
+neurobase::ortho2(robust_window(t1), add.orient = FALSE)
 
 ## ----ortho_nona----------------------------------------------------------
-orthographic(rt1, y = qmask)
-
-## ----ortho2_nona---------------------------------------------------------
-ortho2(rt1, y = qmask)
-
-## ----mask----------------------------------------------------------------
-mask = extrantsr::oMask(t1)
-
-## ---- echo = FALSE-------------------------------------------------------
-t1 = robust_window(t1)
+orthographic(robust_window(t1), y = t1 > 100)
 
 ## ----double_ortho--------------------------------------------------------
-double_ortho(t1, mask)
+double_ortho(robust_window(t1), y = t1 > 100)
 
 ## ----all_slices----------------------------------------------------------
-image(t1, z = 80) # look at average brightness over each slice
-
-## ----one_slice-----------------------------------------------------------
-image(t1, z = 80, plot.type = "single")
-
-## ----two_slice-----------------------------------------------------------
-image(t1, z = c(60, 80), plot.type = "single")
+image(t1) # look at average brightness over each slice
 
 ## ----two_slicewslice-----------------------------------------------------
 oro.nifti::slice(t1, z = c(60, 80))
 
 ## ----one_slice_sag-------------------------------------------------------
-image(t1, z = 125, plot.type = "single", plane = "sagittal")
+oro.nifti::slice(t1, z = 125, plane = "sagittal")
 
 ## ----one_slice_overlay---------------------------------------------------
-overlay(t1, y = qmask, z = 80, plot.type = "single")
-
-## ----one_slice_overlay_right---------------------------------------------
-overlay(t1, y = qmask, z = 80, plot.type = "single", NA.y = TRUE)
-
-## ----dd, cache=FALSE-----------------------------------------------------
-reduced_mask = dropEmptyImageDimensions(qmask)
-dim(qmask)
-dim(reduced_mask)
-
-## ----plot_red_mask-------------------------------------------------------
-ortho2(reduced_mask)
-
-## ----dd_get, cache=FALSE-------------------------------------------------
-keep_inds = getEmptyImageDimensions(qmask)
-reduced_img = applyEmptyImageDimensions(t1, inds = keep_inds)
-ortho2(reduced_mask)
+slice_overlay(t1, y = t1 > 100, z = 80)
 
