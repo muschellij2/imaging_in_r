@@ -67,14 +67,17 @@ t1[5, 4, 3]
 ## t1[5, 4, ] # returns a vector of numbers (1-d)
 ## t1[, 4, ] # returns a 2-d matrix
 ## t1[1, , ] # returns a 2-d matrix
-## t1[t1 < 500] # using logicals
+## t1[t1 < 500] # using logicals - all logical - same dimension
+
+## ----adding_t1-----------------------------------------------------------
+t1 + t1 + 2
 
 ## ------------------------------------------------------------------------
 head(t1[ t1 > 400 ])
 
 ## ------------------------------------------------------------------------
-class(t1 > 400)
-head(t1 > 400)
+class(t1 > 400) # still a nifti
+head(t1 > 400) # values are now logical vs. numeric
 
 ## ------------------------------------------------------------------------
 head(which(t1 > 400, arr.ind = TRUE))

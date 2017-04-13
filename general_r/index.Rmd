@@ -166,6 +166,10 @@ These work with an image and a number (`img + 2`) or two images of the same dime
 - Arithmetic: `+`, `-`, `*`, `/`, `^` - exponents
 - Standard math functions: `log`, `abs`, `sqrt`
 
+```{r adding_t1}
+t1 + t1 + 2
+```
+
 
 ## Working with `nifti` objects
 
@@ -177,8 +181,8 @@ head(t1[ t1 > 400 ])
 
 The operation results in a `nifti` object, and if we look at the values, they are logical:
 ```{r}
-class(t1 > 400)
-head(t1 > 400)
+class(t1 > 400) # still a nifti
+head(t1 > 400) # values are now logical vs. numeric
 ```
 
 ## `which` with `nifti` objects
