@@ -64,12 +64,15 @@ print(v[c(1,3,5)])
 
 ## Subsetting 
 
-- Subsetting a matrix - `[row,column]` format, if `row` or `column` missing then all values:
+- Subsetting a matrix - `[row,column]` format, 
 ```{r matSub}
 print(m)
+print(m[1,3])
+```
+- if `row` or `column` missing then all values printed:
+```{r matsub2}
 print(m[,4])
 print(m[2,])
-print(m[1,3])
 print(m[1:2,3:4])
 ```
 
