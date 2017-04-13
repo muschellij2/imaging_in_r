@@ -270,3 +270,7 @@ trDice2 = lapply(tbls_tr2, dice)
 
 
 ## References {.smaller}
+
+## Website
+
+http://johnmuschelli.com/imaging_in_r

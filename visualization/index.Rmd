@@ -24,18 +24,37 @@ library(scales)
 t1 = neurobase::readnii("training01_01_mprage.nii.gz")
 ```
 
+## Density of an Image
+
+Let's do a marginal density of the values:
+
+```{r dens}
+plot(density(t1))
+```
+
+
+## Histogram
+
+You can also pass in a mask to most standard functions:
+
+```{r dens_with_mask}
+plot(density(t1, mask = t1 > 0))
+```
+
+
+## Similarly: a Histogram
+
+Note the high intensities:
+```{r histog, echo = FALSE}
+hist(t1)
+```
+
 ## Orthographic view with additions
 
 The `neurobase::ortho2` function displays nifti objects in 3 different planes.
 
 ```{r ortho2}
 neurobase::ortho2(t1)
-```
-
-## Why is it so dark - high intensities
-
-```{r histog, echo = FALSE}
-hist(c(t1))
 ```
 
 ## Brightening up the image
@@ -57,34 +76,29 @@ neurobase::ortho2(robust_window(t1), add.orient = FALSE)
 
 ## Overlaying images in `ortho2`
 
-Here we plot the T1 and a binary image of values over $100$:
+Here we plot the T1 and a mask of values over $100$:
 
 ```{r ortho_nona}
-orthographic(robust_window(t1), y = t1 > 100)
+ortho2(robust_window(t1), y = t1 > 100)
 ```
-
 
 ## Double orthographic view
 
-Sometimes you would like to represent 2 images side by side, of the same dimensions and orientation of course.  The `double_ortho` function allows you to do this.
-
-## Double viewing images
-
-We can view the original T1 alongside the high values (useful for checking registration):
+Sometimes you would like to represent 2 images side by side, of the same dimensions and orientation of course (useful for checking registration), use `double_ortho`
 
 ```{r double_ortho}
 double_ortho(robust_window(t1), y = t1 > 100)
 ```
 
-## Lightbox slice view
+## Lightbox: view all slices
 
-We may want to view a single slice of an image.  The `oro.nifti::image` function shows a lightbox view:
+We may want to view a all slices of an image.  The `oro.nifti::image` function shows a lightbox view:
 
 ```{r all_slices}
-image(t1) # look at average brightness over each slice
+image(t1, useRaster = TRUE) # look at average brightness over each slice
 ```
 
-## Multiple Slices but not All 
+## Viewing specific slices
 
 The `slice` function can plot individual slices:
 
@@ -112,13 +126,15 @@ slice_overlay(t1, y = t1 > 100, z = 80)
 ## Conclusions
 
 - `ortho2` - show orthographic images (and with overlays)
-- `image` - shows multiple slices of an image (by default)
+- `image` - shows multiple slices of an image
 - `slice` - shows only specified slices
-- `overlay` - similar to `image` but with an overlay
+- `slice_overlay` - similar to `image` but with an overlay
 - `double_ortho` - similar to `ortho2` but side-by-side
 - `robust_window` - good for setting high values to not so high
-- the `*EmptyImageDimensions` functions are good for removes "extraneous" slices for zooming in
 
+## Website
+
+http://johnmuschelli.com/imaging_in_r
 
 
 
@@ -200,7 +216,7 @@ slice_overlay(t1, y = t1 > 100, z = 80)
 <!-- ## Dropping empty dimensions -->
 
 <!-- Many times, you want to get empty dimensions from some sort of mask/region of interest, then apply that dropping procedure to an image you want to visualize -->
-
+<!-- - the `*EmptyImageDimensions` functions are good for removes "extraneous" slices for zooming in -->
 <!-- ```{r dd_get, cache=FALSE} -->
 <!-- keep_inds = getEmptyImageDimensions(qmask) -->
 <!-- reduced_img = applyEmptyImageDimensions(t1, inds = keep_inds) -->

@@ -28,8 +28,6 @@ knitr::opts_chunk$set(echo = TRUE, comment = "")
 - `matrix` - 2-dimensional object of one class
 - `data.frame` - 2-dimensional object, can be multiple classes (like Excel spreadsheet)
 - `array` - object of dimensions > 2 of one class.  The data in a `nifti` object is one of these (usually 3-D)
-- `nifti` - an array with header information
-- `list` - a general holder of things 
 
 
 ## Initializing: vectors 
@@ -44,6 +42,19 @@ print(v)
 w = 1:5
 print(w)
 ```
+
+## Assignment
+
+In `R`, you can assign using the equals `=` or arrow `<-` (aka assigment operator).
+
+The above commands are equivalent to:
+
+```{r, eval = FALSE}
+v <- c(1, 4, 3, 7, 8)
+w <- 1:5
+```
+
+There are no differences in these 2 commands, but just preference (we use `=`).
 
 ## Help
 
@@ -101,14 +112,13 @@ print(v[c(1,3,5)])
 
 - Subsetting a matrix - `[row,column]` format, 
 ```{r matSub}
-print(m)
 print(m[1,3])
+print(m[1:2,3:4])
 ```
 - if `row` or `column` missing then all values printed:
 ```{r matsub2}
 print(m[,4])
 print(m[2,])
-print(m[1:2,3:4])
 ```
 
 ## Subsetting: arrays
@@ -124,23 +134,19 @@ This will return an error - need to specify all dims:
 a[,4]
 ```
 
-## Operators in R
-
-These return numeric values:
+## Operators in R: return numeric
 
 - Arithmetic: `+`, `-`, `*`, `/`, `^` - exponents
 - Standard math functions: `log`, `abs`, `sqrt`
-- There are many more
 
 ```{r add_vw}
+print(v); print(w)
 print(v + 4)
 print(v + w)
 print(sqrt(w^2))
 ```
 
-## Operators in R
-
-These return logical values:
+## Operators in R: return logical
 
 - Comparison: `>`, `>=`, `<`, `<=`, `==` (equals), `!=` (not equal)
 - Logical: `!` - not, `&` - and, `|` - or (a "pipe")
@@ -150,6 +156,7 @@ These return logical values:
 print(!FALSE)
 print(TRUE | FALSE)
 print(FALSE & FALSE)
+c(all(c(TRUE, FALSE)), any(c(TRUE, FALSE)))
 ```
 
 
@@ -161,7 +168,7 @@ which(v > 5)
 v[ which(v > 5) ]
 ```
 
-Or directly pass in a vector of logicals:
+Or directly pass in a vector of logicals to subset:
 ```{r}
 v[ v > 5 ]
 ```
@@ -176,7 +183,8 @@ This method will be useful later when we are working with images.
 All packages we will discuss are loaded on the RStudio Server:
 
 * `oro.nifti` - reading/writing NIfTI images
-    - made the `nifti` object: like an array - but with header information
+    - made the `nifti` object/data class: like an array - but with header information
+      - the main data class we will use
 * `neurobase` - extends `oro.nifti` and provides helpful imaging functions
 
 Let's load them:
@@ -190,24 +198,12 @@ library(neurobase)
 
 We will use the `readnii` function (from `neurobase`) to read in a `nifti` object (this is an `R` object).
 
-Here we read in the `training01_01_mprage.nii.gz` file, and assign it to an object called `t1`
+Here we read in the "training01_01_mprage.nii.gz" file, and assign it to an object called `t1`:
 ```{r}
 t1 = readnii("training01_01_mprage.nii.gz")
 ```
 
 Now, an object `t1` is in memory/the workspace.
-
-## Reading in NIfTI images: assignment
-
-In `R`, you can assign using the equals `=` or arrow `<-` (aka assigment operator).
-
-The above command is equivalent to:
-
-```{r, eval = FALSE}
-t1 <- readnii("training01_01_mprage.nii.gz")
-```
-
-There are no differences in these 2 commands, but just personal preference.
 
 
 ## `nifti` images
@@ -220,7 +216,7 @@ t1
 
 ## Subsetting with `nifti` objects: like `arrays`
 
-The subsetting here is similar to that of arrays, so we will use the `t1`. Since it's 3-dimensions the subsetting goes to the 3rd dimension
+The subsetting here is similar to that of arrays. Since `t1` is 3-dimensional the subsetting goes to the 3rd dimension:
 ```{r}
 t1[5, 4, 3]
 ```
@@ -248,17 +244,20 @@ t1 + t1 + 2 # still a nifti
 
 ## Working with `nifti` objects
 
-Again, we can use a logical operation.  Let's get the values of the `t1` greater than 400 (`head` only prints the first 6 values):
+Again, we can use a logical operation.  Let's create an image indicating values over $400$: 
 
-```{r}
-head(t1[ t1 > 400 ]) # produces a vector of numbers
-```
-
-The `t1 > 400` creates a `nifti` object with all logical values:
 ```{r}
 class(t1 > 400) # still a nifti
 head(t1 > 400) # values are now logical vs. numeric
 ```
+
+We can view values of the `t1` greater than 400 (`head` only prints the first 6 values):
+
+```{r}
+head(t1[ t1 > 400 ]) # produces a vector of numbers
+```
+We will refer to images such as `t1 > 400` as a "mask", simply binary images with logical values in them (or 0s and 1s)
+
 
 ## `which` with `nifti` objects
 
@@ -279,7 +278,7 @@ Subsetting can work on the left hand side of assignment too:
 
 ```{r}
 t1_copy = t1
-t1_copy[ t1_copy > 400] = 400 # changed these values!
+t1_copy[ t1_copy > 400 ] = 400 # replaced these values!
 max(t1_copy) # should be 400
 max(t1) 
 ```
@@ -308,27 +307,9 @@ To convert a `nifti` to a `vector`, you can simply use the `c()` function:
 vals = c(t1)
 class(vals)
 ```
+Essentially "strings out" the array. If you do `array(c(t1), dim = dim(t1))`, this will put things back "in order" of the `t1`.  
 
-This is useful for making `data.frame`s (not covered here) when you want to do modeling at a voxel level.
-
-If you do `array(c(t1), dim = dim(t1))`, this will put things back "in order" into an array.
-
-## Histogram
-
-From these values we can do all the standard plotting/manipulations of data.  For example, let's do a marginal density of the values:
-
-```{r dens}
-plot(density(vals))
-```
-
-## Histogram
-
-You can also pass in a mask to most standard functions:
-
-```{r dens_with_mask}
-plot(density(t1, mask = t1 > 0))
-```
-
+Vectorizing is useful for making `data.frame`s (covered later) when you want to do modeling at a voxel level.
 
 ## File helpers - for constructing filenames
 
@@ -376,6 +357,10 @@ Data Package we will use
 - We have briefly covered subsetting and image manipulation
     - more on that later
 
+
+## Website
+
+http://johnmuschelli.com/imaging_in_r
 
 ## --- Stop here ----
 - Put lists elsewhere

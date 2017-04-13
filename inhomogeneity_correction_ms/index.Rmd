@@ -218,3 +218,6 @@ ggplot(df, aes(x = value, colour = location)) + geom_line(stat = "density")
 ## References
 
 
+## Website
+
+http://johnmuschelli.com/imaging_in_r

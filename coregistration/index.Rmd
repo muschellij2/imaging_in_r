@@ -265,3 +265,6 @@ We have only done registration within a subject, but many times you want to perf
     - other files (in the same space) can be transformed using the `other.files` and `other.outfiles` arguments.  Or:
     - `ants_apply_transforms` can be used to apply this transformations to the other files 
 
+## Website
+
+http://johnmuschelli.com/imaging_in_r

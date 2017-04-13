@@ -374,3 +374,8 @@ ortho2(dropEmptyImageDimensions(ss))
 
 
 ## References {.smaller}
+
+
+## Website
+
+http://johnmuschelli.com/imaging_in_r

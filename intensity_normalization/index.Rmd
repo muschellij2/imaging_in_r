@@ -355,7 +355,9 @@ plot_densities(wm_ws_dens,
 <!-- - RAVEL extends WhiteStripe to make intensites comparable across subjects for all tissues -->
 
 
+## Website
 
+http://johnmuschelli.com/imaging_in_r
 
 
 
