@@ -21,17 +21,17 @@ opts_chunk$set(comment = "")
 
 Assistant Scientist, Department of Biostatistics
 
-PhD in Biostatistics, ScM in Biostatistics
+PhD in Biostatistics
+
+- worked on fMRI, sMRI, and CT for ≈ 7 years
 
 Email: jmusche1@jhu.edu
-
-## About Us
 
 **Kristin Linn**
 
 Assistant Professor, Department of Biostatistics and Epidemiology Perelman School of Medicine, University of Pennsylvania
 
-PhD in Biostatistics
+PhD in Statistics
 
 Email: klinn@mail.med.upenn.edu
 
@@ -47,6 +47,29 @@ Email: klinn@mail.med.upenn.edu
 - Coregistration Within and Between MRI Studies
 - Intensity Normalization
 - Segmentation of MS lesions
+
+
+## Imaging Data Used: Multiple Sclerosis
+
+- Multiple sclerosis is a chronic disease of the central nervous system (brain, spinal chord, optic nerves)
+- Multiple sclerosis lesions in the brain are areas of active inflammation, demylenation, or permanent tissue damage. 
+    - lesions are primarily in the white matter
+- MRI is well-suited for assessing lesion burden (volume and patterns) because lesions appear as hyperintensities on FLAIR, T2-w, and PD images and as hypointensities on T1-w images.
+- Using 5 training and 3 test subjects data from the MS lesion challenge 2016 (http://iacl.ece.jhu.edu/index.php/MSChallenge)
+
+- The full data is available at https://smart-stats-tools.org. 
+
+## Formats of Images
+
+There are multiple imaging formats.  We will use NIfTI:
+
+* NIfTI - Neuroimaging Informatics Technology Initiative (https://nifti.nimh.nih.gov/nifti-1)
+    - essentially a header and data (binary format)
+    - will have extension .nii (uncompressed) or .nii.gz (compressed)
+    - we will primarily use compressed NIfTI images
+    - we will use 3-D images (4-D and 5-D are possible)
+* ANALYZE 7.5 was a precursor to NIfTI 
+    - had a `hdr` file (header) and `img` file (data)
 
 
 ## Course Website/Materials
@@ -121,54 +144,63 @@ If you want to install things locally:
 * Slower, and more memory intensive, than the more traditional programming languages (C, Java, Perl, Python)
 
 
+# R essentially is a command line with a set of functions loaded
+
 ## Working with R
+
 * The R Console "interprets" whatever you type
-    * Calculator
-    * Creating variables
+    * Can act as a calculator
+    * Creating variables/objects
     * Applying functions
 
 * "Analysis" Script + Interactive Exploration
     * Static copy of what you did (reproducability)
     * Try things out interactively, then add to your script
 
-# R essentially is a command line with a set of functions loaded
 
-## R Uses Functions, in Packages
+## What comes with R
 
 * R revolves around functions
     * Commands that take input, performs computations, and returns results
     * When you download R, it has a "base" set of functions/packages (**base R**)
 * Functions are enclosed in packages
+    - A package is collection of functions, documentation, data, and tutorials (called vignettes).
     * These written by R users/developers (like us) - **some are bad**
     * Think of them as "R Extensions"
-    
+    - You install a package using the `install.packages` command/function:
+
+```r
+install.packages("oro.nifti")
+```
+
+`install.packages` is a function, `"oro.nifti"` is a character string.
+
+
+## Loading Packages
+
+When you install a package, that means it's downloaded on your computer.  That *doesn't* mean that you can use the functions from that package just yet.
+
+- You "load"/import a package into memory using the `library` command
+
+For example, to load the `oro.nifti` package:
+
+```r
+library(oro.nifti)
+```
+
+Now, functions from the `oro.nifti` package can be used.
+
 ## RStudio (the software)
 
-RStudio is an Integrated Development Environment (IDE) for R
+RStudio is an Integrated Development Environment (IDE) for R (made by RStudio the company)
 
-  * It helps the user effectively use R.
-  * Makes things easier  
+* It helps the user effectively and more easily use R.
+    * Syntax highlighting, code completion, and smart indentation
+    * Easily manage multiple working directories and projects
 * Is NOT dropdown statistical tools (such as Stata)
     * See [Rcmdr](https://cran.r-project.org/web/packages/Rcmdr/index.html) or [Radiant](http://vnijs.github.io/radiant/) 
 
 * All snapshots in these slides are taken from http://ayeimanol-r.net/2013/04/21/289/
-
-## RStudio
-
-Easier working with R 
-
-* Syntax highlighting, code completion, and smart indentation
-* Easily manage multiple working directories and projects
-
-More information
-
-* Workspace browser and data viewer
-* Plot history, zooming, and flexible image and PDF export
-* Integrated R help and documentation
-* Searchable command history
-
-## RStudio/R Console <img src="r-rstudio-1-3-console.png" style="width: 95%; display: block; margin: auto;"> 
-<!-- ![Console]() -->
 
 ## RStudio/R Console
 
@@ -177,8 +209,8 @@ More information
 * Code is **not saved** on your disk
 
 
-## Source/Editor <img src="r-rstudio-1-3-script.png" style="width: 95%; display: block; margin: auto;"> 
-<!-- ![Script](r-rstudio-1-3-script.png) -->
+## RStudio/R Console <img src="r-rstudio-1-3-console.png" style="width: 95%; display: block; margin: auto;"> 
+<!-- ![Console]() -->
 
 ## Source
 
@@ -188,8 +220,9 @@ More information
 
 In a .R file (we call a script), code is saved on your disk
 
-## Workspace/Environment <img src="r-rstudio-1-ggplot-point-2.png" style="width: 95%; display: block; margin: auto;"> 
-<!-- ![Workspace]() -->
+
+## Source/Editor <img src="r-rstudio-1-3-script.png" style="width: 95%; display: block; margin: auto;"> 
+<!-- ![Script](r-rstudio-1-3-script.png) -->
 
 ## Workspace/Environment
 
@@ -200,6 +233,10 @@ History
 
 * Shows previous commands.  Good to look at for debugging, but **don't rely** on it as a script.  Make a script!
 * Also type the "up" key in the Console to scroll through previous commands
+
+## Workspace/Environment <img src="r-rstudio-1-ggplot-point-2.png" style="width: 95%; display: block; margin: auto;"> 
+<!-- ![Workspace]() -->
+
 
 ## Other Panes
 
