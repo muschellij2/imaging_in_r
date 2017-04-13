@@ -93,10 +93,15 @@
 
 <ul>
 <li>We are often interested in subdividing or segmenting the brain into meaningful biological regions of interest (ROIs) for an analysis.</li>
-<li><p>Examples: tissue segmentation, segmentation of gray matter structures, segmentation of pathology (MS lesions, tumors, &#8230;)</p></li>
+<li>Examples: tissue segmentation, segmentation of gray matter structures, segmentation of pathology (MS lesions, tumors, &#8230;)</li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Goals</h2></hgroup><article  id="goals">
+
+<ul>
 <li>Perform tissue segmentation in R using FSL and ANTs.</li>
-<li>Discuss multi-atlas label fusion techniques for segmentation.</li>
-<li><p>Perform automatic MS lesion segmentation using OASIS.</p></li>
+<li>Vizualize results</li>
+<li>Estimate volume of each tissue class</li>
 </ul>
 
 </article></slide><slide class=''><hgroup><h2>Loading Data</h2></hgroup><article  id="loading-data">
@@ -108,8 +113,8 @@
 <pre class = 'prettyprint lang-r'>library(ms.lesion)
 library(neurobase)
 library(fslr)
-library(scales)
 library(extrantsr)
+library(scales)
 all_files = get_image_filenames_list_by_subject(
   group = &quot;training&quot;, 
   type = &quot;coregistered&quot;)
