@@ -66,8 +66,7 @@ Image taken from [http://cnl.web.arizona.edu/imageprops.htm](http://cnl.web.ariz
 
 ## Types of Registration
 - Affine registration – 12 dof (scaling)
-- Non-linear (> 12 dof)
-    - Usually require a prior affine registration
+- Non-linear (> 12 dof): sually requires a prior affine registration
     - Across-subject registration
     - Registration to a template: There are many different templates
  
@@ -114,23 +113,28 @@ If a `vector` has names, you can also put the
 - Initialize an empty list and add two elements to it
 
 ```{r named_vec}
-x = c(first = 1, third = 14, second = 5)
+x = c(one = 1, three = 14, two = 5)
 print(x)
-x[c("third")]
+x[c("three")]
 ```
 
 If a `list` has names, you can subset with the `$`
 
-- Subsetting uses double brackets:
+- Subsetting with double brackets:
 ```{r named_lst}
-names(l) = c("V", "m")
+names(l) = c("V", "m"); l[["V"]]
+```
+
+## Subsetting by name
+
+If a `list` has names, you can also subset with the `$`
+
+```{r named_lst_v}
 l$V
 ```
 
 
-## Reading in more than the T1
-
-Here we will use the `ms.lesion` package, with the additional imaging data.
+## Reading in more than the T1: `ms.lesion` package
 
 - `get_image_filenames_list_by_subject` - returns a list, each element is a subject, and each subject has a vector of filenames, named for each modality
 
@@ -140,11 +144,15 @@ all_files = get_image_filenames_list_by_subject()
 class(all_files); names(all_files)
 files = all_files$training01
 class(files); names(files)
+```
+
+## Reading in more than the T1: `ms.lesion` package
+
+```{r t1_2}
 t1_fname = files["MPRAGE"]
 t1 = readnii(t1_fname)
 rt1 = robust_window(t1)
 ```
-
 
 ## Image Registration
 
@@ -187,7 +195,7 @@ We would like to perform registration within a visit for all modalities.  The `e
     - Could also use images from previous lecture
 2.  Registration to a fixed image (T1) 
 
-<img src="within_visit_registration.png" style="width: 100%; display: block; margin: auto;">
+<img src="within_visit_registration.png" style="width: 50%; display: block; margin: auto;">
 
 
 ## Registration within a visit
@@ -224,8 +232,7 @@ res = within_visit_registration(
   moving = files[c("T2", "FLAIR", "PD")],
   correct = TRUE, correction = "N4",
   typeofTransform = "Rigid", 
-  interpolator = "Linear"
-)
+  interpolator = "Linear")
 output_imgs = lapply(res, function(x) x$outfile)
 out = c(MPRAGE = list(t1), output_imgs)
 ```
