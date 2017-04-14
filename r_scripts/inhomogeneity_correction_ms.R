@@ -30,7 +30,7 @@ if (!file.exists(out_fname)) {
 }
 
 ## ---- eval = FALSE-------------------------------------------------------
-## bc_t1 = bias_correct(file = t1_fname, correction = "N4")
+## bc_t1 = bias_correct(file = "training01_01_mprage.nii.gz", correction = "N4")
 
 ## ----ratio_plot----------------------------------------------------------
 ratio = t1 / bc_t1; ortho2(t1, ratio)

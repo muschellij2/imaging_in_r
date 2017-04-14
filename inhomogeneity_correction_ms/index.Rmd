@@ -109,7 +109,7 @@ if (!file.exists(out_fname)) {
 or the filename:
 
 ```{r, eval = FALSE}
-bc_t1 = bias_correct(file = t1_fname, correction = "N4")
+bc_t1 = bias_correct(file = "training01_01_mprage.nii.gz", correction = "N4")
 ```
 
 
