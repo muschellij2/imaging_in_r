@@ -39,7 +39,7 @@ keep_dim = w %>% group_by(dim3) %>%
 keep_dim = keep_dim$dim3
 w = w[ w$dim3 %in% keep_dim, ]
 xyz = floor(colMeans(w))
-ortho2(robust_window(tr_flairs$training05), les_mask, xyz = xyz, col.y = scales::alpha("orange", 0.5))
+ortho2(robust_window(tr_flairs$training05), les_mask, xyz = xyz, col.y = scales::alpha("red", 0.5))
 
 ## ----default_predict_ts_show, eval=FALSE---------------------------------
 ## library(oasis)
@@ -61,12 +61,12 @@ default_ts = lapply(ts_files,
 ## ----viz_01, echo=FALSE--------------------------------------------------
 les_mask = default_ts[[1]]
 les_mask[les_mask<.05] = 0
-ortho2(ts_t1s$test01, les_mask, xyz = xyz)
+ortho2(ts_flairs$test01, les_mask, xyz = xyz)
 
 ## ----viz_02, echo=FALSE--------------------------------------------------
 les_mask[les_mask<.16] = 0
 les_mask[les_mask!=0] = 1
-ortho2(ts_t1s$test01, les_mask, col.y="orange")
+ortho2(ts_flairs$test01, les_mask, col.y=alpha("red", 0.5))
 
 ## ----default_predict_tr_show, eval=FALSE---------------------------------
 ## default_predict_tr = function(x){
