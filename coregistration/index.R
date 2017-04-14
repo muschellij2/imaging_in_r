@@ -1,8 +1,8 @@
 ## ----setup, include=FALSE------------------------------------------------
 library(methods)
+library(neurobase)
+library(extrantsr)
 knitr::opts_chunk$set(echo = TRUE, comment = "")
-options(fsl.path = "/usr/local/fsl/")
-options(fsl.outputtype = "NIFTI_GZ")
 
 ## ----list----------------------------------------------------------------
 l = list()
@@ -24,21 +24,24 @@ l$V
 
 ## ----t1, message=FALSE---------------------------------------------------
 library(ms.lesion)
-library(neurobase)
-library(extrantsr)
 all_files = get_image_filenames_list_by_subject()
-names(all_files)
+class(all_files); names(all_files)
 files = all_files$training01
-names(files)
+class(files); names(files)
 t1_fname = files["MPRAGE"]
 t1 = readnii(t1_fname)
+rt1 = robust_window(t1)
 
-## ----eval = FALSE--------------------------------------------------------
-## library(extrantsr)
-## reg = registration(filename = files["FLAIR"],
-##                    template.file = files["MPRAGE"],
-##                    typeofTransform = "Rigid",
-##                    interpolator = "linear")
+## ---- eval = TRUE, cache = TRUE, message=FALSE---------------------------
+library(extrantsr)
+reg = registration(filename = files["FLAIR"], 
+                   template.file = files["MPRAGE"],
+                   typeofTransform = "Rigid", 
+                   interpolator = "Linear")
+names(reg)
+
+## ----plot_reg, eval = TRUE, cache = TRUE, message=FALSE------------------
+double_ortho(rt1, reg$outfile)
 
 ## ---- eval = FALSE-------------------------------------------------------
 ## res = within_visit_registration(
@@ -49,7 +52,6 @@ t1 = readnii(t1_fname)
 ##   interpolator = "Linear"
 ## )
 ## output_imgs = lapply(res, function(x) x$outfile)
-## names(output_imgs) = c("T2", "FLAIR", "PD")
 ## out = c(MPRAGE = list(t1), output_imgs)
 
 ## ----registration, eval = TRUE, echo = FALSE-----------------------------
@@ -75,7 +77,7 @@ dd = dropEmptyImageDimensions(mask,
                                other.imgs = xout)
 xout = dd$other.imgs
 out = lapply(xout, zscore_img, mask = dd$outimg)
-out = lapply(out, window_img, window = c(-4, 4))
+out = lapply(out, window_img, window = c(-3, 3))
 
 ## ----reg_plot_ortho2_show, eval = FALSE----------------------------------
 ## double_ortho(out$MPRAGE, out$T2 )
