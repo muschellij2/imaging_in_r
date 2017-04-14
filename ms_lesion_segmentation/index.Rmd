@@ -26,11 +26,8 @@ knitr::opts_chunk$set(echo = TRUE, comment = "", cache=TRUE, warning = FALSE)
 - Obtaining manual lesion segmentations is often resource intensive.
 - "Gold standard": Inter- and Intra-rater variability
 - Accurate and efficient methods for automatic segmentation are necessary for scalability and research progress.
+- In this tutorial, we will learn how to train and apply OASIS [@sweeney2013oasis], an automatic lesion segmentation model, to obtain predicted lesion probability maps.
 
-**Goals of this tutorial**
-
-- Apply OASIS [@sweeney2013oasis], an automatic lesion segmentation model, to obtain predicted lesion probability maps.
-- Compare the results using the default OASIS settings to those obtained after re-training the model using our data.
 
 
 ```{r loading, echo=FALSE, message=FALSE}
