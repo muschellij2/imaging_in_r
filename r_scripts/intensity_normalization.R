@@ -121,6 +121,7 @@ plot_densities(wm_norm_dens,
                main = "White Matter After")
 
 ## ----ws_show, eval=FALSE, warning = FALSE, message = FALSE, results='hide'----
+## library(WhiteStripe)
 ## ind = whitestripe(img = t1, type = "T1", stripped = TRUE)$whitestripe.ind
 ## ws_t1 = whitestripe_norm(t1, indices = ind)
 

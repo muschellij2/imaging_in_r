@@ -106,18 +106,18 @@
 </article></slide><slide class=''><hgroup><h2>Goals of this tutorial</h2></hgroup><article  id="goals-of-this-tutorial">
 
 <ul>
-<li>Visualize intensity distributions from different subjects and tissue classes.
+<li>Visualize intensity distributions from different subjects and tissue classes.</li>
+<li>Apply the White Stripe intensity normalization <span class="cite">(Shinohara et al. 2014)</span>.
 
 <ul>
 <li>Because MS lesions are in the white matter, comparable white matter distributions are the target goal</li>
 </ul></li>
-<li>Apply the White Stripe intensity normalization <span class="cite">(Shinohara et al. 2014)</span>.</li>
 </ul>
 
 </article></slide><slide class=''><hgroup><h2>Visualizing whole-brain intensities</h2></hgroup><article  id="visualizing-whole-brain-intensities">
 
 <ul>
-<li>For the moment, we will work with the T1-w images from the training data.</li>
+<li>We will work with the T1-w images from the training data.</li>
 <li>Full brain densities are mixtures of the three tissue class distributions.</li>
 </ul>
 
@@ -251,9 +251,10 @@
 
 </article></slide><slide class=''><hgroup><h2>White Stripe normalization</h2></hgroup><article  id="white-stripe-normalization">
 
-<p>Procedure 1. Find white matter area on histogram</p>
+<p>Procedure:</p>
 
 <ol>
+<li><p>Find white matter area on histogram</p></li>
 <li><p>Estimate mean \(\mu_{WS}\) and variance \(\sigma_{WS}\) of voxel intensities in that area</p></li>
 <li><p>Normalize with those means/variances: \[ T1_{WS} = \frac{T1 - \mu_{WS}}{\sigma_{WS}}\]</p></li>
 </ol>
@@ -269,7 +270,8 @@
 
 </article></slide><slide class=''><hgroup><h2>White Stripe normalization code</h2></hgroup><article  id="white-stripe-normalization-code">
 
-<pre class = 'prettyprint lang-r'>ind = whitestripe(img = t1, type = &quot;T1&quot;, stripped = TRUE)$whitestripe.ind
+<pre class = 'prettyprint lang-r'>library(WhiteStripe)
+ind = whitestripe(img = t1, type = &quot;T1&quot;, stripped = TRUE)$whitestripe.ind
 ws_t1 = whitestripe_norm(t1, indices = ind)</pre>
 
 <ul>

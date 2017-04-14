@@ -179,11 +179,11 @@ We will register scans within a visit to the T1 of that visit.
 
 ## Wrapper function to perform preprocessing
 
-We would like to perform registration within a visit.  The `extrantsr` function `preprocess_mri_within` will do the following steps:
+We would like to perform registration within a visit for all modalities.  The `extrantsr` function `preprocess_mri_within` will do the following steps:
 
 1.  Inhomogeneity correction (N3 or N4)
     - Could also use images from previous lecture
-2.  Registration of the files to the first filename (T1)
+2.  Registration of the files to the first filename (T1) for all images
 3.  Skull_stripping using BET if desired
     - We will set this to `FALSE`
     - We will apply our MALF masks later
