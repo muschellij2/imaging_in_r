@@ -1,5 +1,6 @@
 ## ----setup, include=FALSE------------------------------------------------
 library(methods)
+library(ggplot2)
 knitr::opts_chunk$set(echo = TRUE, comment = "", cache=TRUE, warning = FALSE)
 
 ## ----loading, echo=FALSE, message=FALSE----------------------------------
@@ -98,10 +99,13 @@ dice = function(x){
   return((2*x[2,2])/(2*x[2,2] + x[1,2] + x[2,1]))
 }
 tbls_df1 = lapply(1:5, function(x) table(c(tr_golds1[[x]]), c(default_tr[[x]])))
-dfDice1 = lapply(tbls_df1, dice)
+dfDice1 = sapply(tbls_df1, dice)
 
 tbls_df2 = lapply(1:5, function(x) table(c(tr_golds2[[x]]), c(default_tr[[x]])))
-dfDice2 = lapply(tbls_df2, dice)
+dfDice2 = sapply(tbls_df2, dice)
+
+diceDF = data.frame('Subject'=factor(rep(1:5, 2)), 'Rater'=factor(c(rep(1, 5), rep(2, 5))), 'Dice'=c(dfDice1, dfDice2))
+plot(ggplot(diceDF, aes(x=Subject, y=Dice, fill=Rater)) + geom_histogram(position="dodge", stat="identity", aes(color=Rater)))
 
 ## ----oasis_df_show, eval=FALSE-------------------------------------------
 ## make_df = function(x){
