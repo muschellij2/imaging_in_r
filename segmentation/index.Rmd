@@ -65,7 +65,7 @@ mask = readnii(files["Brain_Mask"])
 - These methods can be skewed by large outliers.
 
 ```{r hist_vals}
-hist(rt1, mask = mask, breaks = 2000); text(x = 800, y = 3000, "outliers!")
+hist(t1, mask = mask, breaks = 2000); text(x = 800, y = 3000, "outliers!")
 ```
 
 ## Where are the outliers

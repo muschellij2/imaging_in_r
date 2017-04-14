@@ -24,7 +24,7 @@ mask = readnii(files["Brain_Mask"])
 # t1 = window_img(t1, window = c(0, 300))
 
 ## ----hist_vals-----------------------------------------------------------
-hist(rt1, mask = mask, breaks = 2000); text(x = 800, y = 3000, "outliers!")
+hist(t1, mask = mask, breaks = 2000); text(x = 800, y = 3000, "outliers!")
 
 ## ----which_big-----------------------------------------------------------
 ortho2(rt1, t1 > 400, xyz = xyz(t1 > 400))
