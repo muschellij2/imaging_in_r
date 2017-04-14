@@ -27,7 +27,7 @@ knitr::opts_chunk$set(echo = TRUE, comment = "")
 - `vector` - 1-dimensional object of one class (all numeric or all character)
 - `matrix` - 2-dimensional object of one class
 - `data.frame` - 2-dimensional object, can be multiple classes (like Excel spreadsheet)
-- `array` - object of dimensions > 2 of one class.  The data in a `nifti` object is one of these (usually 3-D)
+- `array` - object of > 2 dimensions of one class.  The data in a `nifti` object is one of these (usually 3-D)
 
 
 ## Initializing: vectors 
@@ -42,6 +42,8 @@ print(v)
 w = 1:5
 print(w)
 ```
+
+The gray boxes denote code, and the lines after denote the output.  
 
 ## Assignment
 

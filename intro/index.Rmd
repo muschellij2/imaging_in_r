@@ -153,8 +153,7 @@ http://johnmuschelli.com/rstudio_server.html
     * When you download R, it has a "base" set of functions/packages (**base R**)
 * Functions are enclosed in packages
     - A package is collection of functions, documentation, data, and tutorials (called vignettes).
-    * These written by R users/developers (like us) - **some are bad**
-    * Think of them as "R Extensions"
+    * Written by R users/developers (like us) - **some are bad**
     - You install a package using the `install.packages` command/function:
 
 ```r

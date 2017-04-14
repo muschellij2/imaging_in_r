@@ -29,11 +29,11 @@ t1 = neurobase::readnii("training01_01_mprage.nii.gz")
 Let's do a marginal density of the values:
 
 ```{r dens}
-plot(density(t1))
+plot(density(t1)) # large spike at 0
 ```
 
 
-## Histogram
+## Density with a mask
 
 You can also pass in a mask to most standard functions:
 
@@ -45,6 +45,7 @@ plot(density(t1, mask = t1 > 0))
 ## Similarly: a Histogram
 
 Note the high intensities:
+
 ```{r histog, echo = FALSE}
 hist(t1)
 ```
@@ -65,21 +66,29 @@ We see a faint outline of the image, but this single large value affects how we 
 ortho2(robust_window(t1))
 ```
 
-## Orthographic view with additions
+## Robust Density
 
-`ortho2` annotates the orientation of the image.  These many not be correct.  You can turn these off with the `add.orient` argument:
 
-```{r ortho2_noorient}
-neurobase::ortho2(robust_window(t1), add.orient = FALSE)
+```{r dens_robust, echo = FALSE}
+par(mfrow = c(1,2))
+plot(density(t1), main = "Density of T1") 
+plot(density(robust_window(t1)), main = "Density of Windowed T1")
+par(mfrow = c(1,1))
 ```
+
 
 
 ## Overlaying images in `ortho2`
 
-Here we plot the T1 and a mask of values over $100$:
+For the rest of the slides we will use the robust `t1` for plotting
+```{r robust_final, echo = FALSE}
+t1 = robust_window(t1)
+```
+
+Here we plot the T1 and a mask of values over $150$:
 
 ```{r ortho_nona}
-ortho2(robust_window(t1), y = t1 > 100)
+ortho2(t1, y = t1 > 150)
 ```
 
 ## Double orthographic view
@@ -87,7 +96,7 @@ ortho2(robust_window(t1), y = t1 > 100)
 Sometimes you would like to represent 2 images side by side, of the same dimensions and orientation of course (useful for checking registration), use `double_ortho`
 
 ```{r double_ortho}
-double_ortho(robust_window(t1), y = t1 > 100)
+double_ortho(t1, y = t1 > 150, col.y = "white")
 ```
 
 ## Lightbox: view all slices
@@ -106,7 +115,7 @@ The `slice` function can plot individual slices:
 oro.nifti::slice(t1, z = c(60, 80))
 ```
 
-### Different Planes
+## Different Planes
 
 We can specify `z` the same way but change the `plane` to be different to get a different slice of the brain:
 
@@ -119,7 +128,7 @@ We can similarly do the same for "coronal" slices.
 
 We can also overlay one slice of an image upon another using the `oro.nifti::slice_overlay` function.  
 ```{r one_slice_overlay}
-slice_overlay(t1, y = t1 > 100, z = 80)
+slice_overlay(t1, y = t1 > 150, z = 80)
 ```
 
 

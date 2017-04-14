@@ -8,15 +8,8 @@ library(neurobase)
 library(extrantsr)
 library(scales)
 
-## ------------------------------------------------------------------------
-library(ms.lesion)
-library(neurobase)
-all_files = get_image_filenames_list_by_subject()
-print(names(all_files))
-files = all_files$training01
-print(names(files))
-t1_fname = files["MPRAGE"]
-t1 = readnii(t1_fname)
+## ----reading_in_image----------------------------------------------------
+t1 = neurobase::readnii("training01_01_mprage.nii.gz")
 
 ## ----ortho2_show---------------------------------------------------------
 ortho2(robust_window(t1))

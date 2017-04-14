@@ -99,29 +99,9 @@
 
 </article></slide><slide class=''><hgroup><h2>MS Lesion</h2></hgroup><article  id="ms-lesion">
 
-<p>Let&#39;s read in the T1 image from a MS lesion data set:</p>
+<p>Let&#39;s reset and read in the T1 image from a MS lesion data set:</p>
 
-<pre class = 'prettyprint lang-r'>library(ms.lesion)
-library(neurobase)
-all_files = get_image_filenames_list_by_subject()
-print(names(all_files))</pre>
-
-<pre >[1] &quot;test01&quot;     &quot;test02&quot;     &quot;test03&quot;     &quot;training01&quot; &quot;training02&quot;
-[6] &quot;training03&quot; &quot;training04&quot; &quot;training05&quot;</pre>
-
-<pre class = 'prettyprint lang-r'>files = all_files$training01
-print(names(files))</pre>
-
-<pre >[1] &quot;MPRAGE&quot; &quot;T2&quot;     &quot;FLAIR&quot;  &quot;PD&quot;    </pre>
-
-<pre class = 'prettyprint lang-r'>t1_fname = files[&quot;MPRAGE&quot;]
-t1 = readnii(t1_fname)</pre>
-
-<ul>
-<li><code>get_image_filenames_list_by_subject</code> - returns a list, we subset by a subject ID</li>
-<li><code>files</code> is a named vector of filenames, we subset by the modality</li>
-<li><code>t1</code> is a <code>nifti</code> object</li>
-</ul>
+<pre class = 'prettyprint lang-r'>t1 = neurobase::readnii(&quot;training01_01_mprage.nii.gz&quot;)</pre>
 
 </article></slide><slide class=''><hgroup><h2>Image Data</h2></hgroup><article  id="image-data">
 
@@ -291,6 +271,36 @@ df$location = cut(df$dim3, breaks = c(0, 38, 76, 115),
 </article></slide><slide class=''><hgroup><h2>Website</h2></hgroup><article  id="website">
 
 <p><a href='http://johnmuschelli.com/imaging_in_r' title=''>http://johnmuschelli.com/imaging_in_r</a></p>
+
+<!-- ## MS Lesion  -->
+
+<!-- Let's read in the T1 image from a MS lesion data set: -->
+
+<!-- ```{r} -->
+
+<!-- library(ms.lesion) -->
+
+<!-- library(neurobase) -->
+
+<!-- all_files = get_image_filenames_list_by_subject() -->
+
+<!-- print(names(all_files)) -->
+
+<!-- files = all_files$training01 -->
+
+<!-- print(names(files)) -->
+
+<!-- t1_fname = files["MPRAGE"] -->
+
+<!-- t1 = readnii(t1_fname) -->
+
+<!-- ``` -->
+
+<!-- - `get_image_filenames_list_by_subject` - returns a list, we subset by a subject ID -->
+
+<!-- - `files` is a named vector of filenames, we subset by the modality -->
+
+<!-- - `t1` is a `nifti` object -->
 
 <div id="refs" class="references">
 <div id="ref-tustison_n4itk_2010">

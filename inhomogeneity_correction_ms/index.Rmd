@@ -27,22 +27,11 @@ library(scales)
 
 ## MS Lesion 
 
-Let's read in the T1 image from a MS lesion data set:
+Let's reset and read in the T1 image from a MS lesion data set:
 
-```{r}
-library(ms.lesion)
-library(neurobase)
-all_files = get_image_filenames_list_by_subject()
-print(names(all_files))
-files = all_files$training01
-print(names(files))
-t1_fname = files["MPRAGE"]
-t1 = readnii(t1_fname)
+```{r reading_in_image}
+t1 = neurobase::readnii("training01_01_mprage.nii.gz")
 ```
-
-- `get_image_filenames_list_by_subject` - returns a list, we subset by a subject ID
-- `files` is a named vector of filenames, we subset by the modality
-- `t1` is a `nifti` object
 
 ## Image Data
 
@@ -221,3 +210,23 @@ ggplot(df, aes(x = value, colour = location)) + geom_line(stat = "density")
 ## Website
 
 http://johnmuschelli.com/imaging_in_r
+
+
+<!-- ## MS Lesion  -->
+
+<!-- Let's read in the T1 image from a MS lesion data set: -->
+
+<!-- ```{r} -->
+<!-- library(ms.lesion) -->
+<!-- library(neurobase) -->
+<!-- all_files = get_image_filenames_list_by_subject() -->
+<!-- print(names(all_files)) -->
+<!-- files = all_files$training01 -->
+<!-- print(names(files)) -->
+<!-- t1_fname = files["MPRAGE"] -->
+<!-- t1 = readnii(t1_fname) -->
+<!-- ``` -->
+
+<!-- - `get_image_filenames_list_by_subject` - returns a list, we subset by a subject ID -->
+<!-- - `files` is a named vector of filenames, we subset by the modality -->
+<!-- - `t1` is a `nifti` object -->
