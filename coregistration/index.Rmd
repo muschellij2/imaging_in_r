@@ -69,8 +69,7 @@ Image taken from [http://cnl.web.arizona.edu/imageprops.htm](http://cnl.web.ariz
 - Non-linear (> 12 dof)
     - Usually require a prior affine registration
     - Across-subject registration
-    - Registration to a template
-        - There are many different templates
+    - Registration to a template: There are many different templates
  
 <img src="Reg_Figure_Option1_nonlinear_short.png" style="width: 100%; display: block; margin: auto;">
 
