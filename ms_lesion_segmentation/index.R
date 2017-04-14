@@ -39,7 +39,7 @@ keep_dim = w %>% group_by(dim3) %>%
 keep_dim = keep_dim$dim3
 w = w[ w$dim3 %in% keep_dim, ]
 xyz = floor(colMeans(w))
-ortho2(tr_t1s$training05, les_mask, xyz = xyz, col.y = "orange")
+ortho2(robust_window(tr_flairs$training05), les_mask, xyz = xyz, col.y = scales::alpha("orange", 0.5))
 
 ## ----default_predict_ts_show, eval=FALSE---------------------------------
 ## library(oasis)

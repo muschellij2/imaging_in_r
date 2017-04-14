@@ -10,6 +10,9 @@ bibliography: ../refs.bib
 
 ```{r setup, include=FALSE}
 library(methods)
+library(scales)
+library(fslr)
+library(extrantsr)
 knitr::opts_chunk$set(
   message = FALSE, echo = TRUE, 
   comment = "", 
@@ -43,14 +46,12 @@ knitr::opts_chunk$set(
 ```{r loading}
 library(ms.lesion)
 library(neurobase)
-library(fslr)
-library(extrantsr)
-library(scales)
 all_files = get_image_filenames_list_by_subject(
   group = "training", 
   type = "coregistered")
 files = all_files$training05 # NOT training subject 1!
 t1 = readnii(files["MPRAGE"])
+rt1 = robust_window(t1)
 mask = readnii(files["Brain_Mask"])
 ```
 
@@ -64,7 +65,7 @@ mask = readnii(files["Brain_Mask"])
 - These methods can be skewed by large outliers.
 
 ```{r hist_vals}
-hist(t1, mask = mask, breaks = 2000); text(x = 800, y = 3000, "outliers!")
+hist(rt1, mask = mask, breaks = 2000); text(x = 800, y = 3000, "outliers!")
 ```
 
 ## Where are the outliers
@@ -72,7 +73,7 @@ hist(t1, mask = mask, breaks = 2000); text(x = 800, y = 3000, "outliers!")
 We see some values that may have be improperly segmented: 
 
 ```{r which_big}
-ortho2(t1, t1 > 400, xyz = xyz(t1 > 400))
+ortho2(rt1, t1 > 400, xyz = xyz(t1 > 400))
 ```
 
 ## Tissue Segmentation using FSL FAST
@@ -114,33 +115,31 @@ FAST assumes three tissue classes and produces an image with the three labels, o
 ## FAST: White Matter
 
 ```{r fast_wm_nonrobust}
-ortho2(t1, t1fast == 3, col.y = alpha("red", 0.5), text = "White Matter")
+ortho2(rt1, t1fast == 3, col.y = alpha("red", 0.5), text = "White Matter")
 ```
 
 ## FAST: Gray Matter
 
 ```{r fast_gm_nonrobust}
-ortho2(t1, t1fast == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
+ortho2(rt1, t1fast == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 ```
 
 ## FAST: CSF
 
 ```{r fast_csf_nonrobust}
-ortho2(t1, t1fast == 1, col.y = alpha("red", 0.5), text = "CSF")
+ortho2(rt1, t1fast == 1, col.y = alpha("red", 0.5), text = "CSF")
 ```
 
 
 ## Removing large values: Is there an effect?
 
 ```{r fast_better_show, eval = FALSE}
-rb = robust_window(t1)
-robust_fast = fast(rb, 
+robust_fast = fast(rt1, # the robust_window(t1)
               outfile = paste0(nii.stub(t1file), "_FAST"), 
               opts = "--nobias")
 ```
 
 ```{r fast_better_run, echo = FALSE}
-rb = robust_window(t1)
 robust_fast = readnii(files["FAST"])
 ```
 
@@ -161,19 +160,19 @@ multi_overlay(L, z = 58, text = names(L), text.x = 0.5, text.y = 1.4,
 ## FAST with Window: White Matter
 
 ```{r fast_wm}
-ortho2(t1, robust_fast == 3, col.y = alpha("red", 0.5), text = "White Matter")
+ortho2(rt1, robust_fast == 3, col.y = alpha("red", 0.5), text = "White Matter")
 ```
 
 ## FAST with Window: Gray Matter
 
 ```{r fast_gm}
-ortho2(t1, robust_fast == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
+ortho2(rt1, robust_fast == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 ```
 
 ## FAST with Window: CSF
 
 ```{r fast_csf}
-ortho2(t1, robust_fast == 1, col.y = alpha("red", 0.5), text = "CSF")
+ortho2(rt1, robust_fast == 1, col.y = alpha("red", 0.5), text = "CSF")
 ```
 
 ## FAST Results
@@ -206,19 +205,19 @@ if (!file.exists(outfile)) {
 ## Atropos: White Matter
 
 ```{r otropos_wm}
-ortho2(t1, t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
+ortho2(rt1, t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
 ```
 
 ## Atropos: Gray Matter
 
 ```{r otropos_gm}
-ortho2(t1, t1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
+ortho2(rt1, t1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 ```
 
 ## Atropos: CSF
 
 ```{r otropos_csf}
-ortho2(t1, t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
+ortho2(rt1, t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 ```
 
 
@@ -234,7 +233,7 @@ ortho2(t1, t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 
 
 ```{r robust_otropos_show, eval = FALSE}
-robust_t1_otropos = otropos(a = rb, x = mask) # using robust
+robust_t1_otropos = otropos(a = rt1, x = mask) # using robust
 robust_t1seg = robust_t1_otropos$segmentation
 ```
 
