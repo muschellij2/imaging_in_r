@@ -28,16 +28,10 @@ knitr::opts_chunk$set(
 
 - We are often interested in subdividing or segmenting the brain into meaningful biological regions of interest (ROIs) for an analysis.
 - Examples: tissue segmentation, segmentation of gray matter structures, segmentation of pathology (MS lesions, tumors, ...)
-
-**Goals of this module**
-
-- Perform tissue segmentation in R using `fslr` and `ANTsR`.
+- We will perform 3-class tissue segmentation in R using `fslr` and `ANTsR`:
     * Cerebrospinal fluid (CSF)
     * Gray Matter (GM)
     * White Matter (WM)
-- Vizualize results
-- Estimate volume of each tissue class
-
 
 ## Loading Data
 
