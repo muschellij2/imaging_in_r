@@ -41,7 +41,7 @@ knitr::opts_chunk$set(
 
 ## Loading Data
 
-- Let's read in the training T1s and brain mask for subject 05 (not 01!).
+- Let's read in the training T1 and brain mask for subject 05 (not 01!).
 
 ```{r loading}
 library(ms.lesion)
@@ -68,9 +68,7 @@ mask = readnii(files["Brain_Mask"])
 hist(t1, mask = mask, breaks = 2000); text(x = 800, y = 3000, "outliers!")
 ```
 
-## Where are the outliers
-
-We see some values that may have be improperly segmented: 
+## Where are the outliers?
 
 ```{r which_big}
 ortho2(rt1, t1 > 400, xyz = xyz(t1 > 400))
