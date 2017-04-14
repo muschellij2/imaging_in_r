@@ -111,13 +111,8 @@
 
 <p>Let&#39;s reset and read in the T1 image from a MS lesion data set:</p>
 
-<pre class = 'prettyprint lang-r'>library(neurobase)</pre>
-
-<pre >Loading required package: oro.nifti</pre>
-
-<pre >oro.nifti 0.7.5</pre>
-
-<pre class = 'prettyprint lang-r'>t1_fname = &quot;training01_01_mprage.nii.gz&quot;
+<pre class = 'prettyprint lang-r'>library(neurobase)
+t1_fname = &quot;training01_01_mprage.nii.gz&quot;
 t1 = neurobase::readnii(t1_fname)
 rt1 = robust_window(t1); 
 red0.5 = scales::alpha(&quot;red&quot;, 0.5) # for plotting later</pre>
