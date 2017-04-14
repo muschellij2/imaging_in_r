@@ -195,7 +195,7 @@ We would like to perform registration within a visit for all modalities.  The `e
     - Could also use images from previous lecture
 2.  Registration to a fixed image (T1) 
 
-<img src="within_visit_registration.png" style="width: 50%; display: block; margin: auto;">
+<img src="within_visit_registration.png" style="width: 30%; display: block; margin: auto;">
 
 
 ## Registration within a visit
