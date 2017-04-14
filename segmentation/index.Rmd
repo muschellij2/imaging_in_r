@@ -157,30 +157,30 @@ multi_overlay(L, z = 58, text = names(L), text.x = 0.5, text.y = 1.4,
 
 ## FAST with Window: White Matter
 
-```{r prep_wm}
+```{r prep_wm, echo = FALSE}
 rt1_list = list(rt1, rt1)
 m_list = list((t1fast==3), (robust_fast==3))
 ```
-```{r fast_wm}
-multi_overlay(x=rt1_list, y=m_list, col.y=alpha("red", 0.5))
+```{r fast_wm, echo = FALSE}
+multi_overlay(x=rt1_list, y=m_list, col.y=alpha("red", 0.5), text=c("Raw", "Robust"))
 ```
 
 ## FAST with Window: Gray Matter
 
-```{r prep_gm}
+```{r prep_gm, echo = FALSE}
 m_list = list((t1fast==2), (robust_fast==2))
 ```
-```{r fast_gm}
-multi_overlay(x=rt1_list, y=m_list, col.y=alpha("red", 0.5))
+```{r fast_gm, echo = FALSE}
+multi_overlay(x=rt1_list, y=m_list, col.y=alpha("red", 0.5), text=c("Raw", "Robust"))
 ```
 
 ## FAST with Window: CSF
 
-```{r prep_csf}
+```{r prep_csf, echo = FALSE}
 m_list = list((t1fast==1), (robust_fast==1))
 ```
-```{r fast_csf}
-multi_overlay(x=rt1_list, y=m_list, col.y=alpha("red", 0.5))
+```{r fast_csf, echo = FALSE}
+multi_overlay(x=rt1_list, y=m_list, col.y=alpha("red", 0.5), text=c("Raw", "Robust"))
 ```
 
 ## FAST Results
