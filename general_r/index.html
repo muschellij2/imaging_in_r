@@ -395,19 +395,6 @@ attr(,&quot;package&quot;)
   Voxel Units     : mm
   Time Units      : sec</pre>
 
-</article></slide><slide class=''><hgroup><h2>Subsetting with <code>nifti</code> objects: like <code>arrays</code></h2></hgroup><article  id="subsetting-with-nifti-objects-like-arrays">
-
-<p>The subsetting here is similar to that of arrays. Since <code>t1</code> is 3-dimensional the subsetting goes to the 3rd dimension:</p>
-
-<pre class = 'prettyprint lang-r'>t1[5, 4, 3]</pre>
-
-<pre >[1] 0</pre>
-
-<pre class = 'prettyprint lang-r'>t1[5, 4, ] # returns a vector of numbers (1-d)
-t1[, 4, ] # returns a 2-d matrix
-t1[1, , ] # returns a 2-d matrix
-t1[t1 &lt; 500] # using logicals - all logical - same dimension</pre>
-
 </article></slide><slide class=''><hgroup><h2>Operations with <code>nifti</code> objects</h2></hgroup><article  id="operations-with-nifti-objects">
 
 <p>These work with an image and a number (<code>img + 2</code>) or two images of the same dimensions <code>img1 + img2</code>.</p>
@@ -448,13 +435,28 @@ attr(,&quot;package&quot;)
 
 <pre >[1] FALSE FALSE FALSE FALSE FALSE FALSE</pre>
 
-<p>We can view values of the <code>t1</code> greater than 400 (<code>head</code> only prints the first 6 values):</p>
+<p>We will refer to images such as <code>t1 &gt; 400</code> as a &quot;mask&quot;, simply binary images with logical values in them (or 0s and 1s)</p>
+
+</article></slide><slide class=''><hgroup><h2>Subsetting with <code>nifti</code> objects: like <code>arrays</code></h2></hgroup><article  id="subsetting-with-nifti-objects-like-arrays">
+
+<p>The subsetting here is similar to that of arrays. Since <code>t1</code> is 3-dimensional the subsetting goes to the 3rd dimension:</p>
+
+<pre class = 'prettyprint lang-r'>t1[5, 4, 3]</pre>
+
+<pre >[1] 0</pre>
+
+<pre class = 'prettyprint lang-r'>t1[5, 4, ] # returns a vector of numbers (1-d)
+t1[, 4, ] # returns a 2-d matrix
+t1[1, , ] # returns a 2-d matrix</pre>
+
+<ul>
+<li>You can subset with a logical array of the same dimensions!</li>
+<li>We can view values of the <code>t1</code> greater than 400 (<code>head</code> only prints the first 6 values):</li>
+</ul>
 
 <pre class = 'prettyprint lang-r'>head(t1[ t1 &gt; 400 ]) # produces a vector of numbers</pre>
 
 <pre >[1] 421 617 617 479 456 404</pre>
-
-<p>We will refer to images such as <code>t1 &gt; 400</code> as a &quot;mask&quot;, simply binary images with logical values in them (or 0s and 1s)</p>
 
 </article></slide><slide class=''><hgroup><h2><code>which</code> with <code>nifti</code> objects</h2></hgroup><article  id="which-with-nifti-objects">
 
