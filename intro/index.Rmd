@@ -36,28 +36,54 @@ PhD in Statistics
 Email: klinn@mail.med.upenn.edu
 
 
-## Learning Objectives
+<!-- ## Learning Objectives -->
 
-- Introduction to the Statistical Software R
-- Reading and Writing Images
-- Visualization of Images and Image Data
-- Inhomogeneity Correction 
-- Brain Extraction 
-- Image Segmentation 
-- Coregistration Within and Between MRI Studies
-- Intensity Normalization
-- Segmentation of MS lesions
+<!-- - Introduction to the Statistical Software R -->
+<!-- - Reading and Writing Images -->
+<!-- - Visualization of Images and Image Data -->
+<!-- - Inhomogeneity Correction  -->
+<!-- - Brain Extraction  -->
+<!-- - Image Segmentation  -->
+<!-- - Coregistration Within and Between MRI Studies -->
+<!-- - Intensity Normalization -->
+<!-- - Segmentation of MS lesions -->
 
+## Overall Pipeline
+
+<img src="flow.png" style="width: 75%; display: block; margin: auto;"> 
 
 ## Imaging Data Used: Multiple Sclerosis
 
 - Multiple sclerosis is a chronic disease of the central nervous system (brain, spinal chord, optic nerves)
 - Multiple sclerosis lesions in the brain are areas of active inflammation, demylenation, or permanent tissue damage. 
     - lesions are primarily in the white matter
-- MRI is well-suited for assessing lesion burden (volume and patterns) because lesions appear as hyperintensities on FLAIR, T2-w, and PD images and as hypointensities on T1-w images.
+- The full data is available at https://smart-stats-tools.org. 
+
+## Imaging Data Used: Multiple Sclerosis
+  
+- MRI is well-suited for assessing lesion burden (volume and patterns) because lesions appear as hyperintensities on FLAIR, T2-w, and PD images and as hypointensities on T1-w (MPRAGE) images.
 - Using 5 training and 3 test subjects data from the MS lesion challenge 2016 (http://iacl.ece.jhu.edu/index.php/MSChallenge)
 
-- The full data is available at https://smart-stats-tools.org. 
+```{r readin, echo = FALSE, message=FALSE}
+library(ms.lesion)
+library(neurobase)
+files = get_image_filenames_list_by_subject(type = "coregistered")
+files = files$training02
+img_fnames = files[c("MPRAGE", "T2", "FLAIR", "PD")]
+mask_fname = files["mask1"]
+brain_mask = readnii(files["Brain_Mask"])
+imgs = check_nifti(img_fnames)
+mask = readnii(mask_fname)
+zimgs = lapply(imgs, zscore_img, mask = brain_mask)
+inds = getEmptyImageDimensions(brain_mask)
+zimgs = lapply(zimgs, applyEmptyImageDimensions, inds = inds)
+mask = applyEmptyImageDimensions(mask, inds = inds)
+zimgs = c(zimgs, Lesion_Mask = list(mask * 10))
+xyz = xyz(mask)
+multi_overlay(zimgs, z = xyz[3], text = names(zimgs), 
+              text.x = 0.5, text.y = 1.25, text.cex = 2)
+```
+
 
 ## Formats of Images
 
@@ -66,7 +92,6 @@ There are multiple imaging formats.  We will use NIfTI:
 * NIfTI - Neuroimaging Informatics Technology Initiative (https://nifti.nimh.nih.gov/nifti-1)
     - essentially a header and data (binary format)
     - will have extension .nii (uncompressed) or .nii.gz (compressed)
-    - we will primarily use compressed NIfTI images
     - we will use 3-D images (4-D and 5-D are possible)
 * ANALYZE 7.5 was a precursor to NIfTI 
     - had a `hdr` file (header) and `img` file (data)
@@ -81,16 +106,11 @@ All materials for this course (including source for the slides) is located at:
 
 https://github.com/muschellij2/imaging_in_r
 
-
-
-## RStudio Server
+**RStudio Server**
 
 For this course, we will use an RStudio Server because installing all the packages can be a lengthy process.  Mostly all the code we show requires a Linux/Mac OSX platform for FSL and other systems:
 
 http://johnmuschelli.com/rstudio_server.html
-
-The code to make the server is located at:
-https://github.com/muschellij2/rneuro/blob/master/ms_rstudio_droplet.sh
 
 
 # Introduction to R
@@ -118,14 +138,10 @@ https://github.com/muschellij2/rneuro/blob/master/ms_rstudio_droplet.sh
 
 * High level language
 
-## Why not R?
+**Why not R?**
 
 * Fairly steep learning curve
 
-    * "Programming" oriented
-    
-    * Minimal interface - without an IDE
-    
 * Little centralized support, relies on online community and package developers
 
 * Slower, and more memory intensive, than the more traditional programming languages (C, Java, Perl, Python)
@@ -149,7 +165,7 @@ install.packages("oro.nifti")
 
 ## Loading Packages
 
-When you install a package, that means it's downloaded on your computer.  That *doesn't* mean that you can use the functions from that package just yet.
+When you install a package, it's downloaded to the hard disk.  That *doesn't* mean that you can use the functions from that package just yet.
 
 - You "load"/import a package into memory using the `library` command
 
@@ -171,21 +187,9 @@ RStudio is an Integrated Development Environment (IDE) for R (made by RStudio th
 * Is NOT dropdown statistical tools (such as Stata)
     * See [Rcmdr](https://cran.r-project.org/web/packages/Rcmdr/index.html) or [Radiant](http://vnijs.github.io/radiant/) 
 
-* All snapshots in these slides are taken from http://ayeimanol-r.net/2013/04/21/289/
 
 
 # R essentially is a command line with a set of functions loaded
-
-## Working with R
-
-* The R Console "interprets" whatever you type
-    * Can act as a calculator
-    * Creating variables/objects
-    * Applying functions
-
-* "Analysis" Script + Interactive Exploration
-    * Static copy of what you did (reproducability)
-    * Try things out interactively, then add to your script
 
 
 ## RStudio/R Console
@@ -193,21 +197,25 @@ RStudio is an Integrated Development Environment (IDE) for R (made by RStudio th
 * Where code is executed (where things happen)
 * You can type here for things interactively
 * Code is **not saved** on your disk
+    * Can act as a calculator
+    * Creating variables/objects
+    * Applying functions
 
 
-## RStudio/R Console <img src="r-rstudio-1-3-console.png" style="width: 95%; display: block; margin: auto;"> 
+## RStudio/R Console <img src="standard_console.png" style="width: 95%; display: block; margin: auto;"> 
 <!-- ![Console]() -->
 
 ## Source
 
 * Where files open to
 * Have R code and comments in them
+    * Static copy of what you did (reproducability)
+    * Try things out interactively, then add to your script
 * Can highlight and press (CMD+Enter (Mac) or Ctrl+Enter (Windows)) to run the code
+* Code is saved to disk
 
-In a .R file (we call a script), code is saved on your disk
 
-
-## Source/Editor <img src="r-rstudio-1-3-script.png" style="width: 95%; display: block; margin: auto;"> 
+## Source/Editor <img src="standard_script.png" style="width: 95%; display: block; margin: auto;"> 
 <!-- ![Script](r-rstudio-1-3-script.png) -->
 
 ## Workspace/Environment
@@ -215,12 +223,12 @@ In a .R file (we call a script), code is saved on your disk
 * Tells you what **objects** are in R
 * What exists in memory/what is loaded?/what did I read in?
 
-History
+**History**
 
 * Shows previous commands.  Good to look at for debugging, but **don't rely** on it as a script.  Make a script!
 * Also type the "up" key in the Console to scroll through previous commands
 
-## Workspace/Environment <img src="r-rstudio-1-ggplot-point-2.png" style="width: 95%; display: block; margin: auto;"> 
+## Workspace/Environment <img src="standard_workspace.png" style="width: 95%; display: block; margin: auto;"> 
 <!-- ![Workspace]() -->
 
 
