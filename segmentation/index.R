@@ -1,5 +1,8 @@
 ## ----setup, include=FALSE------------------------------------------------
 library(methods)
+library(scales)
+library(fslr)
+library(extrantsr)
 knitr::opts_chunk$set(
   message = FALSE, echo = TRUE, 
   comment = "", 
@@ -8,14 +11,12 @@ knitr::opts_chunk$set(
 ## ----loading-------------------------------------------------------------
 library(ms.lesion)
 library(neurobase)
-library(fslr)
-library(extrantsr)
-library(scales)
 all_files = get_image_filenames_list_by_subject(
   group = "training", 
   type = "coregistered")
 files = all_files$training05 # NOT training subject 1!
 t1 = readnii(files["MPRAGE"])
+rt1 = robust_window(t1)
 mask = readnii(files["Brain_Mask"])
 
 ## ----window, echo = FALSE------------------------------------------------
@@ -23,10 +24,10 @@ mask = readnii(files["Brain_Mask"])
 # t1 = window_img(t1, window = c(0, 300))
 
 ## ----hist_vals-----------------------------------------------------------
-hist(t1, mask = mask, breaks = 2000); text(x = 800, y = 3000, "outliers!")
+hist(rt1, mask = mask, breaks = 2000); text(x = 800, y = 3000, "outliers!")
 
 ## ----which_big-----------------------------------------------------------
-ortho2(t1, t1 > 400, xyz = xyz(t1 > 400))
+ortho2(rt1, t1 > 400, xyz = xyz(t1 > 400))
 
 ## ----fast_show, eval = FALSE---------------------------------------------
 ## t1file = files["MPRAGE"]
@@ -46,22 +47,20 @@ if (!file.exists(outfile)) {
 }
 
 ## ----fast_wm_nonrobust---------------------------------------------------
-ortho2(t1, t1fast == 3, col.y = alpha("red", 0.5), text = "White Matter")
+ortho2(rt1, t1fast == 3, col.y = alpha("red", 0.5), text = "White Matter")
 
 ## ----fast_gm_nonrobust---------------------------------------------------
-ortho2(t1, t1fast == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
+ortho2(rt1, t1fast == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 
 ## ----fast_csf_nonrobust--------------------------------------------------
-ortho2(t1, t1fast == 1, col.y = alpha("red", 0.5), text = "CSF")
+ortho2(rt1, t1fast == 1, col.y = alpha("red", 0.5), text = "CSF")
 
 ## ----fast_better_show, eval = FALSE--------------------------------------
-## rb = robust_window(t1)
-## robust_fast = fast(rb,
+## robust_fast = fast(rt1, # the robust_window(t1)
 ##               outfile = paste0(nii.stub(t1file), "_FAST"),
 ##               opts = "--nobias")
 
 ## ----fast_better_run, echo = FALSE---------------------------------------
-rb = robust_window(t1)
 robust_fast = readnii(files["FAST"])
 
 ## ----multi_overlay, eval = FALSE, echo = FALSE---------------------------
@@ -77,13 +76,13 @@ robust_fast = readnii(files["FAST"])
 ##               text.cex = 2.5)
 
 ## ----fast_wm-------------------------------------------------------------
-ortho2(t1, robust_fast == 3, col.y = alpha("red", 0.5), text = "White Matter")
+ortho2(rt1, robust_fast == 3, col.y = alpha("red", 0.5), text = "White Matter")
 
 ## ----fast_gm-------------------------------------------------------------
-ortho2(t1, robust_fast == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
+ortho2(rt1, robust_fast == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 
 ## ----fast_csf------------------------------------------------------------
-ortho2(t1, robust_fast == 1, col.y = alpha("red", 0.5), text = "CSF")
+ortho2(rt1, robust_fast == 1, col.y = alpha("red", 0.5), text = "CSF")
 
 ## ----otropos_show, eval = FALSE------------------------------------------
 ## t1_otropos = otropos(a = t1, x = mask) # using original data
@@ -101,16 +100,16 @@ if (!file.exists(outfile)) {
 }
 
 ## ----otropos_wm----------------------------------------------------------
-ortho2(t1, t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
+ortho2(rt1, t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
 
 ## ----otropos_gm----------------------------------------------------------
-ortho2(t1, t1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
+ortho2(rt1, t1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 
 ## ----otropos_csf---------------------------------------------------------
-ortho2(t1, t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
+ortho2(rt1, t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 
 ## ----robust_otropos_show, eval = FALSE-----------------------------------
-## robust_t1_otropos = otropos(a = rb, x = mask) # using robust
+## robust_t1_otropos = otropos(a = rt1, x = mask) # using robust
 ## robust_t1seg = robust_t1_otropos$segmentation
 
 ## ----robust_otropos_run, echo = FALSE------------------------------------
