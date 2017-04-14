@@ -27,8 +27,8 @@ options(fsl.outputtype = "NIFTI_GZ")
 ## Goals of this tutorial
 
 - Visualize intensity distributions from different subjects and tissue classes.
-    - Because MS lesions are in the white matter, comparable white matter distributions are the target goal
 - Apply the White Stripe intensity normalization [@shinohara2014statistical].
+    - Because MS lesions are in the white matter, comparable white matter distributions are the target goal
 
 
 ```{r t1, echo=FALSE, warning=FALSE, message=FALSE}
@@ -69,7 +69,7 @@ plot_boxplots = function(vals,
 ```
 
 ## Visualizing whole-brain intensities 
-- For the moment, we will work with the T1-w images from the training data. 
+- We will work with the T1-w images from the training data. 
 - Full brain densities are mixtures of the three tissue class distributions.
 
 ```{r t1viz, warning=FALSE, message=FALSE, echo = FALSE}
@@ -244,7 +244,8 @@ plot_densities(wm_norm_dens,
 
 ## White Stripe normalization
 
-Procedure
+Procedure:
+
 1. Find white matter area on histogram
 
 2. Estimate mean $\mu_{WS}$ and variance $\sigma_{WS}$ of voxel intensities in that area
@@ -263,9 +264,11 @@ $$ T1_{WS} = \frac{T1 - \mu_{WS}}{\sigma_{WS}}$$
 ## White Stripe normalization code
 
 ```{r ws_show, eval=FALSE, warning = FALSE, message = FALSE, results='hide'}
+library(WhiteStripe)
 ind = whitestripe(img = t1, type = "T1", stripped = TRUE)$whitestripe.ind
 ws_t1 = whitestripe_norm(t1, indices = ind)
 ```
+
 - The `whitestripe` function takes an image, image type (in our case T1), and a logical indicating whether the image has been skull stripped.
 - The indicies of voxels in the NAWM used for estimating the normalization parameters are located in the list element `$whitestripe.ind`.
 - The function `whitestripe_norm` takes an image and the indicies from a call to `whitestripe` and returns the White Stripe normalized image as a nifti.
