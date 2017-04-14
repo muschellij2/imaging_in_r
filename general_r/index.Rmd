@@ -222,20 +222,6 @@ By default, if you simply pass the object, it is printed, we can also do `print(
 t1
 ```
 
-## Subsetting with `nifti` objects: like `arrays`
-
-The subsetting here is similar to that of arrays. Since `t1` is 3-dimensional the subsetting goes to the 3rd dimension:
-```{r}
-t1[5, 4, 3]
-```
-
-```{r, eval = FALSE}
-t1[5, 4, ] # returns a vector of numbers (1-d)
-t1[, 4, ] # returns a 2-d matrix
-t1[1, , ] # returns a 2-d matrix
-t1[t1 < 500] # using logicals - all logical - same dimension
-```
-
 ## Operations with `nifti` objects
 
 These work with an image and a number (`img + 2`) or two images of the same dimensions `img1 + img2`.
@@ -259,12 +245,28 @@ class(t1 > 400) # still a nifti
 head(t1 > 400) # values are now logical vs. numeric
 ```
 
-We can view values of the `t1` greater than 400 (`head` only prints the first 6 values):
+We will refer to images such as `t1 > 400` as a "mask", simply binary images with logical values in them (or 0s and 1s)
+
+
+## Subsetting with `nifti` objects: like `arrays`
+
+The subsetting here is similar to that of arrays. Since `t1` is 3-dimensional the subsetting goes to the 3rd dimension:
+```{r}
+t1[5, 4, 3]
+```
+
+```{r, eval = FALSE}
+t1[5, 4, ] # returns a vector of numbers (1-d)
+t1[, 4, ] # returns a 2-d matrix
+t1[1, , ] # returns a 2-d matrix
+```
+
+- Subsetting with logicals: we can view values of the `t1` greater than 400 (`head` only prints the first 6 values):
 
 ```{r}
 head(t1[ t1 > 400 ]) # produces a vector of numbers
 ```
-We will refer to images such as `t1 > 400` as a "mask", simply binary images with logical values in them (or 0s and 1s)
+
 
 
 ## `which` with `nifti` objects
