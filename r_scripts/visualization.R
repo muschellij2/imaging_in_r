@@ -52,3 +52,8 @@ oro.nifti::slice(t1, z = 125, plane = "sagittal")
 ## ----one_slice_overlay---------------------------------------------------
 slice_overlay(t1, y = t1 > 150, z = 80)
 
+## ----smoothed------------------------------------------------------------
+library(extrantsr)
+sm_img = smooth_image(t1, sigma = 2)
+double_ortho(t1, sm_img)
+

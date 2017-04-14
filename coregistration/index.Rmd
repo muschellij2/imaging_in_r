@@ -186,10 +186,9 @@ We would like to perform registration within a visit for all modalities.  The `e
 
 1.  Inhomogeneity correction (N3 or N4)
     - Could also use images from previous lecture
-2.  Registration of the files to the first filename (T1) for all images
-3.  Skull_stripping using BET if desired
-    - We will set this to `FALSE`
-    - We will apply our MALF masks later
+2.  Registration to a fixed image (T1) 
+
+<img src="within_visit_registration.png" style="width: 100%; display: block; margin: auto;">
 
 
 ## Registration within a visit
@@ -200,6 +199,7 @@ The function `within_visit_registration` arguments take in:
 - `moving` images - images to register to the `fixed`
 - `typeofTransform` - transformation of moving to fixed image (Rigid/Affine)
 - `interpolator` - how are voxels averaged in `fixed` space
+- `correct` - should correction be done, if so, specify `correction = "N4"`
 
 and outputs a list of transformations (`fwdtransforms`) and output filenames (`outfile`)
 
@@ -228,7 +228,6 @@ res = within_visit_registration(
   interpolator = "Linear"
 )
 output_imgs = lapply(res, function(x) x$outfile)
-names(output_imgs) = c("T2", "FLAIR", "PD")
 out = c(MPRAGE = list(t1), output_imgs)
 ```
 
@@ -255,7 +254,7 @@ dd = dropEmptyImageDimensions(mask,
                                other.imgs = xout)
 xout = dd$other.imgs
 out = lapply(xout, zscore_img, mask = dd$outimg)
-out = lapply(out, window_img, window = c(-4, 4))
+out = lapply(out, window_img, window = c(-3, 3))
 ```
 
 ```{r reg_plot_ortho2_show, eval = FALSE}

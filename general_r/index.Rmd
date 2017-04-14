@@ -52,7 +52,7 @@ In `R`, you can assign using the equals `=` or arrow `<-` (aka assigment operato
 The above commands are equivalent to:
 
 ```{r, eval = FALSE}
-v <- c(1, 4, 3, 7, 8)
+w = 1:5
 w <- 1:5
 ```
 
@@ -97,6 +97,9 @@ print(m)
 - Create a 3 x 4 x 3 numeric array and assign to variable `a`
 ```{r arr}
 a = array(1:36, dim = c(3, 4, 3))
+```
+- the `dim()` function returns the dimensions of the array
+```{r dim}
 dim(a)
 ```
 
@@ -207,12 +210,15 @@ t1 = readnii("training01_01_mprage.nii.gz")
 
 Now, an object `t1` is in memory/the workspace.
 
+```{r t1class}
+class(t1)
+```
+
 
 ## `nifti` images
 
 By default, if you simply pass the object, it is printed, we can also do `print(t1)`:
 ```{r}
-class(t1)
 t1
 ```
 
@@ -312,6 +318,10 @@ class(vals)
 Essentially "strings out" the array. If you do `array(c(t1), dim = dim(t1))`, this will put things back "in order" of the `t1`.  
 
 Vectorizing is useful for making `data.frame`s (covered later) when you want to do modeling at a voxel level.
+
+```{r df}
+df = data.frame(t1 = c(t1), mask = c(t1 > 400)); head(df)
+```
 
 ## File helpers - for constructing filenames
 

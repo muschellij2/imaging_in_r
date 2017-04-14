@@ -131,6 +131,16 @@ We can also overlay one slice of an image upon another using the `oro.nifti::sli
 slice_overlay(t1, y = t1 > 150, z = 80)
 ```
 
+## Smoothing an Image (not extensively covered)
+
+If you want to do 3D Gaussian smoothing, the `extrantsr::smooth_image` is helpful:
+
+```{r smoothed}
+library(extrantsr)
+sm_img = smooth_image(t1, sigma = 2)
+double_ortho(t1, sm_img)
+```
+
 
 ## Conclusions
 

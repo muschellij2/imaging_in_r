@@ -52,7 +52,6 @@ double_ortho(rt1, reg$outfile)
 ##   interpolator = "Linear"
 ## )
 ## output_imgs = lapply(res, function(x) x$outfile)
-## names(output_imgs) = c("T2", "FLAIR", "PD")
 ## out = c(MPRAGE = list(t1), output_imgs)
 
 ## ----registration, eval = TRUE, echo = FALSE-----------------------------
@@ -78,7 +77,7 @@ dd = dropEmptyImageDimensions(mask,
                                other.imgs = xout)
 xout = dd$other.imgs
 out = lapply(xout, zscore_img, mask = dd$outimg)
-out = lapply(out, window_img, window = c(-4, 4))
+out = lapply(out, window_img, window = c(-3, 3))
 
 ## ----reg_plot_ortho2_show, eval = FALSE----------------------------------
 ## double_ortho(out$MPRAGE, out$T2 )
