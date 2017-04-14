@@ -261,7 +261,8 @@ t1[, 4, ] # returns a 2-d matrix
 t1[1, , ] # returns a 2-d matrix
 ```
 
-- Subsetting with logicals: we can view values of the `t1` greater than 400 (`head` only prints the first 6 values):
+- You can subset with a logical array of the same dimensions!
+- We can view values of the `t1` greater than 400 (`head` only prints the first 6 values):
 
 ```{r}
 head(t1[ t1 > 400 ]) # produces a vector of numbers
