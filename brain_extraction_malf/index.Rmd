@@ -33,7 +33,7 @@ In this tutorial we will discuss performing brain segmentation using:
 
 Let's reset and read in the T1 image from a MS lesion data set:
 
-```{r reading_in_image}
+```{r reading_in_image, message = FALSE}
 library(neurobase)
 t1_fname = "training01_01_mprage.nii.gz"
 t1 = neurobase::readnii(t1_fname)

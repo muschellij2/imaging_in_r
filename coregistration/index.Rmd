@@ -21,70 +21,6 @@ options(fsl.outputtype = "NIFTI_GZ")
 <img src="flow.png" style="width: 75%; display: block; margin: auto;"> 
 
 
-## Lists
-
-- Initialize an empty list and add two elements to it
-
-```{r list}
-l = list()
-l[[1]] = c(1, 2, 4, 5)
-l[[2]] = matrix(1:10, nrow = 2)
-print(l)
-```
-
-- Subsetting uses double brackets:
-```{r listSub}
-print(l[[1]])
-```
-
-## Subsetting by name
-
-If a `vector` has names, you can also put the 
-- Initialize an empty list and add two elements to it
-
-```{r named_vec}
-x = c(first = 1, third = 14, second = 5)
-print(x)
-x[c("third")]
-```
-
-If a `list` has names, you can subset with the `$`
-
-- Subsetting uses double brackets:
-```{r named_lst}
-names(l) = c("V", "m")
-l$V
-```
-
-## Lists: `lapply`
-
-With `list`s and vectors, there are `apply` functions.  These apply a function to every element of the list.  In this course, we will use:
-
-- `lapply` - apply function and return the elements as a `list`
-- `sapply` - apply function and return a "simplified" version
-    - if all elements returned are a one-element vector, return a `vector`
-    - if element 5 has 3 elements and element 4 has 4 elements, return a `list`
-- `mapply` - takes in 2 (or more) lists and "links" the two to perform a function requiring arguments from each list 
-    - passing in a list of images and the filenames to write them to
-
-
-## Overview 
-In this tutorial we will discuss performing co-registration of the multiple imaging modalities to the T1-weighted image.  
-
-- `get_image_filenames_list_by_subject` - returns a list, each element is a subject, and each subject has a vector of filenames, named for each modality
-
-```{r t1}
-library(ms.lesion)
-library(neurobase)
-library(extrantsr)
-all_files = get_image_filenames_list_by_subject()
-names(all_files)
-files = all_files$training01
-names(files)
-t1_fname = files["MPRAGE"]
-t1 = readnii(t1_fname)
-```
-
 ## Types of Registration
 - Rigid-body registration (linear) - 6 degrees of freedom (dof)
     - Co-registration (within the same person)
@@ -132,11 +68,78 @@ Image taken from [http://cnl.web.arizona.edu/imageprops.htm](http://cnl.web.ariz
 </div>
 
 - Pitch - Think of nodding ("yes")
-- Yaw - Think of shaking head ("no") (SMH)
+- Yaw - Think of shaking head ("no") 
 - Roll - Think of shoulder shrugging ("I don't know")
 - x – left/right
 - y – forward/backward
 - z – jump up/down 
+
+
+
+## Aside into Lists
+
+- Initialize an empty list and add two elements to it
+
+```{r list}
+l = list()
+l[[1]] = c(1, 2, 4, 5)
+l[[2]] = matrix(1:10, nrow = 2)
+print(l)
+```
+
+- Subsetting uses double brackets:
+```{r listSub}
+print(l[[1]])
+```
+
+## Subsetting by name
+
+If a `vector` has names, you can also put the 
+- Initialize an empty list and add two elements to it
+
+```{r named_vec}
+x = c(first = 1, third = 14, second = 5)
+print(x)
+x[c("third")]
+```
+
+If a `list` has names, you can subset with the `$`
+
+- Subsetting uses double brackets:
+```{r named_lst}
+names(l) = c("V", "m")
+l$V
+```
+
+## Lists: `lapply`
+
+With `list`s and vectors, there are `apply` functions.  These apply a function to every element of the list.  In this course, we will use:
+
+- `lapply` - apply function and return the elements as a `list`
+- `sapply` - apply function and return a "simplified" version
+    - if all elements returned are a one-element vector, return a `vector`
+    - if element 5 has 3 elements and element 4 has 4 elements, return a `list`
+<!-- - `mapply` - takes in 2 (or more) lists and "links" the two to perform a function requiring arguments from each list  -->
+<!--     - passing in a list of images and the filenames to write them to -->
+
+
+## Reading in more than the T1
+
+Here we will use the `ms.lesion` package, with the additional imaging data.
+
+- `get_image_filenames_list_by_subject` - returns a list, each element is a subject, and each subject has a vector of filenames, named for each modality
+
+```{r t1, message=FALSE}
+library(ms.lesion)
+library(neurobase)
+library(extrantsr)
+all_files = get_image_filenames_list_by_subject()
+names(all_files)
+files = all_files$training01
+names(files)
+t1_fname = files["MPRAGE"]
+t1 = readnii(t1_fname)
+```
 
 
 ## Image Registration
@@ -150,7 +153,7 @@ The `registration` function from `extrantsr` can register 2 images.  The main ar
 
 It can also perform bias correction if `correct = TRUE`.
 
-## Image Registration
+## Image registration
 
 For example, if we wanted to register the FLAIR to the T1 image, we would run:
 
@@ -164,9 +167,7 @@ reg = registration(filename = files["FLAIR"],
 
 The output in `reg` would contain the transformed image and paths to the estimated transformations.  
 
-
-
-## A Longitudinal Framework for Registration
+## Longitudinal framework for registration
 
 <img src="Reg_Figure_Option1_short.png" style="width: 100%; display: block; margin: auto;">
 
@@ -176,8 +177,8 @@ The output in `reg` would contain the transformed image and paths to the estimat
 
 We will register scans within a visit to the T1 of that visit.
 
-
 ## Wrapper function to perform preprocessing
+
 We would like to perform registration within a visit.  The `extrantsr` function `preprocess_mri_within` will do the following steps:
 
 1.  Inhomogeneity correction (N3 or N4)
@@ -251,14 +252,13 @@ double_ortho(robust_window(xout$MPRAGE), robust_window(xout$T2 ))
 
 
 
-## Checking Registration
+## Checking registration: new visualization!
 
 The `multi_overlay` function takes in a list of images and then plots one slice across modalities:
 
 ```{r multi_overlay, echo = TRUE}
 multi_overlay(out)
 ```
-
 
 
 ## Coregistration within a visit results
@@ -269,7 +269,7 @@ multi_overlay(out)
 
 **Applying a Brain mask to all registered images**
 
-Now that the images are in the same space as the T1, if we skull-strip the T1 image (we did with MALF), we can apply this mask to those images to extract brain tissues using the `mask_img` command:
+Now that the images are in the same space as the T1, if we skull-strip the T1 image (we did with MALF), we can apply this mask to those images to extract brain tissues using the `neurobase::mask_img` command:
 
 ```{r bet_t1_show, echo = TRUE, eval = FALSE}
 mask = readnii("../output/training01_01_mprage_mask.nii.gz") # MALF mask 
@@ -294,7 +294,7 @@ orthographic(masked_imgs$FLAIR)
 orthographic(masked_imgs$T2)
 ```
 
-## Overview of Functions
+## Overview of functions
 
 - Registration within a subject can be done in R
     - `registration` wraps around the reading/writing of images and applying transformations (uses `ANTsR` functions)
@@ -304,7 +304,7 @@ orthographic(masked_imgs$T2)
     - Masking with a brain mask
     - Transforming images to new spaces with one modality
 
-## Co-registration Overview 
+## Co-registration overview 
 
 - Co-registration requires a few degrees of freedom (usually 6)
     - sequences from the same individual/brain are more alike than images from different subjects
@@ -315,7 +315,7 @@ orthographic(masked_imgs$T2)
     - Analysis of indvidual-subject change in intensities
 
 
-## Population Registration
+## Population template registration
 
 We have only done registration within a subject, but many times you want to perform a population-level analysis.  This requries registration to a **template**:
 

@@ -22,7 +22,7 @@ x[c("third")]
 names(l) = c("V", "m")
 l$V
 
-## ----t1------------------------------------------------------------------
+## ----t1, message=FALSE---------------------------------------------------
 library(ms.lesion)
 library(neurobase)
 library(extrantsr)

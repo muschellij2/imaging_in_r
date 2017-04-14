@@ -16,19 +16,28 @@ knitr::opts_chunk$set(
   warning = FALSE)
 ```
 
+## Overall Pipeline
+
+<img src="flow.png" style="width: 75%; display: block; margin: auto;"> 
+
+
 ## Image segmentation 
 
 - We are often interested in subdividing or segmenting the brain into meaningful biological regions of interest (ROIs) for an analysis.
 - Examples: tissue segmentation, segmentation of gray matter structures, segmentation of pathology (MS lesions, tumors, ...)
 
-## Goals
+**Goals**
 
-- Perform tissue segmentation in R using FSL and ANTs.
+- Perform tissue segmentation in R using `fslr` and `ANTsR`.
+    * Cerebrospinal fluid (CSF)
+    * Gray Matter (GM)
+    * White Matter (WM)
 - Vizualize results
 - Estimate volume of each tissue class
 
 
 ## Loading Data
+
 - Let's read in the training T1s and brain mask for subject 05 (not 01!).
 
 ```{r loading}

@@ -2,7 +2,7 @@
 library(methods)
 knitr::opts_chunk$set(echo = TRUE, comment = "")
 
-## ----reading_in_image----------------------------------------------------
+## ----reading_in_image, message = FALSE-----------------------------------
 library(neurobase)
 t1_fname = "training01_01_mprage.nii.gz"
 t1 = neurobase::readnii(t1_fname)
