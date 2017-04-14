@@ -11,9 +11,13 @@ bibliography: ../refs.bib
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, comment = "", fig.height = 5.5, fig.width = 5.5, cache = TRUE)
-options(fsl.path = "/usr/local/fsl/")
-options(fsl.outputtype = "NIFTI_GZ")
 ```
+
+
+## Overall Pipeline
+
+<img src="flow.png" style="width: 75%; display: block; margin: auto;"> 
+
 
 ## Intensity normalization
 - Conventional MRI intensites (T1-w, T2-w, PD, FLAIR) are acquired in arbitrary units
@@ -240,6 +244,33 @@ plot_densities(wm_norm_dens,
     - Other more robust transformations may be used, such as using the median to center, IQR to scale, etc.
 - White Stripe [@shinohara2014statistical] is based on parameters obtained from a sample of normal appearing white matter (NAWM), which is robust to outliers. 
     - The idea is to make normal appearing white matter comparable across subjects and visits.
+
+
+## White Stripe normalization
+
+Procedure:
+
+1. Find white matter area on histogram
+
+<img src="whitestripe_before.png" style="width: 60%; display: block; margin: auto;">
+
+## White Stripe normalization
+
+Procedure:
+
+1. Find white matter area on histogram
+
+2. Estimate mean $\mu_{WS}$ and variance $\sigma_{WS}$ of voxel intensities in that area
+
+3. Normalize with those means/variances:
+$$ T1_{WS} = \frac{T1 - \mu_{WS}}{\sigma_{WS}}$$
+
+## White Stripe normalization
+
+- After normalization, NAWM will have a standard normal distribution and units will be in standard deviations of NAWM.
+- Gray matter and CSF distributions may not be comparable after White Stripe.
+
+<img src="whitestripe_after.png" style="width: 60%; display: block; margin: auto;">
 
 
 ## White Stripe normalization

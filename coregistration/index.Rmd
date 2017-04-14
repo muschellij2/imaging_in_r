@@ -10,9 +10,9 @@ bibliography: ../refs.bib
 
 ```{r setup, include=FALSE}
 library(methods)
+library(neurobase)
+library(extrantsr)
 knitr::opts_chunk$set(echo = TRUE, comment = "")
-options(fsl.path = "/usr/local/fsl/")
-options(fsl.outputtype = "NIFTI_GZ")
 ```
 
 
@@ -23,29 +23,57 @@ options(fsl.outputtype = "NIFTI_GZ")
 
 ## Types of Registration
 - Rigid-body registration (linear) - 6 degrees of freedom (dof)
+
+<img src="rollpitchyaw.png" style="width: 50%; display: block; margin: auto;">
+<div style="font-size: 8pt">
+Image taken from [http://cnl.web.arizona.edu/imageprops.htm](http://cnl.web.arizona.edu/imageprops.htm)
+</div>
+
+- Pitch - Think of nodding ("yes")
+- Yaw - Think of shaking head ("no") 
+- Roll - Think of shoulder shrugging ("I don't know")
+- x – left/right
+- y – forward/backward
+- z – jump up/down 
+
+
+## Types of Registration
+- Rigid-body registration (linear) - 6 degrees of freedom (dof)
     - Co-registration (within the same person)
-        - Cross-sectional between-sequences
+        - **Cross-sectional between-sequences**
         - Longitudinal within-sequence
         - Longitudinal between-sequences
-- Affine registration – 12 dof
-- Non-linear (> 12 dof)
-    - Usually require a prior affine registration
-    - Across-subject registration
-    - Registration to a template
-        - There are many different templates
-    
+
+<img src="Reg_Figure_Option1_short_within_only.png" style="width: 100%; display: block; margin: auto;">
+
 ## Types of Registration
 - Rigid-body registration (linear) - 6 degrees of freedom (dof)
     - Co-registration (within the same person)
         - **Cross-sectional between-sequences**
         - **Longitudinal within-sequence**
-        - **Longitudinal between-sequences**
-- Affine registration – 12 dof
+        - Longitudinal between-sequences
+
+<img src="Reg_Figure_Option1_short_within.png" style="width: 100%; display: block; margin: auto;">
+
+## Types of Registration
+- Rigid-body registration (linear) - 6 degrees of freedom (dof)
+    - Co-registration (within the same person)
+        - **Cross-sectional between-sequences**
+        - **Longitudinal within-sequence**
+        - Longitudinal between-sequences
+
+<img src="Reg_Figure_Option1_within_mod.png" style="width: 100%; display: block; margin: auto;">
+
+## Types of Registration
+- Affine registration – 12 dof (scaling)
 - Non-linear (> 12 dof)
     - Usually require a prior affine registration
     - Across-subject registration
     - Registration to a template
         - There are many different templates
+ 
+<img src="Reg_Figure_Option1_nonlinear_short.png" style="width: 100%; display: block; margin: auto;">
+
 
 ## Rigid Registration: The Math
 For a voxel $v$, the rigid transformation can be written as:
@@ -62,17 +90,6 @@ $$\left[\begin{array}{ccc} \cos\beta\cos\gamma& \cos\alpha\sin\gamma + \sin\alph
 - $3$ associated with the translation vector: $t=(t_x, t_y, t_z)$
 - $3$ associated with the rotation parameters: $\theta=(\alpha, \beta,\gamma)$. 
 
-## <img src="rollpitchyaw.png" style="width: 50%; display: block; margin: auto;">
-<div style="font-size: 8pt">
-Image taken from [http://cnl.web.arizona.edu/imageprops.htm](http://cnl.web.arizona.edu/imageprops.htm)
-</div>
-
-- Pitch - Think of nodding ("yes")
-- Yaw - Think of shaking head ("no") 
-- Roll - Think of shoulder shrugging ("I don't know")
-- x – left/right
-- y – forward/backward
-- z – jump up/down 
 
 
 
@@ -111,17 +128,6 @@ names(l) = c("V", "m")
 l$V
 ```
 
-## Lists: `lapply`
-
-With `list`s and vectors, there are `apply` functions.  These apply a function to every element of the list.  In this course, we will use:
-
-- `lapply` - apply function and return the elements as a `list`
-- `sapply` - apply function and return a "simplified" version
-    - if all elements returned are a one-element vector, return a `vector`
-    - if element 5 has 3 elements and element 4 has 4 elements, return a `list`
-<!-- - `mapply` - takes in 2 (or more) lists and "links" the two to perform a function requiring arguments from each list  -->
-<!--     - passing in a list of images and the filenames to write them to -->
-
 
 ## Reading in more than the T1
 
@@ -131,14 +137,13 @@ Here we will use the `ms.lesion` package, with the additional imaging data.
 
 ```{r t1, message=FALSE}
 library(ms.lesion)
-library(neurobase)
-library(extrantsr)
 all_files = get_image_filenames_list_by_subject()
-names(all_files)
+class(all_files); names(all_files)
 files = all_files$training01
-names(files)
+class(files); names(files)
 t1_fname = files["MPRAGE"]
 t1 = readnii(t1_fname)
+rt1 = robust_window(t1)
 ```
 
 
@@ -149,7 +154,7 @@ The `registration` function from `extrantsr` can register 2 images.  The main ar
 - `filename` - either `nifti` object or filename of image to be registered (moving)
 - `template.file` - either `nifti` object or filename of target image (fixed)
 - `typeofTransform` - transformation of moving to fixed image (Rigid/Affine/SyN)
-- `interpolator` - how are voxels averaged in `fixed` space
+- `interpolator` - how are voxels averaged in `fixed` space (Linear/NearestNeighbor/LanczosWindowedSinc)
 
 It can also perform bias correction if `correct = TRUE`.
 
@@ -157,29 +162,27 @@ It can also perform bias correction if `correct = TRUE`.
 
 For example, if we wanted to register the FLAIR to the T1 image, we would run:
 
-```{r eval = FALSE}
+```{r, eval = TRUE, cache = TRUE, message=FALSE}
 library(extrantsr)
 reg = registration(filename = files["FLAIR"], 
                    template.file = files["MPRAGE"],
                    typeofTransform = "Rigid", 
-                   interpolator = "linear")
+                   interpolator = "Linear")
+names(reg)
 ```
 
-The output in `reg` would contain the transformed image and paths to the estimated transformations.  
+The output in `reg` would contain the transformed image and paths to the estimated transformations. 
 
-## Longitudinal framework for registration
+## FLAIR comparison
 
-<img src="Reg_Figure_Option1_short.png" style="width: 100%; display: block; margin: auto;">
+```{r plot_reg, eval = TRUE, cache = TRUE, message=FALSE}
+double_ortho(rt1, reg$outfile)
+```
 
-## Within-visit co-registration framework
-
-<img src="Reg_Figure_Option1_short_within.png" style="width: 100%; display: block; margin: auto;">
-
-We will register scans within a visit to the T1 of that visit.
 
 ## Wrapper function to perform preprocessing
 
-We would like to perform registration within a visit for all modalities.  The `extrantsr` function `preprocess_mri_within` will do the following steps:
+We would like to perform registration within a visit for all modalities.  The `extrantsr` function `within_visit_registration` will do the following steps:
 
 1.  Inhomogeneity correction (N3 or N4)
     - Could also use images from previous lecture
@@ -199,6 +202,19 @@ The function `within_visit_registration` arguments take in:
 - `interpolator` - how are voxels averaged in `fixed` space
 
 and outputs a list of transformations (`fwdtransforms`) and output filenames (`outfile`)
+
+
+## Lists: `lapply`
+
+With `list`s and vectors, there are `apply` functions.  These apply a function to every element of the list.  In this course, we will use:
+
+- `lapply` - apply function and return the elements as a `list`
+    - `lapply(LIST, FUNCTION, OTHER_ARGUMENTS_TO_FUNCTION)`
+- `sapply` - apply function and return a "simplified" version
+    - if all elements returned are a one-element vector, return a `vector`
+    - if element 5 has 3 elements and element 4 has 4 elements, return a `list`
+<!-- - `mapply` - takes in 2 (or more) lists and "links" the two to perform a function requiring arguments from each list  -->
+<!--     - passing in a list of images and the filenames to write them to -->
 
 
 ## Register to the T1 image
