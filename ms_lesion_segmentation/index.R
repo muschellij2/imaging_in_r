@@ -92,7 +92,7 @@ default_tr = lapply(tr_files,
 
 ## ----over_05_run, echo=FALSE---------------------------------------------
 les_mask = default_tr[[5]]
-ortho2(tr_t1s$training05, les_mask, col.y = alpha("red", 0.5))
+ortho2(tr_flairs$training05, les_mask, col.y = alpha("red", 0.5))
 
 ## ----table1, echo=FALSE--------------------------------------------------
 dice = function(x){
@@ -135,8 +135,16 @@ trained_tr = lapply(tr_files,
 
 ## ----table3, echo=FALSE--------------------------------------------------
 tbls_tr1 = lapply(1:5, function(x) table(c(tr_golds1[[x]]), c(trained_tr[[x]])))
-trDice1 = lapply(tbls_tr1, dice)
+trDice1 = sapply(tbls_tr1, dice)
 
 tbls_tr2 = lapply(1:5, function(x) table(c(tr_golds2[[x]]), c(trained_tr[[x]])))
-trDice2 = lapply(tbls_tr2, dice)
+trDice2 = sapply(tbls_tr2, dice)
+
+diceTR = data.frame('Subject'=factor(rep(1:5, 2)), 'Rater'=factor(c(rep(1, 5), rep(2, 5))), 'Dice'=c(trDice1, trDice2))
+diceDF$Model = "Default"
+diceTR$Model = "Trained"
+diceAll = rbind(diceDF, diceTR)
+diceAll$Model = factor(diceAll$Model)
+
+plot(ggplot(diceAll, aes(x=Subject, y=Dice, fill=Rater)) + geom_histogram(position="dodge", stat="identity", aes(color=Rater)) + facet_wrap(~Model))
 
