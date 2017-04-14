@@ -4,11 +4,32 @@ knitr::opts_chunk$set(echo = TRUE, comment = "")
 options(fsl.path = "/usr/local/fsl/")
 options(fsl.outputtype = "NIFTI_GZ")
 
+## ----list----------------------------------------------------------------
+l = list()
+l[[1]] = c(1, 2, 4, 5)
+l[[2]] = matrix(1:10, nrow = 2)
+print(l)
+
+## ----listSub-------------------------------------------------------------
+print(l[[1]])
+
+## ----named_vec-----------------------------------------------------------
+x = c(first = 1, third = 14, second = 5)
+print(x)
+x[c("third")]
+
+## ----named_lst-----------------------------------------------------------
+names(l) = c("V", "m")
+l$V
+
 ## ----t1------------------------------------------------------------------
 library(ms.lesion)
 library(neurobase)
 library(extrantsr)
-files = get_image_filenames_list_by_subject()$training01
+all_files = get_image_filenames_list_by_subject()
+names(all_files)
+files = all_files$training01
+names(files)
 t1_fname = files["MPRAGE"]
 t1 = readnii(t1_fname)
 

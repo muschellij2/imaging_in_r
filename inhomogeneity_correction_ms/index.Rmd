@@ -214,12 +214,13 @@ ortho2(t1, ratio, col.y = colors, ybreaks = quants, ycolorbar = TRUE)
     - correction before skull-stripping may be necessary and can improve after correction
 
 
-## References
-
-
 ## Website
 
 http://johnmuschelli.com/imaging_in_r
+
+## References
+
+
 
 
 <!-- ## MS Lesion  -->

@@ -345,6 +345,13 @@ plot_densities(wm_ws_dens,
     - Located at https://github.com/Jfortin1/RAVEL
       - This was shown to have better comparability than histogram matching 
 
+
+## Website
+
+http://johnmuschelli.com/imaging_in_r
+
+
+
 ## References {.smaller}
 
 
@@ -353,11 +360,6 @@ plot_densities(wm_ws_dens,
 <!-- - WhiteStripe is great, it normalized the WM intensities across samples -->
 <!-- - Grey matter (GM) and cerebrospinal fluid (CSF) intensites are still not comparable -->
 <!-- - RAVEL extends WhiteStripe to make intensites comparable across subjects for all tissues -->
-
-
-## Website
-
-http://johnmuschelli.com/imaging_in_r
 
 
 
