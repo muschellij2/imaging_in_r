@@ -19,12 +19,6 @@ library(extrantsr)
 library(scales)
 ```
 
-## Inhomogeneity correction
-
-- Scans can have nonuniform intensities throughout the brain
-- Usually low frequency - smooth over the brain (assumed)
-- Referred to as bias, bias field, or inhomogeneity
-
 ## MS Lesion 
 
 Let's reset and read in the T1 image from a MS lesion data set:
@@ -33,17 +27,31 @@ Let's reset and read in the T1 image from a MS lesion data set:
 t1 = neurobase::readnii("training01_01_mprage.nii.gz")
 ```
 
+## Overall Pipeline
+
+<img src="flow.png" style="width: 75%; display: block; margin: auto;"> 
+
+## Inhomogeneity correction
+
+- Scans can have nonuniform intensities throughout the brain
+- Usually low frequency - smooth over the brain (assumed)
+- Referred to as bias, bias field, or inhomogeneity
+
+<img src="MRI_Bias_Field_Correction_Slicer3_close_up.png" style="width: 75%; display: block; margin: auto;"> 
+
+Image From https://www.slicer.org/w/images/7/77/MRI_Bias_Field_Correction_Slicer3_close_up.png
+
+
+
 ## Image Data
 
-It's hard to see bias fields, but sometimes they can be seen visually.
+It's hard to see subtler bias fields, but sometimes they can be seen visually.
 
 ```{r ortho2_show}
 ortho2(robust_window(t1))
 ```
 
 ## Image Data: Lightbox
-
-It's hard to see bias fields, but sometimes they can be seen visually.
 
 ```{r lightbox}
 image(robust_window(t1), useRaster = TRUE)
@@ -114,13 +122,13 @@ ratio = t1 / bc_t1; ortho2(t1, ratio)
 ```
 
 
-## Histogram of Ratio Values
+<!-- ## Histogram of Ratio Values -->
 
-The majority of voxels have a ratio of $1$ because `n4BiasFieldCorrection` does some implicit masking using `ANTsR::getMask`, and those values are unchanged (backround excluded).
+<!-- The majority of voxels have a ratio of $1$ because `n4BiasFieldCorrection` does some implicit masking using `ANTsR::getMask`, and those values are unchanged (backround excluded). -->
 
-```{r ratio_hist_plot, echo = FALSE}
-hist(ratio, breaks = 200)
-```
+<!-- ```{r ratio_hist_plot, echo = FALSE} -->
+<!-- hist(ratio, breaks = 200) -->
+<!-- ``` -->
 
 <!-- ## Getting a Mask -->
 
@@ -130,24 +138,25 @@ hist(ratio, breaks = 200)
 <!-- mask = oMask(t1) -->
 <!-- ``` -->
 
-## Visualizing Bias Field Correction
+<!-- ## Visualizing Bias Field Correction -->
 
-Removing these, we can see what the distribution of ratios look like (most are below 1):
+<!-- Removing these, we can see what the distribution of ratios look like (most are below 1): -->
 
-```{r ratio_hist_plot_no1}
-in_mask = (ratio < 0.999 | ratio > 1.0001) & ratio != 0
-hist(ratio, mask = in_mask, breaks = 200)
-```
+<!-- ```{r ratio_hist_plot_no1} -->
+<!-- in_mask = (ratio < 0.999 | ratio > 1.0001) & ratio != 0 -->
+<!-- hist(ratio, mask = in_mask, breaks = 200) -->
+<!-- ``` -->
 
 
-## Visualizing Bias Field Correction
+<!-- ## Visualizing Bias Field Correction -->
 
-Here we would like to change the colors of the ratio to something more descriptive.
+<!-- Here we would like to change the colors of the ratio to something more descriptive. -->
 
-Here we will use a diverging palette and map colors to the quantiles of the ratio image:
+<!-- Here we will use a diverging palette and map colors to the quantiles of the ratio image: -->
 
-```{r making_scales}
+```{r making_scales, echo = FALSE}
 library(scales)
+in_mask = (ratio < 0.999 | ratio > 1.0001) & ratio != 0
 
 # get the quantiles
 quants = quantile(ratio[ in_mask ], na.rm = TRUE,
@@ -163,7 +172,7 @@ colors = scales::alpha(colors, 0.5) # colors are created
 
 ## Visualizing Bias Field Correction
 
-Now we put those breaks into `ortho2` to plot it:
+We are breaking the ratio into quantiles:
 
 ```{r better_ratio_plot}
 ortho2(t1, ratio, col.y = colors, ybreaks = quants, ycolorbar = TRUE)
@@ -171,27 +180,27 @@ ortho2(t1, ratio, col.y = colors, ybreaks = quants, ycolorbar = TRUE)
 
 
 
-## Visualizing Bias Field Correction
+<!-- ## Visualizing Bias Field Correction -->
 
-We would like to see how the ratio changes in different areas of the brain.  Here we make a `data.frame` of voxel location and intensity.  We cut the location into the bottom, middle, and top of the brain:
+<!-- We would like to see how the ratio changes in different areas of the brain.  Here we make a `data.frame` of voxel location and intensity.  We cut the location into the bottom, middle, and top of the brain: -->
 
-```{r make_df}
-df = which(in_mask, arr.ind = TRUE)
-df = cbind(df, value = ratio[df])
-df = data.frame(df, stringsAsFactors = FALSE)
-df$location = cut(df$dim3, breaks = c(0, 38, 76, 115),
-                  labels = c("bottom", "middle", "top"))
-```
-```{r, echo = FALSE}
-head(df)
-```
+<!-- ```{r make_df} -->
+<!-- df = which(in_mask, arr.ind = TRUE) -->
+<!-- df = cbind(df, value = ratio[df]) -->
+<!-- df = data.frame(df, stringsAsFactors = FALSE) -->
+<!-- df$location = cut(df$dim3, breaks = c(0, 38, 76, 115), -->
+<!--                   labels = c("bottom", "middle", "top")) -->
+<!-- ``` -->
+<!-- ```{r, echo = FALSE} -->
+<!-- head(df) -->
+<!-- ``` -->
 
-## Visualizing Bias Field Correction
+<!-- ## Visualizing Bias Field Correction -->
 
-Let's plot these with a density plot for each different location:
-```{r ratio_hist_plot_slices}
-ggplot(df, aes(x = value, colour = location)) + geom_line(stat = "density")
-```
+<!-- Let's plot these with a density plot for each different location: -->
+<!-- ```{r ratio_hist_plot_slices} -->
+<!-- ggplot(df, aes(x = value, colour = location)) + geom_line(stat = "density") -->
+<!-- ``` -->
 
 ## Conclusions
 

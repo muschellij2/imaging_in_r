@@ -35,15 +35,9 @@ if (!file.exists(out_fname)) {
 ## ----ratio_plot----------------------------------------------------------
 ratio = t1 / bc_t1; ortho2(t1, ratio)
 
-## ----ratio_hist_plot, echo = FALSE---------------------------------------
-hist(ratio, breaks = 200)
-
-## ----ratio_hist_plot_no1-------------------------------------------------
-in_mask = (ratio < 0.999 | ratio > 1.0001) & ratio != 0
-hist(ratio, mask = in_mask, breaks = 200)
-
-## ----making_scales-------------------------------------------------------
+## ----making_scales, echo = FALSE-----------------------------------------
 library(scales)
+in_mask = (ratio < 0.999 | ratio > 1.0001) & ratio != 0
 
 # get the quantiles
 quants = quantile(ratio[ in_mask ], na.rm = TRUE,
@@ -58,17 +52,4 @@ colors = scales::alpha(colors, 0.5) # colors are created
 
 ## ----better_ratio_plot---------------------------------------------------
 ortho2(t1, ratio, col.y = colors, ybreaks = quants, ycolorbar = TRUE)
-
-## ----make_df-------------------------------------------------------------
-df = which(in_mask, arr.ind = TRUE)
-df = cbind(df, value = ratio[df])
-df = data.frame(df, stringsAsFactors = FALSE)
-df$location = cut(df$dim3, breaks = c(0, 38, 76, 115),
-                  labels = c("bottom", "middle", "top"))
-
-## ---- echo = FALSE-------------------------------------------------------
-head(df)
-
-## ----ratio_hist_plot_slices----------------------------------------------
-ggplot(df, aes(x = value, colour = location)) + geom_line(stat = "density")
 
