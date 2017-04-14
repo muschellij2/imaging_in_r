@@ -23,6 +23,7 @@ knitr::opts_chunk$set(echo = TRUE, comment = "", cache=TRUE, warning = FALSE)
 ## Background
 
 - Obtaining manual lesion segmentations is often resource intensive.
+- "Gold standard": Inter- and Intra-rater variability
 - Accurate and efficient methods for automatic segmentation are necessary for scalability and research progress.
 
 **Goals of this tutorial**
@@ -57,7 +58,7 @@ tr_golds = tr_golds2
 ```
 
 ## Visualization
-- Here's the T1 volume for training subject 05 with a "gold standard" manual lesion segmentation overlayed.
+- Here's the FLAIR volume for training subject 05 with a manual lesion segmentation overlayed.
 
 ```{r over_show_run, echo=FALSE}
 les_mask = tr_golds2$training05
@@ -72,21 +73,22 @@ keep_dim = w %>% group_by(dim3) %>%
 keep_dim = keep_dim$dim3
 w = w[ w$dim3 %in% keep_dim, ]
 xyz = floor(colMeans(w))
-ortho2(robust_window(tr_flairs$training05), les_mask, xyz = xyz, col.y = scales::alpha("orange", 0.5))
+ortho2(robust_window(tr_flairs$training05), les_mask, xyz = xyz, col.y = scales::alpha("red", 0.5))
 ```
 
 ## MS Lesion Segmentation with OASIS
-- OASIS is Automated Statistical Inference for Segmentation [@sweeney2013oasis].
-- OASIS takes FLAIR, T1, T2, and PD images 
-    - produces OASIS probability maps of MS lesion presence
-    - these can be thresholded into a binary lesion segmentation
-- The OASIS model is based on a logistic regression of the gold standard manual segmentation labels on the images, smoothed versions of the images, and some interaction terms (i.e., supervised learning).
-    - Performed well compared to common machine learning models [@sweeney2014comparison]
+- **O**ASIS is **A**utomated **S**tatistical **I**nference for **S**egmentation [@sweeney2013oasis].
+- OASIS takes FLAIR, T1, T2, and PD images. 
+    - Produces OASIS probability maps of MS lesion presence.
+    - These can be thresholded into a binary lesion segmentation.
+- The OASIS model is based on a logistic regression. 
+  - Regress binary manual segmentation labels on the images, smoothed versions of the images, and some interaction terms (e.g., supervised learning).
+  - Performed well compared to common machine learning models [@sweeney2014comparison]
 
 ## Default OASIS Model
 - The OASIS library comes with default parameters that can be used to generate probability maps for new test subjects.
-- The default model was trained on approximately 100 MS subjects and 30 healthy subjects with manual segmentations.
-- Here we apply the function `oasis_predict` with the default model to obtain OASIS probability maps for the test subjects.
+  - The default model was trained on approximately 100 MS subjects and 30 healthy subjects with manual segmentations.
+- Here we apply `oasis_predict` with the default model to obtain OASIS probability maps for the test subjects.
 
 ```{r default_predict_ts_show, eval=FALSE}
 library(oasis)
@@ -113,12 +115,12 @@ default_ts = lapply(ts_files,
 ```{r viz_01, echo=FALSE}
 les_mask = default_ts[[1]]
 les_mask[les_mask<.05] = 0
-ortho2(ts_t1s$test01, les_mask, xyz = xyz)
+ortho2(ts_flairs$test01, les_mask, xyz = xyz)
 ```
 
 ## Thresholding: Getting a binary map 
 
-- To get a final estimated segmentation, we must choose a cutoff to binarize the OASIS probability maps.
+- We must choose a cutoff to binarize the OASIS probability maps.
 - The `binary` argument in the `oasis_predict` function is FALSE by default, resulting in the output being the probability map.
     - Setting `binary=TRUE` will return the thresholded version, using the input to the `threshold` argument (default = 0.16).
     - 0.16 was obtained via a validation set allowing for a 0.5% false positive rate.
@@ -130,7 +132,7 @@ ortho2(ts_t1s$test01, les_mask, xyz = xyz)
 ```{r viz_02, echo=FALSE}
 les_mask[les_mask<.16] = 0
 les_mask[les_mask!=0] = 1
-ortho2(ts_t1s$test01, les_mask, col.y="orange")
+ortho2(ts_flairs$test01, les_mask, col.y=alpha("red", 0.5))
 ```
 
 ## Default OASIS Model
@@ -162,11 +164,22 @@ default_tr = lapply(tr_files,
 ```
 
 ## Default OASIS Model Results
-- Here's the T1 volume for training subject 05 with the OASIS segmentation overlayed.
+- Here's the FLAIR volume for training subject 05 with the OASIS segmentation overlayed.
 
 ```{r over_05_run, echo=FALSE}
 les_mask = default_tr[[5]]
-ortho2(tr_t1s$training05, les_mask, col.y = "orange")
+ortho2(tr_t1s$training05, les_mask, col.y = alpha("red", 0.5))
+```
+
+## Default OASIS Model Results
+- Sorensen–Dice coefficient: 
+  - Similarity measure between two samples (range 0 to 1)
+
+
+
+```{r over_05_run, echo=FALSE}
+les_mask = default_tr[[5]]
+ortho2(tr_t1s$training05, les_mask, col.y = alpha("red", 0.5))
 ```
 
 ## Default OASIS Model Results
