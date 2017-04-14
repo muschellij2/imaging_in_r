@@ -75,24 +75,24 @@ robust_fast = readnii(files["FAST"])
 ## multi_overlay(L, z = 58, text = names(L), text.x = 0.5, text.y = 1.4,
 ##               text.cex = 2.5)
 
-## ----prep_wm-------------------------------------------------------------
+## ----prep_wm, echo = FALSE-----------------------------------------------
 rt1_list = list(rt1, rt1)
 m_list = list((t1fast==3), (robust_fast==3))
 
-## ----fast_wm-------------------------------------------------------------
-multi_overlay(x=rt1_list, y=m_list, col.y=alpha("red", 0.5))
+## ----fast_wm, echo = FALSE-----------------------------------------------
+multi_overlay(x=rt1_list, y=m_list, col.y=alpha("red", 0.5), text=c("Raw", "Robust"), text.x=c(.3, .7), text.y=c(.1, .1))
 
-## ----prep_gm-------------------------------------------------------------
+## ----prep_gm, echo = FALSE-----------------------------------------------
 m_list = list((t1fast==2), (robust_fast==2))
 
-## ----fast_gm-------------------------------------------------------------
-multi_overlay(x=rt1_list, y=m_list, col.y=alpha("red", 0.5))
+## ----fast_gm, echo = FALSE-----------------------------------------------
+multi_overlay(x=rt1_list, y=m_list, col.y=alpha("red", 0.5), text=c("Raw", "Robust"), text.x=c(.3, .7), text.y=c(.1, .1))
 
-## ----prep_csf------------------------------------------------------------
+## ----prep_csf, echo = FALSE----------------------------------------------
 m_list = list((t1fast==1), (robust_fast==1))
 
-## ----fast_csf------------------------------------------------------------
-multi_overlay(x=rt1_list, y=m_list, col.y=alpha("red", 0.5))
+## ----fast_csf, echo = FALSE----------------------------------------------
+multi_overlay(x=rt1_list, y=m_list, col.y=alpha("red", 0.5), text=c("Raw", "Robust"), text.x=c(.3, .7), text.y=c(.1, .1))
 
 ## ----otropos_show, eval = FALSE------------------------------------------
 ## t1_otropos = otropos(a = t1, x = mask) # using original data

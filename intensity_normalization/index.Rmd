@@ -25,14 +25,9 @@ knitr::opts_chunk$set(echo = TRUE, comment = "", fig.height = 5.5, fig.width = 5
     - This affects algorithm performance, prediction, inference.
     - Even simple things like thresholding an image
 - Intensity normalization brings the intensities to a common scale across people.
-- We will discuss subject-level intensity normalization.
-
-
-## Goals of this tutorial
-
-- Visualize intensity distributions from different subjects and tissue classes.
-- Apply the White Stripe intensity normalization [@shinohara2014statistical].
-    - Because MS lesions are in the white matter, comparable white matter distributions are the target goal
+- In this tutorial we will normalize intensities within subject using two methods:
+    - Whole-brain normalization
+    - White Stripe normalization [@shinohara2014statistical].
 
 
 ```{r t1, echo=FALSE, warning=FALSE, message=FALSE}
