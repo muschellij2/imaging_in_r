@@ -13,6 +13,12 @@ library(methods)
 knitr::opts_chunk$set(echo = TRUE, comment = "")
 ```
 
+
+## Overall Pipeline
+
+<img src="flow.png" style="width: 75%; display: block; margin: auto;"> 
+
+
 ## Brain Extraction 3 Different Attempts
 
 In this tutorial we will discuss performing brain segmentation using:
@@ -177,6 +183,7 @@ ss = extrantsr::malf(
   template.structs = timgs$masks,
   keep_images = FALSE # don't keep the registered images
 )
+mask = ss > 0
 ```
 
 ```{r t1_malf_ss_run, echo = FALSE, message = FALSE}
@@ -196,47 +203,53 @@ if (!file.exists(outfile)) {
 } else {
   ss = readnii(outfile)
 }
+mask = ss > 0
 ```
 
 
 ## MALF performs well
 
+
+```{r show_them, eval = FALSE}
+mask = readnii("training01_01_mprage_mask.nii.gz") # already computed
+```
+
 ```{r display_malf_result}
-ortho2(bc_img, ss > 0, col.y = red0.5)
+ortho2(bc_img, mask, col.y = red0.5)
 ```
 
 
-## Processed Results Available in `ms.lesion`
+<!-- ## Processed Results Available in `ms.lesion` -->
 
-In the `ms.lesion` package, we have the brain masks for each subject located in the `coregistered` folder.  You can access this data using the `type = "coregistered"`:
+<!-- In the `ms.lesion` package, we have the brain masks for each subject located in the `coregistered` folder.  You can access this data using the `type = "coregistered"`: -->
 
-```{r, echo = TRUE, eval = FALSE}
-files = get_image_filenames_list_by_subject(
-  type = "coregistered")$training01
-files["Brain_Mask"]
-brain_mask = readnii(files["Brain_Mask"])
-```
+<!-- ```{r, echo = TRUE, eval = FALSE} -->
+<!-- files = get_image_filenames_list_by_subject( -->
+<!--   type = "coregistered")$training01 -->
+<!-- files["Brain_Mask"] -->
+<!-- brain_mask = readnii(files["Brain_Mask"]) -->
+<!-- ``` -->
 
-```{r, echo = FALSE}
-files = get_image_filenames_list_by_subject(
-  type = "coregistered")$training01
-files = files["Brain_Mask"]
-dd = strsplit(files, "/")$Brain_Mask
-ind = which(dd == "library")
-dd = dd[seq(ind, length(dd))]
-dd = paste(dd, collapse = "/")
-print(dd)
-```
+<!-- ```{r, echo = FALSE} -->
+<!-- files = get_image_filenames_list_by_subject( -->
+<!--   type = "coregistered")$training01 -->
+<!-- files = files["Brain_Mask"] -->
+<!-- dd = strsplit(files, "/")$Brain_Mask -->
+<!-- ind = which(dd == "library") -->
+<!-- dd = dd[seq(ind, length(dd))] -->
+<!-- dd = paste(dd, collapse = "/") -->
+<!-- print(dd) -->
+<!-- ``` -->
 
-```{r, echo = FALSE, eval = TRUE}
-cofiles = get_image_filenames_list_by_subject(
-  type = "coregistered")$training01
-brain_mask = readnii(cofiles["Brain_Mask"])
-```
+<!-- ```{r, echo = FALSE, eval = TRUE} -->
+<!-- cofiles = get_image_filenames_list_by_subject( -->
+<!--   type = "coregistered")$training01 -->
+<!-- brain_mask = readnii(cofiles["Brain_Mask"]) -->
+<!-- ``` -->
 
-```{r, echo = FALSE, eval = TRUE}
-ortho2(t1, brain_mask > 0, col.y = red0.5)
-```
+<!-- ```{r, echo = FALSE, eval = TRUE} -->
+<!-- ortho2(t1, brain_mask > 0, col.y = red0.5) -->
+<!-- ``` -->
 
 
 ## Conclusions from the MS data
@@ -246,8 +259,14 @@ ortho2(t1, brain_mask > 0, col.y = red0.5)
     - There are options you can change for performance
 - Bias-correction before brain extraction is a good idea
     - Especially if the method depends on intensities
+    - Didn't change the results here
 - MALF/MASS is a good option, but needs templates and is computationally expensive
     - weighted templates or local weighting is done in other software (not discussed)
+    
+
+## Website
+
+http://johnmuschelli.com/imaging_in_r    
     
 # Extra Slides are showing additional BET options
 
@@ -372,10 +391,10 @@ ortho2(dropEmptyImageDimensions(ss))
     - High values may affect results - may need to remove/Winsorize them
 
 
-
-## References {.smaller}
-
-
 ## Website
 
 http://johnmuschelli.com/imaging_in_r
+
+
+## References {.smaller}
+

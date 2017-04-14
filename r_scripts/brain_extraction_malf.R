@@ -66,6 +66,7 @@ ortho2(bc_img, bc_bet > 0, col.y = red0.5)
 ##   template.structs = timgs$masks,
 ##   keep_images = FALSE # don't keep the registered images
 ## )
+## mask = ss > 0
 
 ## ----t1_malf_ss_run, echo = FALSE, message = FALSE-----------------------
 library(malf.templates)
@@ -84,33 +85,13 @@ if (!file.exists(outfile)) {
 } else {
   ss = readnii(outfile)
 }
+mask = ss > 0
+
+## ----show_them, eval = FALSE---------------------------------------------
+## mask = readnii("training01_01_mprage_mask.nii.gz") # already computed
 
 ## ----display_malf_result-------------------------------------------------
-ortho2(bc_img, ss > 0, col.y = red0.5)
-
-## ---- echo = TRUE, eval = FALSE------------------------------------------
-## files = get_image_filenames_list_by_subject(
-##   type = "coregistered")$training01
-## files["Brain_Mask"]
-## brain_mask = readnii(files["Brain_Mask"])
-
-## ---- echo = FALSE-------------------------------------------------------
-files = get_image_filenames_list_by_subject(
-  type = "coregistered")$training01
-files = files["Brain_Mask"]
-dd = strsplit(files, "/")$Brain_Mask
-ind = which(dd == "library")
-dd = dd[seq(ind, length(dd))]
-dd = paste(dd, collapse = "/")
-print(dd)
-
-## ---- echo = FALSE, eval = TRUE------------------------------------------
-cofiles = get_image_filenames_list_by_subject(
-  type = "coregistered")$training01
-brain_mask = readnii(cofiles["Brain_Mask"])
-
-## ---- echo = FALSE, eval = TRUE------------------------------------------
-ortho2(t1, brain_mask > 0, col.y = red0.5)
+ortho2(bc_img, mask, col.y = red0.5)
 
 ## ------------------------------------------------------------------------
 library(kirby21.t1)

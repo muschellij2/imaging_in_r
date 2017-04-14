@@ -268,9 +268,10 @@ trDice2 = lapply(tbls_tr2, dice)
 | 04 |  `r 100*(trDice1[[4]]-dfDice1[[4]])/dfDice1[[4]]`|  `r 100*(trDice2[[4]]-dfDice2[[4]])/dfDice2[[4]]`|
 | 05 |  `r 100*(trDice1[[5]]-dfDice1[[5]])/dfDice1[[5]]`|  `r 100*(trDice2[[5]]-dfDice2[[5]])/dfDice2[[5]]`|
 
-
-## References {.smaller}
-
 ## Website
 
 http://johnmuschelli.com/imaging_in_r
+
+## References {.smaller}
+
+

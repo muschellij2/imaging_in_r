@@ -15,14 +15,72 @@ options(fsl.path = "/usr/local/fsl/")
 options(fsl.outputtype = "NIFTI_GZ")
 ```
 
+
+## Overall Pipeline
+
+<img src="flow.png" style="width: 75%; display: block; margin: auto;"> 
+
+
+## Lists
+
+- Initialize an empty list and add two elements to it
+
+```{r list}
+l = list()
+l[[1]] = c(1, 2, 4, 5)
+l[[2]] = matrix(1:10, nrow = 2)
+print(l)
+```
+
+- Subsetting uses double brackets:
+```{r listSub}
+print(l[[1]])
+```
+
+## Subsetting by name
+
+If a `vector` has names, you can also put the 
+- Initialize an empty list and add two elements to it
+
+```{r named_vec}
+x = c(first = 1, third = 14, second = 5)
+print(x)
+x[c("third")]
+```
+
+If a `list` has names, you can subset with the `$`
+
+- Subsetting uses double brackets:
+```{r named_lst}
+names(l) = c("V", "m")
+l$V
+```
+
+## Lists: `lapply`
+
+With `list`s and vectors, there are `apply` functions.  These apply a function to every element of the list.  In this course, we will use:
+
+- `lapply` - apply function and return the elements as a `list`
+- `sapply` - apply function and return a "simplified" version
+    - if all elements returned are a one-element vector, return a `vector`
+    - if element 5 has 3 elements and element 4 has 4 elements, return a `list`
+- `mapply` - takes in 2 (or more) lists and "links" the two to perform a function requiring arguments from each list 
+    - passing in a list of images and the filenames to write them to
+
+
 ## Overview 
-In this tutorial we will discuss performing co-registration of the multiple imaging modalities to the T1-weighted image.
+In this tutorial we will discuss performing co-registration of the multiple imaging modalities to the T1-weighted image.  
+
+- `get_image_filenames_list_by_subject` - returns a list, each element is a subject, and each subject has a vector of filenames, named for each modality
 
 ```{r t1}
 library(ms.lesion)
 library(neurobase)
 library(extrantsr)
-files = get_image_filenames_list_by_subject()$training01
+all_files = get_image_filenames_list_by_subject()
+names(all_files)
+files = all_files$training01
+names(files)
 t1_fname = files["MPRAGE"]
 t1 = readnii(t1_fname)
 ```
