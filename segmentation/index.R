@@ -75,14 +75,24 @@ robust_fast = readnii(files["FAST"])
 ## multi_overlay(L, z = 58, text = names(L), text.x = 0.5, text.y = 1.4,
 ##               text.cex = 2.5)
 
+## ----prep_wm-------------------------------------------------------------
+rt1_list = list(rt1, rt1)
+m_list = list((t1fast==3), (robust_fast==3))
+
 ## ----fast_wm-------------------------------------------------------------
-ortho2(rt1, robust_fast == 3, col.y = alpha("red", 0.5), text = "White Matter")
+multi_overlay(x=rt1_list, y=m_list, col.y=alpha("red", 0.5))
+
+## ----prep_gm-------------------------------------------------------------
+m_list = list((t1fast==2), (robust_fast==2))
 
 ## ----fast_gm-------------------------------------------------------------
-ortho2(rt1, robust_fast == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
+multi_overlay(x=rt1_list, y=m_list, col.y=alpha("red", 0.5))
+
+## ----prep_csf------------------------------------------------------------
+m_list = list((t1fast==1), (robust_fast==1))
 
 ## ----fast_csf------------------------------------------------------------
-ortho2(rt1, robust_fast == 1, col.y = alpha("red", 0.5), text = "CSF")
+multi_overlay(x=rt1_list, y=m_list, col.y=alpha("red", 0.5))
 
 ## ----otropos_show, eval = FALSE------------------------------------------
 ## t1_otropos = otropos(a = t1, x = mask) # using original data
