@@ -266,6 +266,11 @@ bc_t1 = bias_correct(file = t1, correction = &quot;N4&quot;)</pre>
 <li>Inhomogeneity correction is one of the first steps of most structural MRI pipelines</li>
 <li>Inhomogeneity can cause problems for other methods/segmentation</li>
 <li>Corrections try to make tissues of the same class to have similar intensities</li>
+<li>Use the <code>extrantsr</code> <code>bias_correct</code> function
+
+<ul>
+<li>There is also <code>fsl_biascorrect</code> from <code>fslr</code> (not as effective in our experience)</li>
+</ul></li>
 <li>You may also want to run corrections after skull stripping on the brain only
 
 <ul>

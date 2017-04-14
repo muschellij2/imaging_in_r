@@ -207,10 +207,11 @@ ortho2(t1, ratio, col.y = colors, ybreaks = quants, ycolorbar = TRUE)
 - Inhomogeneity correction is one of the first steps of most structural MRI pipelines
 - Inhomogeneity can cause problems for other methods/segmentation
 - Corrections try to make tissues of the same class to have similar intensities
+- Use the `extrantsr` `bias_correct` function
+    - There is also `fsl_biascorrect` from `fslr` (not as effective in our experience)
 - You may also want to run corrections after skull stripping on the brain only
     - this is possible with the result after the brain extraction lecture
     - correction before skull-stripping may be necessary and can improve after correction
-
 
 
 ## References
