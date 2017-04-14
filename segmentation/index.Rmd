@@ -171,7 +171,6 @@ ortho2(t1, robust_fast == 1, col.y = alpha("red", 0.5), text = "CSF")
 
 - Overall the results look good
     - Not much difference after dampening outliers using `robust_window`
-- FAST is robust to noise
 
 ## Tissue Segmentation using ANTsR, extrantsr
 
@@ -193,10 +192,6 @@ if (!file.exists(outfile)) {
 } else {
   t1seg = readnii(outfile)
 }
-```
-
-```{r atropos_overall}
-double_ortho(t1, t1seg)
 ```
 
 ## Atropos: White Matter
@@ -221,8 +216,9 @@ ortho2(t1, t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 ## Default Atropos Results
 
 - Overall the results do not look good
-    - We will use `robust_window`
-- The k-means clustering is affected by large outliers
+	- The k-means clustering is affected by large outliers
+- We will try using `robust_window`
+
 
 
 ## Atropos using Windowing
@@ -264,8 +260,8 @@ ortho2(t1, robust_t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 
 - Overall the results look like they reasonably separate the classes
     - No ground truth
-    - Better than running Atropos on the raw data
-- The k-means clustering can be aided by Winsorizing these large outliers
+- Winsorizing large outliers aided the k-means clustering
+    - Results much better than running Atropos on the raw data
 
 
 ## Estimating the Volume of Each Class
@@ -273,11 +269,11 @@ ortho2(t1, robust_t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 We can create a table which will count the number of voxels in each category:
 
 ```{r tabs}
-tab_fsl = table(t1seg[ t1seg != 0])
-tab_fsl
-tab_ants = table(t1fast[ t1fast != 0])
-tab_ants
+tab_fsl = table(robust_fast[ robust_fast != 0])
+tab_ants = table(robust_t1seg[ robust_t1seg != 0])
 names(tab_fsl) = names(tab_ants) = c("CSF", "GM", "WM")
+tab_fsl
+tab_ants
 ```
 
 ## Estimating the Volume of Each Class
@@ -285,7 +281,7 @@ names(tab_fsl) = names(tab_ants) = c("CSF", "GM", "WM")
 By multiplying by the voxel resolution (in cubic centimeters) using the `voxres` function, we can get volumes
 
 ```{r volumes}
-vres = voxres(t1seg, units = "cm")
+vres = voxres(t1, units = "cm")
 print(vres)
 vol_fsl = tab_fsl * vres
 vol_fsl
@@ -295,7 +291,3 @@ vol_ants
 
 
 ## References {.smaller}
-
-## Website
-
-http://johnmuschelli.com/imaging_in_r
