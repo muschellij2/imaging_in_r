@@ -117,12 +117,11 @@ oro.nifti::slice(t1, z = c(60, 80))
 
 ## Different Planes
 
-We can specify `z` the same way but change the `plane` to be different to get a different slice of the brain:
+We can specify `z` the same way but change the `plane` to be different to get a different slice of the brain (could also do coronal):
 
 ```{r one_slice_sag}
 oro.nifti::slice(t1, z = 125, plane = "sagittal")
 ```
-We can similarly do the same for "coronal" slices.
 
 ## Overlaying slices
 
