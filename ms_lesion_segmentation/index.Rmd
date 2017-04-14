@@ -169,19 +169,20 @@ default_tr = lapply(tr_files,
 
 ```{r over_05_run, echo=FALSE}
 les_mask = default_tr[[5]]
-ortho2(tr_t1s$training05, les_mask, col.y = alpha("red", 0.5))
+ortho2(tr_flairs$training05, les_mask, col.y = alpha("red", 0.5))
 ```
 
 ## Default OASIS Model Results
-- Sorensen–Dice coefficient: 
-  - Similarity measure between two samples (range 0 to 1)
+Sorensen–Dice coefficient
+  - Similarity measure between two samples 
+  - Ranges from 0 to 1
 
 $$D = \frac{2TP}{2TP + FP + FN}$$
 
 
 
 ## Default OASIS Model Results
-- The dice coeffients for the training subjects compared to raters 1 and 2 are: 
+Dice coeffients for the training subjects compared to raters 1 and 2 
 
 ```{r table1, echo=FALSE}
 dice = function(x){
@@ -196,15 +197,6 @@ dfDice2 = sapply(tbls_df2, dice)
 diceDF = data.frame('Subject'=factor(rep(1:5, 2)), 'Rater'=factor(c(rep(1, 5), rep(2, 5))), 'Dice'=c(dfDice1, dfDice2))
 plot(ggplot(diceDF, aes(x=Subject, y=Dice, fill=Rater)) + geom_histogram(position="dodge", stat="identity", aes(color=Rater)))
 ```
-
-|   |  Rater 1|  Rater 2|
-|------:|------:|------:|
-| 01 |  `r dfDice1[[1]]`|  `r dfDice2[[1]]`|
-| 02 |  `r dfDice1[[2]]`|  `r dfDice2[[2]]`|
-| 03 |  `r dfDice1[[3]]`|  `r dfDice2[[3]]`|
-| 04 |  `r dfDice1[[4]]`|  `r dfDice2[[4]]`|
-| 05 |  `r dfDice1[[5]]`|  `r dfDice2[[5]]`|
-
 
 ## Improving Results
 - The default model is picking up a lot of false positives in the spinal cord. 
@@ -232,9 +224,8 @@ oasis_dfs = lapply(1:5, make_df)
 ```
 
 ## Training OASIS 
-- The function `oasis_training` takes the data frames we made and fits a logistic regression using labels and features from a subset of voxels in each subject's brain mask (top 85\% in FLAIR intensity).
+- The function `oasis_training` takes the data frames we made and fits a logistic regression using labels and features from a subset of voxels in each subject's brain mask (top 15\% in FLAIR intensity).
 - The function `do.call` is a useful R function that applies the function named in the first argument to all elements of the list specified in the second argument. 
-- Below, `model` is a `glm` object that stores the estimated parameters from the logistic regression.
 
 ```{r oasis_model_show, eval=FALSE}
 ms_model = do.call("oasis_training", oasis_dfs)
@@ -256,25 +247,24 @@ trained_tr = lapply(tr_files,
     return(img)
   })
 ```
+- Using the same threshold of 0.16.
+- Dice coeffients for default vs. re-trained OASIS model
 
 ```{r table3, echo=FALSE}
 tbls_tr1 = lapply(1:5, function(x) table(c(tr_golds1[[x]]), c(trained_tr[[x]])))
-trDice1 = lapply(tbls_tr1, dice)
+trDice1 = sapply(tbls_tr1, dice)
 
 tbls_tr2 = lapply(1:5, function(x) table(c(tr_golds2[[x]]), c(trained_tr[[x]])))
-trDice2 = lapply(tbls_tr2, dice)
+trDice2 = sapply(tbls_tr2, dice)
+
+diceTR = data.frame('Subject'=factor(rep(1:5, 2)), 'Rater'=factor(c(rep(1, 5), rep(2, 5))), 'Dice'=c(trDice1, trDice2))
+diceDF$Model = "Default"
+diceTR$Model = "Trained"
+diceAll = rbind(diceDF, diceTR)
+diceAll$Model = factor(diceAll$Model)
+
+plot(ggplot(diceAll, aes(x=Subject, y=Dice, fill=Rater)) + geom_histogram(position="dodge", stat="identity", aes(color=Rater)) + facet_wrap(~Model))
 ```
-
-- Using the same threshold of 0.16.
-- Dice coeffients for the training subjects: 
-
-|   |  Rater 1|  Rater 2|
-|------:|------:|------:|
-| 01 |  `r trDice1[[1]]`|  `r trDice2[[1]]`|
-| 02 |  `r trDice1[[2]]`|  `r trDice2[[2]]`|
-| 03 |  `r trDice1[[3]]`|  `r trDice2[[3]]`|
-| 04 |  `r trDice1[[4]]`|  `r trDice2[[4]]`|
-| 05 |  `r trDice1[[5]]`|  `r trDice2[[5]]`|
 
 ## Improvement
 
