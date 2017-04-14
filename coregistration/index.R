@@ -14,12 +14,14 @@ print(l)
 print(l[[1]])
 
 ## ----named_vec-----------------------------------------------------------
-x = c(first = 1, third = 14, second = 5)
+x = c(one = 1, three = 14, two = 5)
 print(x)
-x[c("third")]
+x[c("three")]
 
 ## ----named_lst-----------------------------------------------------------
-names(l) = c("V", "m")
+names(l) = c("V", "m"); l[["V"]]
+
+## ----named_lst_v---------------------------------------------------------
 l$V
 
 ## ----t1, message=FALSE---------------------------------------------------
@@ -28,6 +30,8 @@ all_files = get_image_filenames_list_by_subject()
 class(all_files); names(all_files)
 files = all_files$training01
 class(files); names(files)
+
+## ----t1_2----------------------------------------------------------------
 t1_fname = files["MPRAGE"]
 t1 = readnii(t1_fname)
 rt1 = robust_window(t1)
@@ -49,8 +53,7 @@ double_ortho(rt1, reg$outfile)
 ##   moving = files[c("T2", "FLAIR", "PD")],
 ##   correct = TRUE, correction = "N4",
 ##   typeofTransform = "Rigid",
-##   interpolator = "Linear"
-## )
+##   interpolator = "Linear")
 ## output_imgs = lapply(res, function(x) x$outfile)
 ## out = c(MPRAGE = list(t1), output_imgs)
 
