@@ -100,9 +100,6 @@ if (!file.exists(outfile)) {
   t1seg = readnii(outfile)
 }
 
-## ----atropos_overall-----------------------------------------------------
-double_ortho(t1, t1seg)
-
 ## ----otropos_wm----------------------------------------------------------
 ortho2(t1, t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
 
@@ -132,14 +129,14 @@ ortho2(t1, robust_t1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 ortho2(t1, robust_t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 
 ## ----tabs----------------------------------------------------------------
-tab_fsl = table(t1seg[ t1seg != 0])
-tab_fsl
-tab_ants = table(t1fast[ t1fast != 0])
-tab_ants
+tab_fsl = table(robust_fast[ robust_fast != 0])
+tab_ants = table(robust_t1seg[ robust_t1seg != 0])
 names(tab_fsl) = names(tab_ants) = c("CSF", "GM", "WM")
+tab_fsl
+tab_ants
 
 ## ----volumes-------------------------------------------------------------
-vres = voxres(t1seg, units = "cm")
+vres = voxres(t1, units = "cm")
 print(vres)
 vol_fsl = tab_fsl * vres
 vol_fsl
