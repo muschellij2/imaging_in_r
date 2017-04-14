@@ -91,7 +91,7 @@ default_tr = lapply(tr_files,
 
 ## ----over_05_run, echo=FALSE---------------------------------------------
 les_mask = default_tr[[5]]
-ortho2(tr_t1s$training05, les_mask, col.y = "orange")
+ortho2(tr_t1s$training05, les_mask, col.y = alpha("red", 0.5))
 
 ## ----table1, echo=FALSE--------------------------------------------------
 dice = function(x){
