@@ -2,14 +2,12 @@
 library(methods)
 knitr::opts_chunk$set(echo = TRUE, comment = "")
 
-## ------------------------------------------------------------------------
-library(ms.lesion)
+## ----reading_in_image----------------------------------------------------
 library(neurobase)
-files = get_image_filenames_list_by_subject()$training01
-t1_fname = files["MPRAGE"]
-t1 = readnii(t1_fname)
-rt1 = robust_window(t1);
-red0.5 = scales::alpha("red", 0.5)
+t1_fname = "training01_01_mprage.nii.gz"
+t1 = neurobase::readnii(t1_fname)
+rt1 = robust_window(t1); 
+red0.5 = scales::alpha("red", 0.5) # for plotting later
 
 ## ----t1_plot_robust------------------------------------------------------
 ortho2(rt1)

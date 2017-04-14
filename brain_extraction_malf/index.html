@@ -107,20 +107,40 @@
 <li>(extra slides) a robust version using a wrapper function in <code>extrantsr</code>, <code>fslbet_robust</code></li>
 </ul>
 
-</article></slide><slide class=''><hgroup><h2>Loading Data from <code>ms.lesion</code></h2></hgroup><article  id="loading-data-from-ms.lesion">
+</article></slide><slide class=''><hgroup><h2>MS Lesion MPRAGE</h2></hgroup><article  id="ms-lesion-mprage">
 
-<pre class = 'prettyprint lang-r'>library(ms.lesion)
-library(neurobase)</pre>
+<p>Let&#39;s reset and read in the T1 image from a MS lesion data set:</p>
+
+<pre class = 'prettyprint lang-r'>library(neurobase)</pre>
 
 <pre >Loading required package: oro.nifti</pre>
 
 <pre >oro.nifti 0.7.5</pre>
 
-<pre class = 'prettyprint lang-r'>files = get_image_filenames_list_by_subject()$training01
-t1_fname = files[&quot;MPRAGE&quot;]
-t1 = readnii(t1_fname)
-rt1 = robust_window(t1);
-red0.5 = scales::alpha(&quot;red&quot;, 0.5)</pre>
+<pre class = 'prettyprint lang-r'>t1_fname = &quot;training01_01_mprage.nii.gz&quot;
+t1 = neurobase::readnii(t1_fname)
+rt1 = robust_window(t1); 
+red0.5 = scales::alpha(&quot;red&quot;, 0.5) # for plotting later</pre>
+
+<!-- ## Loading Data from `ms.lesion` -->
+
+<!-- ```{r} -->
+
+<!-- library(ms.lesion) -->
+
+<!-- library(neurobase) -->
+
+<!-- files = get_image_filenames_list_by_subject()$training01 -->
+
+<!-- t1_fname = files["MPRAGE"] -->
+
+<!-- t1 = readnii(t1_fname) -->
+
+<!-- rt1 = robust_window(t1); -->
+
+<!-- red0.5 = scales::alpha("red", 0.5) -->
+
+<!-- ``` -->
 
 </article></slide><slide class=''><hgroup><h2>T1-weighted MPRAGE Image</h2></hgroup><article  id="t1-weighted-mprage-image">
 
