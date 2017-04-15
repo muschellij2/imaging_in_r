@@ -56,6 +56,8 @@ w = 1:5
 w <- 1:5
 ```
 
+There are no differences in these 2 commands, but just preference (we use `=`).
+
 Variable/object names:
 
 - must start with a letter
@@ -63,7 +65,6 @@ Variable/object names:
     - generally just alpha-numeric
 - **can** contain periods (`.`) and underscores `_`
 
-There are no differences in these 2 commands, but just preference (we use `=`).
 
 ## Help
 
