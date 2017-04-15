@@ -56,6 +56,12 @@ w = 1:5
 w <- 1:5
 ```
 
+Variable/object names:
+- must start with a letter
+- cannot contain spaces, `$`, quotes, or other special characters 
+    - generally just alpha-numeric
+- **can** contain periods (`.`) and underscores `_`
+
 There are no differences in these 2 commands, but just preference (we use `=`).
 
 ## Help
@@ -377,6 +383,4 @@ Data Package we will use
 
 http://johnmuschelli.com/imaging_in_r
 
-## --- Stop here ----
-- Put lists elsewhere
 
