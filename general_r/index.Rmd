@@ -57,6 +57,7 @@ w <- 1:5
 ```
 
 Variable/object names:
+
 - must start with a letter
 - cannot contain spaces, `$`, quotes, or other special characters 
     - generally just alpha-numeric
