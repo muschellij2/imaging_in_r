@@ -68,8 +68,9 @@ ortho2(robust_window(t1))
 
 ## Robust Density
 
+Note the x-axis
 
-```{r dens_robust, echo = FALSE}
+```{r dens_robust, echo = FALSE, fig.height = 4, fig.width = 10}
 par(mfrow = c(1,2))
 plot(density(t1), main = "Density of T1") 
 plot(density(robust_window(t1)), main = "Density of Windowed T1")
