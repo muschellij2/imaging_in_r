@@ -213,7 +213,7 @@ With `list`s and vectors, there are `apply` functions.  These apply a function t
     - `lapply(LIST, FUNCTION, OTHER_ARGUMENTS_TO_FUNCTION)`
 - `sapply` - apply function and return a "simplified" version
     - if all elements returned are a one-element vector, return a `vector`
-    - if element 5 has 3 elements and element 4 has 4 elements, return a `list`
+    - if element 1 is a vector of length 3 and element 2 is a vector of length 1, return a `list`
 <!-- - `mapply` - takes in 2 (or more) lists and "links" the two to perform a function requiring arguments from each list  -->
 <!--     - passing in a list of images and the filenames to write them to -->
 
