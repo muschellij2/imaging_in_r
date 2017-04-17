@@ -67,7 +67,7 @@ plot_boxplots = function(vals,
 }
 ```
 
-## Visualizing whole-brain intensities 
+## Visualizing whole-brain intensities (each line is a person)
 - We will work with the T1-w images from the training data. 
 - Full brain densities are mixtures of the three tissue class distributions.
 
@@ -140,6 +140,7 @@ plot_densities(wm_dens, main = "White Matter")
 par(mfrow = c(1, 1))
 ```
 
+And these are all the same scanner/protocol!
 
 ## Whole-brain normalization
 
@@ -281,11 +282,6 @@ $$ T1_{WS} = \frac{T1 - \mu_{WS}}{\sigma_{WS}}$$
 
 - After normalization, NAWM will have a standard normal distribution and units will be in standard deviations of NAWM.
 - Gray matter and CSF distributions may not be comparable after White Stripe.
-
-## White Stripe normalization
-
-<img src="whitestripe.png" style="width: 60%; display: block; margin: auto;">
-
 
 ## White Stripe normalization code
 

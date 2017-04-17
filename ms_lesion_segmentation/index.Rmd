@@ -11,6 +11,7 @@ bibliography: ../refs.bib
 ```{r setup, include=FALSE}
 library(methods)
 library(ggplot2)
+library(pander)
 knitr::opts_chunk$set(echo = TRUE, comment = "", cache=TRUE, warning = FALSE)
 ```
 
@@ -27,6 +28,7 @@ knitr::opts_chunk$set(echo = TRUE, comment = "", cache=TRUE, warning = FALSE)
 - "Gold standard": Inter- and Intra-rater variability
 - Accurate and efficient methods for automatic segmentation are necessary for scalability and research progress.
 - In this tutorial, we will learn how to train and apply OASIS [@sweeney2013oasis], an automatic lesion segmentation model, to obtain predicted lesion probability maps.
+    - relies on intensity-normalized data
 
 
 
@@ -108,7 +110,7 @@ default_ts = lapply(ts_files,
 ```
 
 ## Vizualization of probability map
-- Here's the probability map for test subject 01:
+- Here's the probability map for test subject 01 (no gold standard):
 
 ```{r viz_01, echo=FALSE}
 les_mask = default_ts[[1]]
@@ -130,7 +132,7 @@ ortho2(ts_flairs$test01, les_mask, xyz = xyz)
 ```{r viz_02, echo=FALSE}
 les_mask[les_mask<.16] = 0
 les_mask[les_mask!=0] = 1
-ortho2(ts_flairs$test01, les_mask, col.y=alpha("red", 0.5))
+ortho2(ts_flairs$test01, les_mask, col.y=alpha("red", 0.5), xyz = xyz)
 ```
 
 ## Default OASIS Model
@@ -155,8 +157,7 @@ default_probs_tr = lapply(1:5, default_predict_tr)
 default_tr = lapply(tr_files, 
 	function(x){
 		img = readnii(x["Default_OASIS"])
-		img[img>.16] = 1
-		img[img<1] = 0
+		img = img > 0.16
 		return(img)
 	})
 ```
@@ -170,9 +171,12 @@ ortho2(tr_flairs$training05, les_mask, col.y = alpha("red", 0.5))
 ```
 
 ## Default OASIS Model Results
+
 Sorensen–Dice coefficient
+
   - Similarity measure between two samples 
   - Ranges from 0 to 1
+  - (TP) - true positive, (FP) - false positive, (FN) - false negative
 
 $$D = \frac{2TP}{2TP + FP + FN}$$
 
@@ -239,8 +243,7 @@ print(ms.lesion::ms_model)
 trained_tr = lapply(tr_files, 
   function(x){
     img = readnii(x["Trained_OASIS"])
-    img[img>.16] = 1
-    img[img<1] = 0
+    img = img > 0.16
     return(img)
   })
 ```
@@ -263,17 +266,29 @@ diceAll$Model = factor(diceAll$Model)
 plot(ggplot(diceAll, aes(x=Subject, y=Dice, fill=Rater)) + geom_histogram(position="dodge", stat="identity", aes(color=Rater)) + facet_wrap(~Model))
 ```
 
+
+```{r dice_mat, echo = FALSE}
+df = cbind(id = sprintf("%02.0f", 1:5),
+           r1 = round((trDice1 - dfDice1) / dfDice1 * 100, 1),
+           r2 = round((trDice2 - dfDice2) / dfDice2 * 100, 1))
+df = data.frame(df, stringsAsFactors = FALSE)
+colnames(df) = c("ID", "Rater 1", "Rater 2")
+```
 ## Improvement
 
 - Percent improvement in dice over the default model:
 
-|   |  Rater 1|  Rater 2|
-|------:|------:|------:|
-| 01 |  `r 100*(trDice1[[1]]-dfDice1[[1]])/dfDice1[[1]]`|  `r 100*(trDice2[[1]]-dfDice2[[1]])/dfDice2[[1]]`|
-| 02 |  `r 100*(trDice1[[2]]-dfDice1[[2]])/dfDice1[[2]]`|  `r 100*(trDice2[[2]]-dfDice2[[2]])/dfDice2[[2]]`|
-| 03 |  `r 100*(trDice1[[3]]-dfDice1[[3]])/dfDice1[[3]]`|  `r 100*(trDice2[[3]]-dfDice2[[3]])/dfDice2[[3]]`|
-| 04 |  `r 100*(trDice1[[4]]-dfDice1[[4]])/dfDice1[[4]]`|  `r 100*(trDice2[[4]]-dfDice2[[4]])/dfDice2[[4]]`|
-| 05 |  `r 100*(trDice1[[5]]-dfDice1[[5]])/dfDice1[[5]]`|  `r 100*(trDice2[[5]]-dfDice2[[5]])/dfDice2[[5]]`|
+```{r, echo = FALSE}
+pander(df)
+```
+
+<!-- |   |  Rater 1|  Rater 2| -->
+<!-- |------:|------:|------:| -->
+<!-- | 01 |  `r round(100*(trDice1[[1]]-dfDice1[[1]])/dfDice1[[1]], 1)`|  `r round(100*(trDice2[[1]]-dfDice2[[1]])/dfDice2[[1]])`| -->
+<!-- | 02 |  `r round(100*(trDice1[[2]]-dfDice1[[2]])/dfDice1[[2]])`|  `r round(100*(trDice2[[2]]-dfDice2[[2]])/dfDice2[[2]])`| -->
+<!-- | 03 |  `r round(100*(trDice1[[3]]-dfDice1[[3]])/dfDice1[[3]])`|  `r round(100*(trDice2[[3]]-dfDice2[[3]])/dfDice2[[3]])`| -->
+<!-- | 04 |  `r round(100*(trDice1[[4]]-dfDice1[[4]])/dfDice1[[4]])`|  `r round(100*(trDice2[[4]]-dfDice2[[4]])/dfDice2[[4]])`| -->
+<!-- | 05 |  `r round(100*(trDice1[[5]]-dfDice1[[5]])/dfDice1[[5]])`|  `r round(100*(trDice2[[5]]-dfDice2[[5]])/dfDice2[[5]])`| -->
 
 ## Website
 

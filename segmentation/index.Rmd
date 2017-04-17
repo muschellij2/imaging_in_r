@@ -65,7 +65,7 @@ hist(t1, mask = mask, breaks = 2000); text(x = 800, y = 3000, "outliers!")
 ## Where are the outliers?
 
 ```{r which_big}
-ortho2(rt1, t1 > 400, xyz = xyz(t1 > 400))
+ortho2(rt1, t1 > 400, xyz = xyz(t1 > 400)) # xyz - cog of a region
 ```
 
 ## Tissue Segmentation using FSL FAST
@@ -244,26 +244,26 @@ robust_t1seg = readnii(files["Tissue_Classes"])
 ```
 
 ```{r atropos_robust_overall}
-double_ortho(t1, robust_t1seg)
+double_ortho(rt1, robust_t1seg)
 ```
 
 
 ## Atropos with Window: White Matter
 
 ```{r otropos_wm_robust}
-ortho2(t1, robust_t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
+ortho2(rt1, robust_t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
 ```
 
 ## Atropos with Window: Gray Matter
 
 ```{r otropos_gm_robust}
-ortho2(t1, robust_t1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
+ortho2(rt1, robust_t1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 ```
 
 ## Atropos with Window: CSF
 
 ```{r otropos_csf_robust}
-ortho2(t1, robust_t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
+ortho2(rt1, robust_t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 ```
 
 ## Atropos with Window Results
@@ -273,6 +273,13 @@ ortho2(t1, robust_t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 - Winsorizing large outliers aided the k-means clustering
     - Results much better than running Atropos on the raw data
 
+```{r prep_wm_atropos, echo = FALSE}
+m_list = list(t1seg == 3, robust_t1seg==3)
+```
+
+```{r prep_wm_atropos_show, echo = FALSE}
+multi_overlay(x=rt1_list, y=m_list, col.y=alpha("red", 0.5), text=c("Raw", "Robust"), text.x=c(.3, .7), text.y=c(.1, .1))
+```
 
 ## Estimating the Volume of Each Class
 
@@ -291,7 +298,7 @@ tab_ants
 By multiplying by the voxel resolution (in cubic centimeters) using the `voxres` function, we can get volumes
 
 ```{r volumes}
-vres = voxres(t1, units = "cm")
+vres = oro.nifti::voxres(t1, units = "cm")
 print(vres)
 vol_fsl = tab_fsl * vres
 vol_fsl

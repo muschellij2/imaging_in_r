@@ -25,7 +25,7 @@ neurobase::ortho2(t1)
 ## ----ortho2_rob----------------------------------------------------------
 ortho2(robust_window(t1))
 
-## ----dens_robust, echo = FALSE, fig.height = 4, fig.width = 10-----------
+## ----dens_robust, echo = FALSE, fig.height = 5, fig.width = 10-----------
 par(mfrow = c(1,2))
 plot(density(t1), main = "Density of T1") 
 plot(density(robust_window(t1)), main = "Density of Windowed T1")

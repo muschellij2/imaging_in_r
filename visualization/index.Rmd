@@ -70,7 +70,7 @@ ortho2(robust_window(t1))
 
 Note the x-axis
 
-```{r dens_robust, echo = FALSE, fig.height = 4, fig.width = 10}
+```{r dens_robust, echo = FALSE, fig.height = 5, fig.width = 10}
 par(mfrow = c(1,2))
 plot(density(t1), main = "Density of T1") 
 plot(density(robust_window(t1)), main = "Density of Windowed T1")
@@ -102,7 +102,7 @@ double_ortho(t1, y = t1 > 150, col.y = "white")
 
 ## Lightbox: view all slices
 
-We may want to view a all slices of an image.  The `oro.nifti::image` function shows a lightbox view:
+The `oro.nifti::image` function shows a lightbox view, all slices of an image:
 
 ```{r all_slices}
 image(t1, useRaster = TRUE) # look at average brightness over each slice
