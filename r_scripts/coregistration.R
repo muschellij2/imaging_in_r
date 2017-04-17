@@ -28,10 +28,7 @@ l$V
 library(ms.lesion)
 all_files = get_image_filenames_list_by_subject()
 class(all_files); names(all_files)
-files = all_files$training01
-class(files); names(files)
-
-## ----t1_2----------------------------------------------------------------
+files = all_files$training01; class(files); names(files)
 t1_fname = files["MPRAGE"]
 t1 = readnii(t1_fname)
 rt1 = robust_window(t1)
@@ -49,11 +46,9 @@ double_ortho(rt1, reg$outfile)
 
 ## ---- eval = FALSE-------------------------------------------------------
 ## res = within_visit_registration(
-##   fixed = files["MPRAGE"],
-##   moving = files[c("T2", "FLAIR", "PD")],
+##   fixed = files["MPRAGE"], moving = files[c("T2", "FLAIR", "PD")],
 ##   correct = TRUE, correction = "N4",
-##   typeofTransform = "Rigid",
-##   interpolator = "Linear")
+##   typeofTransform = "Rigid", interpolator = "Linear")
 ## output_imgs = lapply(res, function(x) x$outfile)
 ## out = c(MPRAGE = list(t1), output_imgs)
 
@@ -101,8 +96,8 @@ sub_mask = applyEmptyImageDimensions(mask, inds = dd$inds)
 masked_imgs = lapply(xout, mask_img, sub_mask)
 
 ## ----mimgs_2-------------------------------------------------------------
-orthographic(masked_imgs$FLAIR)
+ortho2(masked_imgs$FLAIR)
 
 ## ----mimgs_T2------------------------------------------------------------
-orthographic(masked_imgs$T2)
+ortho2(masked_imgs$T2)
 

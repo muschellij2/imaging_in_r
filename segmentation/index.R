@@ -27,7 +27,7 @@ mask = readnii(files["Brain_Mask"])
 hist(t1, mask = mask, breaks = 2000); text(x = 800, y = 3000, "outliers!")
 
 ## ----which_big-----------------------------------------------------------
-ortho2(rt1, t1 > 400, xyz = xyz(t1 > 400))
+ortho2(rt1, t1 > 400, xyz = xyz(t1 > 400)) # xyz - cog of a region
 
 ## ----fast_show, eval = FALSE---------------------------------------------
 ## t1file = files["MPRAGE"]
@@ -126,16 +126,22 @@ ortho2(rt1, t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 robust_t1seg = readnii(files["Tissue_Classes"])
 
 ## ----atropos_robust_overall----------------------------------------------
-double_ortho(t1, robust_t1seg)
+double_ortho(rt1, robust_t1seg)
 
 ## ----otropos_wm_robust---------------------------------------------------
-ortho2(t1, robust_t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
+ortho2(rt1, robust_t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
 
 ## ----otropos_gm_robust---------------------------------------------------
-ortho2(t1, robust_t1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
+ortho2(rt1, robust_t1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 
 ## ----otropos_csf_robust--------------------------------------------------
-ortho2(t1, robust_t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
+ortho2(rt1, robust_t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
+
+## ----prep_wm_atropos, echo = FALSE---------------------------------------
+m_list = list(t1seg == 3, robust_t1seg==3)
+
+## ----prep_wm_atropos_show, echo = FALSE----------------------------------
+multi_overlay(x=rt1_list, y=m_list, col.y=alpha("red", 0.5), text=c("Raw", "Robust"), text.x=c(.3, .7), text.y=c(.1, .1))
 
 ## ----tabs----------------------------------------------------------------
 tab_fsl = table(robust_fast[ robust_fast != 0])
@@ -145,7 +151,7 @@ tab_fsl
 tab_ants
 
 ## ----volumes-------------------------------------------------------------
-vres = voxres(t1, units = "cm")
+vres = oro.nifti::voxres(t1, units = "cm")
 print(vres)
 vol_fsl = tab_fsl * vres
 vol_fsl

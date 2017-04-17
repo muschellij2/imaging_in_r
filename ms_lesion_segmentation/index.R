@@ -1,6 +1,7 @@
 ## ----setup, include=FALSE------------------------------------------------
 library(methods)
 library(ggplot2)
+library(pander)
 knitr::opts_chunk$set(echo = TRUE, comment = "", cache=TRUE, warning = FALSE)
 
 ## ----loading, echo=FALSE, message=FALSE----------------------------------
@@ -67,7 +68,7 @@ ortho2(ts_flairs$test01, les_mask, xyz = xyz)
 ## ----viz_02, echo=FALSE--------------------------------------------------
 les_mask[les_mask<.16] = 0
 les_mask[les_mask!=0] = 1
-ortho2(ts_flairs$test01, les_mask, col.y=alpha("red", 0.5))
+ortho2(ts_flairs$test01, les_mask, col.y=alpha("red", 0.5), xyz = xyz)
 
 ## ----default_predict_tr_show, eval=FALSE---------------------------------
 ## default_predict_tr = function(x){
@@ -85,8 +86,7 @@ ortho2(ts_flairs$test01, les_mask, col.y=alpha("red", 0.5))
 default_tr = lapply(tr_files, 
 	function(x){
 		img = readnii(x["Default_OASIS"])
-		img[img>.16] = 1
-		img[img<1] = 0
+		img = img > 0.16
 		return(img)
 	})
 
@@ -128,8 +128,7 @@ print(ms.lesion::ms_model)
 trained_tr = lapply(tr_files, 
   function(x){
     img = readnii(x["Trained_OASIS"])
-    img[img>.16] = 1
-    img[img<1] = 0
+    img = img > 0.16
     return(img)
   })
 
@@ -147,4 +146,14 @@ diceAll = rbind(diceDF, diceTR)
 diceAll$Model = factor(diceAll$Model)
 
 plot(ggplot(diceAll, aes(x=Subject, y=Dice, fill=Rater)) + geom_histogram(position="dodge", stat="identity", aes(color=Rater)) + facet_wrap(~Model))
+
+## ----dice_mat, echo = FALSE----------------------------------------------
+df = cbind(id = sprintf("%02.0f", 1:5),
+           r1 = round((trDice1 - dfDice1) / dfDice1 * 100, 1),
+           r2 = round((trDice2 - dfDice2) / dfDice2 * 100, 1))
+df = data.frame(df, stringsAsFactors = FALSE)
+colnames(df) = c("ID", "Rater 1", "Rater 2")
+
+## ---- echo = FALSE-------------------------------------------------------
+pander(df)
 
