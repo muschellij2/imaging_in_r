@@ -143,6 +143,12 @@ m_list = list(t1seg == 3, robust_t1seg==3)
 ## ----prep_wm_atropos_show, echo = FALSE----------------------------------
 multi_overlay(x=rt1_list, y=m_list, col.y=alpha("red", 0.5), text=c("Raw", "Robust"), text.x=c(.3, .7), text.y=c(.1, .1))
 
+## ----prep_wm_atropos_fast, echo = FALSE----------------------------------
+m_list = list(t1fast == 3, robust_t1seg==3)
+
+## ----prep_wm_atropos_fast_show, echo = FALSE-----------------------------
+multi_overlay(x=rt1_list, y=m_list, col.y=alpha("red", 0.5), text=c("FAST", "Atropos"), text.x=c(.3, .7), text.y=c(.1, .1))
+
 ## ----tabs----------------------------------------------------------------
 tab_fsl = table(robust_fast[ robust_fast != 0])
 tab_ants = table(robust_t1seg[ robust_t1seg != 0])

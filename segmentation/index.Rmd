@@ -186,6 +186,8 @@ multi_overlay(x=rt1_list, y=m_list, col.y=alpha("red", 0.5), text=c("Raw", "Robu
 
 - Uses Atropos [@avants2011open] 
     - 3D K-means clustering + a Markov random field
+- The `extrantsr::otropos` function works with `nifti` objects
+    - calls `ANTsR::atropos` function
 
 ```{r otropos_show, eval = FALSE}
 t1_otropos = otropos(a = t1, x = mask) # using original data
@@ -279,6 +281,18 @@ m_list = list(t1seg == 3, robust_t1seg==3)
 
 ```{r prep_wm_atropos_show, echo = FALSE}
 multi_overlay(x=rt1_list, y=m_list, col.y=alpha("red", 0.5), text=c("Raw", "Robust"), text.x=c(.3, .7), text.y=c(.1, .1))
+```
+
+
+## Atropos WM vs. FAST WM
+
+
+```{r prep_wm_atropos_fast, echo = FALSE}
+m_list = list(t1fast == 3, robust_t1seg==3)
+```
+
+```{r prep_wm_atropos_fast_show, echo = FALSE}
+multi_overlay(x=rt1_list, y=m_list, col.y=alpha("red", 0.5), text=c("FAST", "Atropos"), text.x=c(.3, .7), text.y=c(.1, .1))
 ```
 
 ## Estimating the Volume of Each Class

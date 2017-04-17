@@ -33,6 +33,8 @@ Assistant Professor, Department of Biostatistics and Epidemiology Perelman Schoo
 
 PhD in Statistics
 
+- worked on sMRI for 3 years
+
 Email: klinn@mail.med.upenn.edu
 
 
@@ -54,8 +56,8 @@ Email: klinn@mail.med.upenn.edu
 
 ## Imaging Data Used: Multiple Sclerosis
 
-- Multiple sclerosis is a chronic disease of the central nervous system (brain, spinal chord, optic nerves)
-- Multiple sclerosis lesions in the brain are areas of active inflammation, demylenation, or permanent tissue damage. 
+- Multiple sclerosis (MS) is a chronic disease of the central nervous system (brain, spinal chord, optic nerves)
+- MS lesions in the brain are areas of active inflammation, demylenation, or permanent tissue damage. 
     - lesions are primarily in the white matter
 - The full data is available at https://smart-stats-tools.org. 
 
