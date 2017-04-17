@@ -339,4 +339,4 @@ We have only done registration within a subject, but many times you want to perf
 
 ## Website
 
-http://johnmuschelli.com/imaging_in_r
+<a href="../index.html" target="_blank">http://johnmuschelli.com/imaging_in_r</a>
