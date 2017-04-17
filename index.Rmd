@@ -19,6 +19,8 @@ output:
 
 ## Schedule
 
+All the PDF slides are located [in a zip file here](http://johnmuschelli.com/ISBI_2017.zip). 
+
 ```{r, echo = FALSE}
 # library(pander)
 # library(DT)
