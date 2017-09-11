@@ -1,0 +1,152 @@
+---
+title: "CE Course Proposal Summary"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+
+
+```{r setup, include=FALSE}
+conference = "JSM"
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Presenters
+
+1.  (Presenter 1, **Course Contact**) John Muschelli, PhD 
+    Assistant Scientist in Biostatistics
+    Johns Hopkins Bloomberg School of Public Health Baltimore, Maryland
+2.  (Presenter 2, **Course Contact**) Kristin Linn, PhD
+    Assistant Professor of Biostatistics in Biostatistics and Epidemiology
+    University of Pennsylvania, Philadelphia, PA
+    Department: Biostatistics and Epidemiology
+
+# Course Length:
+
+1 Day Course (7 contact hours)	 
+ 
+# Co-sponsorship:
+
+Co-sponsor:	Statistics in Imaging Section	 
+ 
+# Course Information:
+
+Course Title:	Neuroimaging Analysis within R	 
+ 
+## Abstract
+    In the neuroimaging community, there is a diverse and large set of software tools currently being used by analysts and researchers. There have been great strides in standardizing the syntax for multiple pieces of software, yet many of these languages do not have the statistical sophistication demanded to solve cutting-edge problems. R is a programming language that has the state of the art statistical tools that are relevant to imaging analysis. 
+    With the rapid and increasing number of open-access neuroimaging datasets, there is a void for an analysis framework that (1) is reproducible and can deal with high-dimensional data structures, (2) is open-access and accessible to a large community, and (3) provides the best environment to perform fast and advanced statistical methods needed for such complex data. 
+    In this tutorial, we will provide tutorials on how to use R for structural magnetic resonance imaging (MRI) analysis. We will show how to perform entire analysis in R, from the raw scans to the statistical analysis after image preprocessing. This course will use a real multiple sclerosis dataset and will go from raw image files to performing multiple sclerosis lesion classification.
+    
+Materials are located at: http://johnmuschelli.com/imaging_in_r/ for the course.
+
+## Outline
+
+Part I: Introduction
+Objectives
+Course materials available to participants (website, handout and its index, video recording)
+
+
+The topics to be cover in the course are as follows:
+
+a) Introduction to the Statistical Software R
+b) Read and Write Images 
+c) Visualization 
+d) Inhomogeneity Correction 
+e) Brain Extraction
+f) Image Segmentation
+g) Coregistration Within and Between MRI Studies
+h) Intensity Normalization
+i) Harmonization of mutli-site datasets
+
+<!-- Part 2: Analyzing a binary response, 2x2 contingency tables -->
+<!-- Two example tables -->
+<!-- Properties of maximum likelihood estimators explained while relating them to estimating a proportion -->
+<!-- Odds ratios: Define, estimate, Wald interval for log of the odds ratio   -->
+<!-- Part 3: Analyzing a binary response, logistic regression -->
+<!-- Brief review of linear regression: Present model and problems with using it for binary responses -->
+<!-- Regression model for binary/binomial data: Present model and provide graphical displays -->
+<!-- Regression parameter estimation: Present likelihood function and introduce the glm() function that is used for maximization -->
+<!-- Hypothesis testing for regression parameters: Focus on likelihood ratio tests -->
+<!-- Odds ratios: Estimation and inference -->
+<!-- Probability of success: Estimation and inference -->
+<!-- Explanatory variable formats: Categorical, interactions, and transformations -->
+<!-- Generalized linear model framework: Briefly explain how logistic regression models fit into a larger class of models   -->
+<!-- Part 4: Analyzing a multicategory response -->
+<!-- Multinomial distribution: Briefly review the distribution -->
+<!-- Baseline-category logit models -->
+<!-- Regression parameter estimation: Present likelihood function while connecting to earlier multinomial distribution discussion and introduce multinom() function -->
+<!-- Category probabilities: Estimation and inference -->
+<!-- Odds ratios: Estimation and inference -->
+<!-- Proportional odds models -->
+<!-- Regression parameter estimation: Present likelihood function while connecting to earlier multinomial distribution discussion and introduce polr() function -->
+<!-- Category probabilities: Estimation and inference -->
+<!-- Odds ratios: Estimation and inference   -->
+<!-- Part 5: Analyzing a count response -->
+<!-- Poisson distribution: Briefly review the distribution -->
+<!-- Poisson regression models -->
+<!-- Regression parameter estimation: Present likelihood function while connecting to earlier Poisson distribution discussion and show how the glm() function is used -->
+<!-- Mean: Estimation and inference -->
+<!-- Loglinear models: Show that these are Poisson regression models with only categorical explanatory variables; discuss how to include ordinal categorical variables   -->
+<!-- Pearson chi-square and likelihood ratio tests for independence between two categorical variables: Present tests and draw connections to loglinear models -->
+<!-- Rates and offsets: Show how to account for the length of the observation period   -->
+<!-- Part 6: Model selection and evaluation for regression models in Parts 3, 4, and 5 -->
+<!--  Variable selection -->
+<!-- Reasoning: Discuss when variable selection is needed -->
+<!-- Model comparison: Present information criterion and discuss their properties -->
+<!-- All-subsets: Show how to examine “all possible models” through enumeration and genetic algorithms -->
+<!-- Model averaging: Focus on its use to identify important variables -->
+<!-- Other methods available: Briefly mention stepwise methods (along with caveats) and the LASSO -->
+<!--  Tools to assess model fit -->
+<!-- Residuals: Compute measures and show how to find poorly fit observations -->
+<!--  Goodness-of-fit statistics: Show how to obtain an overall assessment of model fit -->
+<!-- R functions: Focus on our own functions that facilitate assessing a model’s fit -->
+<!--  Overdispersion -->
+<!-- Causes and implications: Discuss in the context of count responses, but briefly mention the possibility for binomial and multicategory responses -->
+<!-- Detection: Focus on the “Deviance/DF” statistic and graphical measures -->
+<!-- Solutions: -->
+<!-- Negative binomial models -->
+<!-- Generalized linear mixed models (limited to Gaussian quadrature and 1 random-effect) -->
+<!-- Part 7: Conclusion -->
+<!--  Review objectives -->
+<!-- Short breaks are tentatively scheduled between 4) and 5) of Part 3 and prior to beginning Part 6. The lunch break is tentatively scheduled between Parts 4 and 5. -->
+<!-- While there are a considerable number of topics given in the outline, we will take the following approach to ensure that we can cover them within the allotted time: -->
+<!-- Application rather than theoretical details will be emphasized -->
+<!-- A solid foundation for categorical methods will be set in Parts 2 and 3; this will save us time for the remaining sections -->
+<!-- Only R will be used for computations rather than a variety of statistical software packages -->
+<!-- We will build on the multiple linear regression model background of participants -->
+<!-- Our own functions, such as one to assess a model’s fit, will be used at times to make it easier to implement particular methods -->
+<!-- Throughout the course, we will make use of real data sets on topics including: 1) HIV vaccine clinical trials, 2) Placekicking in football, 3) Wheat kernel quality, and 4) Alcohol consumption. -->
+<!-- The target audience for this course is individuals who want a broad overview of statistical methods used to analyze categorical data. The content may be new to participants or serve as a “refresher” for past experience, especially those who want to learn how to perform the analyses in R. The ideal background for participants is experience with multiple linear regression and with application of likelihood-based methods (particularly Wald and likelihood ratio methods). Familiarity with the basics of R, including object types and the use of functions, is recommended. This level of R background is meant to be low. Essentially, participants should understand R at the level of Appendix A of Bilder and Loughin (2014). We would be happy to provide this appendix to participants prior to the course. -->
+
+## Learning Objectives
+
+Learning outcomes (performance objectives)
+
+<!-- After the short course, participants will be able to -->
+<!-- Apply appropriate methods to analyze data in a contingency table -->
+<!-- State, interpret, and fit logistic, baseline-category, proportional odds, and Poisson regression models -->
+<!-- Use appropriate variable-selection methods -->
+<!-- Evaluate the fit of categorical regression models -->
+<!-- Identify and solve overdispersion problems -->
+<!-- Be comfortable with using R to analyze categorical data -->
+<!-- Content and instructional methods -->
+<!-- We will describe models, focusing on when to use them, how to fit and interpret them, and how to examine the quality of their fit. We will use formulas and descriptions as necessary, as well as graphical representations where appropriate. We will provide R code and results for each analysis presented. Handouts will contain all of this content. Participants will be able to take notes on these handouts as we cover the material. The handouts will also contain a table of contents and an index to help participants quickly find content during and after the course. -->
+<!-- We will make a video recording of the course and post it to a web page shortly after the meetings. This recording will be created with Camtasia Studio and a high-definition camera affixed to a tripod. Included in this recording will be our computer screen along with live-action video focused on the podium from which we will present. -->
+<!-- We will use a pen-enabled, tablet computer to present the material in handouts and to interactively use R. The tablet allows us to annotate what is on the computer screen in simple ways such as highlighting topics of discussion and in more complex ways such as drawing diagrams. This ability to annotate can be especially helpful when responding to participant questions. -->
+<!-- Please note that this is not a “How to use R” course. Rather, focus will be on the analysis of categorical data where R is used when computations are needed. -->
+
+
+# Presenter Background:
+
+John Muschelli is a Research Assistant Professor in the Department of Biostatistics at the Johns Hopkins Bloomberg School of Public Health. His research has been published in a diverse set of outlets ranging from the Lancet, R Journal, NeuroImage, and Stroke.
+<!-- Since 2002, Bilder has taught a course on categorical data analysis to students majoring in statistics and to students majoring in a wide variety of other fields of study. He also has been a pioneer in using technology in and outside the classroom through his use of class video capturing, course websites, distance learning, hybrid (blended) learning, and tablets during his career. -->
+<!-- Thomas M. Loughin is a professional, accredited Statistician (P.Stat. American Statistical Association and Statistical Society of Canada) with extensive experience in both statistical applications and methodological development. As a professor at Kansas State University and at Simon Fraser University, Loughin has worked with hundreds of researchers in a wide array of disciplines, including agriculture, engineering, medicine, education, and other areas. He specializes in communication with subject-matter experts and students, re-expressing complex statistical concepts into language that is easy to understand. Loughin also has years of experience teaching a categorical data analysis course to statistics and non-statistics majors. -->
+<!-- Loughin is a fellow of the American Statistical Association. He has held positions on the editorial boards of Biometrics, Technometrics, and Developmental Medicine and Child Neurology. His research has been funded by the National Science Foundation, the Natural Sciences and Engineering Research Council, and numerous other agencies. -->
+
+<!-- Bilder and Loughin are authors of “Analysis of Categorical Data with R,” which was published in 2014 by CRC Press. They have constructed a website for the book at www.chrisbilder.com/categorical that contains more than 75 R programs with over 11,000 lines of code. The website also provides 30 hours of instructional videos recorded while teaching a course on the analysis of categorical data. -->
+
+## AV Request:	
+No additional equipment is required other than wireless internet and a projector.
+

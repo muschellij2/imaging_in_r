@@ -1,0 +1,52 @@
+---
+title: "Tutorial Proposal"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+
+
+```{r setup, include=FALSE}
+conference = "JSM"
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1. **Title: Neuroimaging Analysis within R **
+2. **Instructors:**
+  * John Muschelli, PhD
+    Assistant Scientist in Biostatistics
+    Johns Hopkins Bloomberg School of Public Health Baltimore, Maryland
+  * Kristin Linn, PhD
+    Assistant Professor of Biostatistics in Biostatistics and Epidemiology
+    University of Pennsylvania, Philadelphia, PA
+    Department: Biostatistics and Epidemiology
+3. **Outline of Tutorial**
+
+    In the neuroimaging community, there is a diverse and large set of software tools currently being used by analysts and researchers. There have been great strides in standardizing the syntax for multiple pieces of software such as nypipe in Python, yet many of these languages do not have the statistical sophistication demanded to solve cutting-edge neuroimaging problems. R is a programming language that has the state of the art statistical tools that are relevant to imaging analysis. Already, a number of neuroimaging researchers use R as their primary language, and we believe this community will grow rapidly in the future.
+
+
+    With the rapid and increasing number of open-access neuroimaging datasets, such as the Alzheimer’s Disease Neuroinitiative Initiative (ADNI) and the Human Connectome Project (HCP), there is a void for an analysis framework that (1) is reproducible and can deal with high-dimensional data structures, (2) is open-access and accessible to a large community, and (3) provides the best environment to perform fast and advanced statistical methods needed for such complex data. The R programming language satistifies 1,2, and 3.
+
+
+    In this tutorial, we will provide tutorials on how to use R for structural magnetic resonance imaging (MRI) analysis. We will show how to perform entire image analysis in R, from the scans in raw image format to the statistical analysis after image preprocessing, with an emphasis on reproducibility by using a single programming language. This course will use a real multiple sclerosis dataset and will show the steps of going from the raw image files to performing multiple sclerosis lesion classification with a number of classifiers entirely in R. In this hands-on tutorial, attendees will be given instructions for setup and data before the course, so that they are able to follow along and perform the analysis during the tutorial. 
+
+
+    The topics to be cover in the course are as follows:
+
+    a) Introduction to the Statistical Software R
+    b) Read and Write Images 
+    c) Visualization 
+    d) Inhomogeneity Correction 
+    e) Brain Extraction
+    f) Image Segmentation
+    g) Coregistration Within and Between MRI Studies
+    h) Intensity Normalization
+    i) Harmonization of mutli-site datasets
+
+4. **Timeliness and relevance of the proposed tutorial to `r conference`**
+    
+    Only within recent years has it become possible to perform entire image analysis completely and reproducibly in R. New R packages such as ANTsR (http://stnava.github.io/ANTsR/) and fslr (https://cran.r-project.org/web/packages/fslr/index.html) have made this possible. R is a powerful and open source statistical software that many members of `r conference` already use for post-processing statistical analysis; yet members may be unaware of the new and powerful potential of R for image preprocessing, allowing for the creation of a streamline reproducible pipeline for entire image analysis. This tutorial is designed to educate and instruct in a step-by-step manner how to perform an entire image analysis in R. In addition, if time permits, we will show how we can use several statistical methods from existing R packages to attack the crucial problem of harmonizing datasets coming from different imaging sites.
+5. **Intended target audience of the proposed tutorial**
+    The intended audience for this tutorial is broadly researchers and analysts working on structural MRI analysis. Prior knowledge of programming in R is useful, but not absolutely necessary.
+

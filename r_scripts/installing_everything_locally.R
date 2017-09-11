@@ -14,7 +14,7 @@ biocLite(pkgs = c("Biobase"), suppressUpdates = TRUE, suppressAutoUpdate = TRUE,
 devtools::install_github("muschellij2/dcm2niir")
 library(dcm2niir); install_dcm2nii()
 # HCP database connector
-devtools::install_github("muschellij2/hcp")
+devtools::install_github("muschellij2/neurohcp")
 # dcm2nii Rcpp implementation
 install.packages(c("RNifti", "divest", "oro.dicom", "oro.nifti", "WhiteStripe"))
 # data for whitestripe
