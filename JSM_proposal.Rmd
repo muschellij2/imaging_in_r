@@ -18,9 +18,9 @@ knitr::opts_chunk$set(echo = TRUE)
     Assistant Scientist in Biostatistics
     Johns Hopkins Bloomberg School of Public Health Baltimore, Maryland
 2.  (Presenter 2, **Course Contact**) Kristin Linn, PhD
-    Assistant Professor of Biostatistics in Biostatistics and Epidemiology
+    Assistant Professor of Biostatistics 
+    Department of Biostatistics, Epidemiology, and Informatics
     University of Pennsylvania, Philadelphia, PA
-    Department: Biostatistics and Epidemiology
 
 # Course Length:
 
@@ -46,7 +46,6 @@ Materials are located at: http://johnmuschelli.com/imaging_in_r/ for the course.
 Part I: Introduction
 Objectives
 Course materials available to participants (website, handout and its index, video recording)
-
 
 The topics to be cover in the course are as follows:
 
@@ -124,14 +123,15 @@ i) Harmonization of mutli-site datasets
 
 Learning outcomes (performance objectives)
 
-<!-- After the short course, participants will be able to -->
-<!-- Apply appropriate methods to analyze data in a contingency table -->
-<!-- State, interpret, and fit logistic, baseline-category, proportional odds, and Poisson regression models -->
-<!-- Use appropriate variable-selection methods -->
-<!-- Evaluate the fit of categorical regression models -->
-<!-- Identify and solve overdispersion problems -->
-<!-- Be comfortable with using R to analyze categorical data -->
-<!-- Content and instructional methods -->
+After the short course, participants will be able to:
+ - Work with NIFTI files R, including reading, writing, and manipulating images in this format. 
+ - Visualize images in R. 
+ - Apply appropriate algorithms implemented in various R packages to pre-process images in preparation for later statistical analyses.  
+ - Be aware of common errors in the pre-processing pipeline and identify appropriate ways to address them. 
+ - Be comfortable with using R to analyze neuroimaging data. 
+ 
+Content and instructional methods 
+
 <!-- We will describe models, focusing on when to use them, how to fit and interpret them, and how to examine the quality of their fit. We will use formulas and descriptions as necessary, as well as graphical representations where appropriate. We will provide R code and results for each analysis presented. Handouts will contain all of this content. Participants will be able to take notes on these handouts as we cover the material. The handouts will also contain a table of contents and an index to help participants quickly find content during and after the course. -->
 <!-- We will make a video recording of the course and post it to a web page shortly after the meetings. This recording will be created with Camtasia Studio and a high-definition camera affixed to a tripod. Included in this recording will be our computer screen along with live-action video focused on the podium from which we will present. -->
 <!-- We will use a pen-enabled, tablet computer to present the material in handouts and to interactively use R. The tablet allows us to annotate what is on the computer screen in simple ways such as highlighting topics of discussion and in more complex ways such as drawing diagrams. This ability to annotate can be especially helpful when responding to participant questions. -->
@@ -141,6 +141,9 @@ Learning outcomes (performance objectives)
 # Presenter Background:
 
 John Muschelli is a Research Assistant Professor in the Department of Biostatistics at the Johns Hopkins Bloomberg School of Public Health. His research has been published in a diverse set of outlets ranging from the Lancet, R Journal, NeuroImage, and Stroke.
+
+Kristin Linn is an Assistant Professor of Biostatistics in the Department of Biostatistics, Epidemiology, and Informatics at the University of Pennsylvania. She has been working on developing statistical methods for neuroimaging data for the past three years resulting in publications in both statistical and neuroimaging journals. In addition, her applied work has spaned multiple disease areas including Alzheimer's disease, Multiple Sclerosis, Depression, and neurological development in adolescence. 
+
 <!-- Since 2002, Bilder has taught a course on categorical data analysis to students majoring in statistics and to students majoring in a wide variety of other fields of study. He also has been a pioneer in using technology in and outside the classroom through his use of class video capturing, course websites, distance learning, hybrid (blended) learning, and tablets during his career. -->
 <!-- Thomas M. Loughin is a professional, accredited Statistician (P.Stat. American Statistical Association and Statistical Society of Canada) with extensive experience in both statistical applications and methodological development. As a professor at Kansas State University and at Simon Fraser University, Loughin has worked with hundreds of researchers in a wide array of disciplines, including agriculture, engineering, medicine, education, and other areas. He specializes in communication with subject-matter experts and students, re-expressing complex statistical concepts into language that is easy to understand. Loughin also has years of experience teaching a categorical data analysis course to statistics and non-statistics majors. -->
 <!-- Loughin is a fellow of the American Statistical Association. He has held positions on the editorial boards of Biometrics, Technometrics, and Developmental Medicine and Child Neurology. His research has been funded by the National Science Foundation, the Natural Sciences and Engineering Research Council, and numerous other agencies. -->
