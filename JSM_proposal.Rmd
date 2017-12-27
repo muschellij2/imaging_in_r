@@ -17,6 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 1.  (Presenter 1, **Course Contact**) John Muschelli, PhD 
     Assistant Scientist in Biostatistics
     Johns Hopkins Bloomberg School of Public Health Baltimore, Maryland
+    Email: jmuschel@jhsph.edu
 2.  (Presenter 2, **Course Contact**) Kristin Linn, PhD
     Assistant Professor of Biostatistics 
     Department of Biostatistics, Epidemiology, and Informatics
@@ -28,24 +29,24 @@ knitr::opts_chunk$set(echo = TRUE)
  
 # Co-sponsorship:
 
-Co-sponsor:	Statistics in Imaging Section	 
+<!-- Co-sponsor:	Statistics in Imaging Section	  -->
+Co-sponsor: Biometrics Section of the ASA
  
 # Course Information:
 
 Course Title:	Neuroimaging Analysis within R	 
  
 ## Abstract
-    In the neuroimaging community, there is a diverse and large set of software tools currently being used by analysts and researchers. There have been great strides in standardizing the syntax for multiple pieces of software, yet many of these languages do not have the statistical sophistication demanded to solve cutting-edge problems. R is a programming language that has the state of the art statistical tools that are relevant to imaging analysis. 
+
+In the neuroimaging community, there is a diverse and large set of software tools currently being used by analysts and researchers. There have been great strides in standardizing the syntax for multiple pieces of software, yet many of these languages do not have the statistical sophistication demanded to solve cutting-edge problems. R is a programming language that has the state of the art statistical tools that are relevant to imaging analysis. 
     With the rapid and increasing number of open-access neuroimaging datasets, there is a void for an analysis framework that (1) is reproducible and can deal with high-dimensional data structures, (2) is open-access and accessible to a large community, and (3) provides the best environment to perform fast and advanced statistical methods needed for such complex data. 
     In this tutorial, we will provide tutorials on how to use R for structural magnetic resonance imaging (MRI) analysis. We will show how to perform entire analysis in R, from the raw scans to the statistical analysis after image preprocessing. This course will use a real multiple sclerosis dataset and will go from raw image files to performing multiple sclerosis lesion classification.
     
 Materials are located at: http://johnmuschelli.com/imaging_in_r/ for the course.
 
-## Outline
+## Course Outline
 
-Part I: Introduction
-Objectives
-Course materials available to participants (website, handout and its index, video recording)
+Course materials available to participants (website, handout and its index, videos)
 
 The topics to be cover in the course are as follows:
 
@@ -119,18 +120,18 @@ i) Harmonization of mutli-site datasets
 <!-- Throughout the course, we will make use of real data sets on topics including: 1) HIV vaccine clinical trials, 2) Placekicking in football, 3) Wheat kernel quality, and 4) Alcohol consumption. -->
 <!-- The target audience for this course is individuals who want a broad overview of statistical methods used to analyze categorical data. The content may be new to participants or serve as a “refresher” for past experience, especially those who want to learn how to perform the analyses in R. The ideal background for participants is experience with multiple linear regression and with application of likelihood-based methods (particularly Wald and likelihood ratio methods). Familiarity with the basics of R, including object types and the use of functions, is recommended. This level of R background is meant to be low. Essentially, participants should understand R at the level of Appendix A of Bilder and Loughin (2014). We would be happy to provide this appendix to participants prior to the course. -->
 
-## Learning Objectives
+## Course Learning Objectives
 
 Learning outcomes (performance objectives)
 
 After the short course, participants will be able to:
- - Work with NIFTI files R, including reading, writing, and manipulating images in this format. 
+ - Work with NIFTI files R, including reading, writing, and manipulating images in this format.  This format is one of the most common formats in neuroimaging research
  - Visualize images in R. 
  - Apply appropriate algorithms implemented in various R packages to pre-process images in preparation for later statistical analyses.  
  - Be aware of common errors in the pre-processing pipeline and identify appropriate ways to address them. 
  - Be comfortable with using R to analyze neuroimaging data. 
+ - Discuss the state of the art in statistical analysis in structural and functional neuroimaging data
  
-Content and instructional methods 
 
 <!-- We will describe models, focusing on when to use them, how to fit and interpret them, and how to examine the quality of their fit. We will use formulas and descriptions as necessary, as well as graphical representations where appropriate. We will provide R code and results for each analysis presented. Handouts will contain all of this content. Participants will be able to take notes on these handouts as we cover the material. The handouts will also contain a table of contents and an index to help participants quickly find content during and after the course. -->
 <!-- We will make a video recording of the course and post it to a web page shortly after the meetings. This recording will be created with Camtasia Studio and a high-definition camera affixed to a tripod. Included in this recording will be our computer screen along with live-action video focused on the podium from which we will present. -->
@@ -140,7 +141,7 @@ Content and instructional methods
 
 # Presenter Background:
 
-John Muschelli is a Research Assistant Professor in the Department of Biostatistics at the Johns Hopkins Bloomberg School of Public Health. His research has been published in a diverse set of outlets ranging from the Lancet, R Journal, NeuroImage, and Stroke.
+John Muschelli is a Research Assistant Professor in the Department of Biostatistics at the Johns Hopkins Bloomberg School of Public Health. His research has been published in a diverse set of outlets ranging from the Lancet, R Journal, NeuroImage, and Stroke.  He has been developing a framework for integrating medical imaging analyses into the R statistical lanaguage.  His research has been on patients with hemorrhagic stroke, multiple sclerosis, and 
 
 Kristin Linn is an Assistant Professor of Biostatistics in the Department of Biostatistics, Epidemiology, and Informatics at the University of Pennsylvania. She has been working on developing statistical methods for neuroimaging data for the past three years resulting in publications in both statistical and neuroimaging journals. In addition, her applied work has spaned multiple disease areas including Alzheimer's disease, Multiple Sclerosis, Depression, and neurological development in adolescence. 
 
