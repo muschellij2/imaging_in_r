@@ -14,6 +14,9 @@ all:
 	for fol in $(LIST) ; do \
 		pwd && echo $$fol && cp makefile.copy $$fol/makefile && cd $$fol && make all && cd ../; \
 	done
+	for fol in $(LIST) ; do \
+		pwd && echo $$fol && cp $$fol/index.pdf pdfs/$$fol.pdf; \
+	done		
 	Rscript -e "rmarkdown::render('index.Rmd')"
 #  
 
