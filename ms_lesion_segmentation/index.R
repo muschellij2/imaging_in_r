@@ -13,23 +13,21 @@ library(oasis)
 library(dplyr)
 tr_files = get_image_filenames_list_by_subject(group = "training", type = "coregistered")
 ts_files = get_image_filenames_list_by_subject(group = "test", type = "coregistered")
-tr_t1s = lapply(tr_files, function(x) readnii(x["MPRAGE"]))
+tr_t1s = lapply(tr_files, function(x) readnii(x["T1"]))
 tr_t2s = lapply(tr_files, function(x) readnii(x["T2"]))
 tr_flairs = lapply(tr_files, function(x) readnii(x["FLAIR"]))
-tr_pds = lapply(tr_files, function(x) readnii(x["PD"]))
+tr_pds = NULL
 tr_masks = lapply(tr_files, function(x) readnii(x["Brain_Mask"]))
-tr_golds1 = lapply(tr_files, function(x) readnii(x["mask1"]))
-tr_golds2 = lapply(tr_files, function(x) readnii(x["mask2"]))
-ts_t1s = lapply(ts_files, function(x) readnii(x["MPRAGE"]))
+tr_golds = lapply(tr_files, function(x) readnii(x["mask"]))
+ts_t1s = lapply(ts_files, function(x) readnii(x["T1"]))
 ts_t2s = lapply(ts_files, function(x) readnii(x["T2"]))
 ts_flairs = lapply(ts_files, function(x) readnii(x["FLAIR"]))
-ts_pds = lapply(ts_files, function(x) readnii(x["PD"]))
+ts_pds = NULL
 ts_masks = lapply(ts_files, function(x) readnii(x["Brain_Mask"]))
 # John added for code to work
-tr_golds = tr_golds2
 
 ## ----over_show_run, echo=FALSE-------------------------------------------
-les_mask = tr_golds2$training05
+les_mask = tr_golds$training05
 
 # john code for choosing z-slice with highest # of voxels
 w = which(les_mask > 0, arr.ind = TRUE)

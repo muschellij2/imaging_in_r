@@ -15,7 +15,7 @@ all_files = get_image_filenames_list_by_subject(
   group = "training", 
   type = "coregistered")
 files = all_files$training05 # NOT training subject 1!
-t1 = readnii(files["MPRAGE"])
+t1 = readnii(files["T1"])
 rt1 = robust_window(t1)
 mask = readnii(files["Brain_Mask"])
 
@@ -30,13 +30,13 @@ hist(t1, mask = mask, breaks = 2000); text(x = 800, y = 3000, "outliers!")
 ortho2(rt1, t1 > 400, xyz = xyz(t1 > 400)) # xyz - cog of a region
 
 ## ----fast_show, eval = FALSE---------------------------------------------
-## t1file = files["MPRAGE"]
+## t1file = files["T1"]
 ## t1fast = fast(t1,
 ##               outfile = paste0(nii.stub(t1file), "_FAST"),
 ##               opts = "--nobias")
 
 ## ----fast_show_run, echo = FALSE-----------------------------------------
-t1file = files["MPRAGE"]
+t1file = files["T1"]
 outfile = paste0(nii.stub(t1file, bn = TRUE), "_FAST.nii.gz")
 if (!file.exists(outfile)) {
   t1fast = fast(t1file, 
@@ -66,10 +66,10 @@ robust_fast = readnii(files["FAST"])
 ## ----multi_overlay, eval = FALSE, echo = FALSE---------------------------
 ## separate = separate_img(robust_fast, levels = 1:3)
 ## names(separate) = c("CSF", "GM", "WM")
-## L = c(MPRAGE = list(t1), separate)
-## L$MPRAGE = robust_window(L$MPRAGE)
-## r = range(L$MPRAGE)
-## L$MPRAGE = (L$MPRAGE - r[1])/(r[2] - r[1])
+## L = c(T1 = list(t1), separate)
+## L$T1 = robust_window(L$T1)
+## r = range(L$T1)
+## L$T1 = (L$T1 - r[1])/(r[2] - r[1])
 ## dd = dropEmptyImageDimensions(t1fast > 0, other.imgs = L)
 ## L = dd$other.imgs
 ## multi_overlay(L, z = 58, text = names(L), text.x = 0.5, text.y = 1.4,
@@ -99,7 +99,7 @@ multi_overlay(x=rt1_list, y=m_list, col.y=alpha("red", 0.5), text=c("Raw", "Robu
 ## t1seg = t1_otropos$segmentation
 
 ## ----otropos_run, echo = FALSE-------------------------------------------
-t1file = files["MPRAGE"]
+t1file = files["T1"]
 outfile = paste0(nii.stub(t1file, bn = TRUE), "_Atropos.nii.gz")
 if (!file.exists(outfile)) {
   t1_otropos = otropos(a = t1, x = mask) # using robust

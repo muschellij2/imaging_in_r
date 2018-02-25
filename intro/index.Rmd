@@ -63,7 +63,7 @@ Email: klinn@mail.med.upenn.edu
 
 ## Imaging Data Used: Multiple Sclerosis
   
-- MRI is well-suited for assessing lesion burden (volume and patterns) because lesions appear as hyperintensities on FLAIR, T2-w, and PD images and as hypointensities on T1-w (MPRAGE) images.
+- MRI is well-suited for assessing lesion burden (volume and patterns) because lesions appear as hyperintensities on FLAIR and T2-w images and as hypointensities on T1-w images.
 - Using 5 training and 3 test subjects data from the MS lesion challenge 2016 (http://iacl.ece.jhu.edu/index.php/MSChallenge)
 
 ```{r readin, echo = FALSE, message=FALSE}
@@ -71,8 +71,8 @@ library(ms.lesion)
 library(neurobase)
 files = get_image_filenames_list_by_subject(type = "coregistered")
 files = files$training02
-img_fnames = files[c("MPRAGE", "T2", "FLAIR", "PD")]
-mask_fname = files["mask1"]
+img_fnames = files[c("T1", "T2", "FLAIR")]
+mask_fname = files["mask"]
 brain_mask = readnii(files["Brain_Mask"])
 imgs = check_nifti(img_fnames)
 mask = readnii(mask_fname)
@@ -163,6 +163,17 @@ install.packages("oro.nifti")
 ```
 
 `install.packages` is a function, `"oro.nifti"` is a character string.
+
+## Neuroconductor 
+
+* Most packages are in a repository [Comprehensive R Archive Network (CRAN)](https://cran.r-project.org/)
+* Neuroconductor (https://neuroconductor.org/) has packages related to medical imaging
+
+```r
+source("https://neuroconductor.org/neurocLite.R")
+neuro_install("oro.nifti")
+```
+
 
 ## Loading Packages
 

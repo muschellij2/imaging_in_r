@@ -1,4 +1,4 @@
----
+mpr---
 title: "General R (Reading and Writing Images)"
 output:
   ioslides_presentation:
@@ -211,9 +211,9 @@ library(neurobase)
 
 We will use the `readnii` function (from `neurobase`) to read in a `nifti` object (this is an `R` object).
 
-Here we read in the "training01_01_mprage.nii.gz" file, and assign it to an object called `t1`:
+Here we read in the "training01_01_t1.nii.gz" file, and assign it to an object called `t1`:
 ```{r}
-t1 = readnii("training01_01_mprage.nii.gz")
+t1 = readnii("training01_01_t1.nii.gz")
 ```
 
 Now, an object `t1` is in memory/the workspace.
@@ -309,8 +309,8 @@ Note, although `t1_copy` was copied from `t1`, they are not linked - if you chan
 We now can write out this modified `t1_copy` image:
 ```{r}
 writenii(nim = t1_copy, 
-         filename = "training01_mprage_under400.nii.gz")
-file.exists("training01_mprage_under400.nii.gz")
+         filename = "training01_t1_under400.nii.gz")
+file.exists("training01_t1_under400.nii.gz")
 ```
 
 We have seen that `file.exists` returns `TRUE` if a file exists 

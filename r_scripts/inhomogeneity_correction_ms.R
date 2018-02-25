@@ -9,7 +9,7 @@ library(extrantsr)
 library(scales)
 
 ## ----reading_in_image----------------------------------------------------
-t1 = neurobase::readnii("training01_01_mprage.nii.gz")
+t1 = neurobase::readnii("training01_01_t1.nii.gz")
 
 ## ----ortho2_show---------------------------------------------------------
 ortho2(robust_window(t1))
@@ -22,7 +22,7 @@ image(robust_window(t1), useRaster = TRUE)
 ## bc_t1 = bias_correct(file = t1, correction = "N4")
 
 ## ----bc_run, echo = FALSE------------------------------------------------
-out_fname = "../output/training01_01_mprage_n4.nii.gz"
+out_fname = "../output/training01_01_t1_n4.nii.gz"
 if (!file.exists(out_fname)) {
   bc_t1 = bias_correct(file = t1, correction = "N4")
 } else {
@@ -30,7 +30,7 @@ if (!file.exists(out_fname)) {
 }
 
 ## ---- eval = FALSE-------------------------------------------------------
-## bc_t1 = bias_correct(file = "training01_01_mprage.nii.gz", correction = "N4")
+## bc_t1 = bias_correct(file = "training01_01_t1.nii.gz", correction = "N4")
 
 ## ----ratio_plot----------------------------------------------------------
 ratio = t1 / bc_t1; ortho2(t1, ratio)

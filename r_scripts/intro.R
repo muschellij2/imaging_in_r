@@ -8,8 +8,8 @@ library(ms.lesion)
 library(neurobase)
 files = get_image_filenames_list_by_subject(type = "coregistered")
 files = files$training02
-img_fnames = files[c("MPRAGE", "T2", "FLAIR", "PD")]
-mask_fname = files["mask1"]
+img_fnames = files[c("T1", "T2", "FLAIR")]
+mask_fname = files["mask"]
 brain_mask = readnii(files["Brain_Mask"])
 imgs = check_nifti(img_fnames)
 mask = readnii(mask_fname)

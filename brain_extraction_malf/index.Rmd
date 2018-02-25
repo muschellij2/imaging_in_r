@@ -11,6 +11,7 @@ bibliography: ../refs.bib
 ```{r setup, include=FALSE}
 library(methods)
 knitr::opts_chunk$set(echo = TRUE, comment = "")
+library(extrantsr)
 ```
 
 
@@ -29,13 +30,13 @@ In this tutorial we will discuss performing brain segmentation using:
 - (extra slides) a robust version using a wrapper function in `extrantsr`, `fslbet_robust`
 
 
-## MS Lesion MPRAGE
+## MS Lesion T1
 
 Let's reset and read in the T1 image from a MS lesion data set:
 
 ```{r reading_in_image, message = FALSE}
 library(neurobase)
-t1_fname = "training01_01_mprage.nii.gz"
+t1_fname = "training01_01_t1.nii.gz"
 t1 = neurobase::readnii(t1_fname)
 rt1 = robust_window(t1); 
 red0.5 = scales::alpha("red", 0.5) # for plotting later
@@ -47,13 +48,13 @@ red0.5 = scales::alpha("red", 0.5) # for plotting later
 <!-- library(ms.lesion) -->
 <!-- library(neurobase) -->
 <!-- files = get_image_filenames_list_by_subject()$training01 -->
-<!-- t1_fname = files["MPRAGE"] -->
+<!-- t1_fname = files["T1"] -->
 <!-- t1 = readnii(t1_fname) -->
 <!-- rt1 = robust_window(t1); -->
 <!-- red0.5 = scales::alpha("red", 0.5) -->
 <!-- ``` -->
 
-## T1-weighted MPRAGE Image
+## T1-weighted T1 Image
 
 ```{r t1_plot_robust}
 ortho2(rt1)
@@ -117,8 +118,13 @@ bc_img = bias_correct(file = t1, correction = "N4")
 ```
 
 ```{r bc_show_run, echo = FALSE}
-bc_fname = "../output/training01_01_mprage_n4.nii.gz"
-bc_img = readnii(bc_fname)
+bc_fname = "../output/training01_01_t1_n4.nii.gz"
+if (!file.exists(bc_fname)) {
+  bc_img = bias_correct(file = t1, correction = "N4")
+  writenii(bc_img, bc_fname)
+} else {
+  bc_img = readnii(bc_fname)
+}
 bc_img = robust_window(bc_img)
 ```
 
@@ -199,7 +205,7 @@ mask = ss > 0
 library(malf.templates)
 library(extrantsr)
 timgs = mass_images(n_templates = 5)
-outfile = "../output/training01_01_mprage_mask.nii.gz"
+outfile = "../output/training01_01_t1_mask.nii.gz"
 if (!file.exists(outfile)) {
   ss = malf(
     infile = bc_fname, 
@@ -220,7 +226,7 @@ mask = ss > 0
 
 
 ```{r show_them, eval = FALSE}
-mask = readnii("training01_01_mprage_mask.nii.gz") # already computed
+mask = readnii("training01_01_t1_mask.nii.gz") # already computed
 ```
 
 ```{r display_malf_result}

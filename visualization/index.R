@@ -8,7 +8,7 @@ library(extrantsr)
 library(scales)
 
 ## ----colon_twice---------------------------------------------------------
-t1 = neurobase::readnii("training01_01_mprage.nii.gz")
+t1 = neurobase::readnii("training01_01_t1.nii.gz")
 
 ## ----dens----------------------------------------------------------------
 plot(density(t1)) # large spike at 0

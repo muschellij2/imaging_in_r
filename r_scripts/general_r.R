@@ -80,7 +80,7 @@ library(oro.nifti)
 library(neurobase)
 
 ## ------------------------------------------------------------------------
-t1 = readnii("training01_01_mprage.nii.gz")
+t1 = readnii("training01_01_t1.nii.gz")
 
 ## ----t1class-------------------------------------------------------------
 class(t1)
@@ -120,8 +120,8 @@ max(t1)
 
 ## ------------------------------------------------------------------------
 writenii(nim = t1_copy, 
-         filename = "training01_mprage_under400.nii.gz")
-file.exists("training01_mprage_under400.nii.gz")
+         filename = "training01_t1_under400.nii.gz")
+file.exists("training01_t1_under400.nii.gz")
 
 ## ----vec_nifti, cache=FALSE----------------------------------------------
 vals = c(t1)
