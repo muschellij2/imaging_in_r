@@ -4,7 +4,9 @@ output:
   ioslides_presentation:
     widescreen: yes
     css: ../styles.css
-  beamer_presentation: default
+    keep_md: true
+  beamer_presentation: 
+    keep_md: true
 bibliography: ../refs.bib       
 ---
 
@@ -39,8 +41,10 @@ library(fslr)
 library(scales)
 library(oasis)
 library(dplyr)
-tr_files = get_image_filenames_list_by_subject(group = "training", type = "coregistered")
-ts_files = get_image_filenames_list_by_subject(group = "test", type = "coregistered")
+tr_files = get_image_filenames_list_by_subject(
+  group = "training", type = "coregistered")
+ts_files = get_image_filenames_list_by_subject(
+  group = "test", type = "coregistered")
 tr_t1s = lapply(tr_files, function(x) readnii(x["T1"]))
 tr_t2s = lapply(tr_files, function(x) readnii(x["T2"]))
 tr_flairs = lapply(tr_files, function(x) readnii(x["FLAIR"]))
@@ -75,7 +79,7 @@ ortho2(robust_window(tr_flairs$training05), les_mask, xyz = xyz, col.y = scales:
 
 ## MS Lesion Segmentation with OASIS
 - **O**ASIS is **A**utomated **S**tatistical **I**nference for **S**egmentation [@sweeney2013oasis].
-- OASIS takes FLAIR, T1, T2, and PD images. 
+- OASIS takes FLAIR, T1, T2, and PD (optional) images. 
     - Produces OASIS probability maps of MS lesion presence.
     - These can be thresholded into a binary lesion segmentation.
 - The OASIS model is based on a logistic regression. 
@@ -127,8 +131,7 @@ ortho2(ts_flairs$test01, les_mask, xyz = xyz)
 - Here's the binary mask for test subject 01, using the default 0.16 threshold:
 
 ```{r viz_02, echo=FALSE}
-les_mask[les_mask<.16] = 0
-les_mask[les_mask!=0] = 1
+les_mask = default_ts[[1]] > 0.16
 ortho2(ts_flairs$test01, les_mask, col.y=alpha("red", 0.5), xyz = xyz)
 ```
 
@@ -193,7 +196,7 @@ dfDice = sapply(tbls_df, dice)
 
 
 diceDF = data.frame(Subject=factor(rep(1:5)), 
-                    Rater=factor(1), Dice=c(dfDice))
+                    Dice=c(dfDice))
 g = ggplot(diceDF, aes(x=Subject, y=Dice)) + 
        geom_histogram(position="dodge", stat="identity")
 print(g)
@@ -216,7 +219,7 @@ and (2) rigid coregistration using `flirt` to the T1 space.
 make_df = function(x){
   res = oasis_train_dataframe(
       flair=tr_flairs[[x]], t1=tr_t1s[[x]], t2=tr_t2s[[x]],
-      pd=tr_pds[[x]], gold_standard=tr_golds2[[x]], 
+      pd=tr_pds[[x]], gold_standard=tr_golds[[x]], 
       brain_mask=tr_masks[[x]], 
       preproc=FALSE, normalize=TRUE, return_preproc=FALSE)
   return(res$oasis_dataframe)
@@ -283,13 +286,7 @@ colnames(df) = c("ID", "Dice")
 pander(df)
 ```
 
-<!-- |   |  Rater 1|  Rater 2| -->
-<!-- |------:|------:|------:| -->
-<!-- | 01 |  `r round(100*(trDice1[[1]]-dfDice1[[1]])/dfDice1[[1]], 1)`|  `r round(100*(trDice2[[1]]-dfDice2[[1]])/dfDice2[[1]])`| -->
-<!-- | 02 |  `r round(100*(trDice1[[2]]-dfDice1[[2]])/dfDice1[[2]])`|  `r round(100*(trDice2[[2]]-dfDice2[[2]])/dfDice2[[2]])`| -->
-<!-- | 03 |  `r round(100*(trDice1[[3]]-dfDice1[[3]])/dfDice1[[3]])`|  `r round(100*(trDice2[[3]]-dfDice2[[3]])/dfDice2[[3]])`| -->
-<!-- | 04 |  `r round(100*(trDice1[[4]]-dfDice1[[4]])/dfDice1[[4]])`|  `r round(100*(trDice2[[4]]-dfDice2[[4]])/dfDice2[[4]])`| -->
-<!-- | 05 |  `r round(100*(trDice1[[5]]-dfDice1[[5]])/dfDice1[[5]])`|  `r round(100*(trDice2[[5]]-dfDice2[[5]])/dfDice2[[5]])`| -->
+
 
 ## Wrap-up
 - We've covered all (or most) image pre-procssing steps in a typical image pre-processing pipeline, starting with raw nifti images. 

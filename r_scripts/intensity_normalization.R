@@ -7,7 +7,7 @@ library(neurobase)
 library(WhiteStripe)
 fnames = get_image_filenames_list_by_subject(group = "training", 
   type = "coregistered")
-t1s = lapply(fnames, function(x) readnii(x["MPRAGE"]))
+t1s = lapply(fnames, function(x) readnii(x["T1"]))
 tissues = lapply(fnames, function(x) readnii(x["Tissue_Classes"]))
 masks = lapply(fnames, function(x) readnii(x["Brain_Mask"]))
 

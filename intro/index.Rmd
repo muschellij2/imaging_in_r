@@ -64,7 +64,7 @@ Email: klinn@mail.med.upenn.edu
 ## Imaging Data Used: Multiple Sclerosis
   
 - MRI is well-suited for assessing lesion burden (volume and patterns) because lesions appear as hyperintensities on FLAIR and T2-w images and as hypointensities on T1-w images.
-- Using 5 training and 3 test subjects data from the MS lesion challenge 2016 (http://iacl.ece.jhu.edu/index.php/MSChallenge)
+- Using 5 training and 3 test subjects data from the an open MS data set (http://lit.fe.uni-lj.si/tools.php?lang=eng) [@lesjak2017novel]
 
 ```{r readin, echo = FALSE, message=FALSE}
 library(ms.lesion)

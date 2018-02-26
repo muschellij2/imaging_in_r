@@ -1611,19 +1611,33 @@ biocLite(pkgs = c(&quot;Biobase&quot;), suppressUpdates = TRUE, suppressAutoUpda
 <h2><span class="header-section-number">2.6</span> Neuroimaging packages on Github</h2>
 <section id="standard-packages" class="level3">
 <h3><span class="header-section-number">2.6.1</span> Standard Packages</h3>
-<pre class="r"><code># DICOM converter
-devtools::install_github(&quot;muschellij2/dcm2niir&quot;)
+<pre class="r"><code>source(&quot;https://neuroconductor.org/neurocLite.R&quot;)
+# DICOM converter
+neuro_install(&quot;dcm2niir&quot;)
 library(dcm2niir); install_dcm2nii()
 # HCP database connector
-devtools::install_github(&quot;muschellij2/neurohcp&quot;)
+neuro_install(&quot;neurohcp&quot;)
 # dcm2nii Rcpp implementation
-install.packages(c(&quot;RNifti&quot;, &quot;divest&quot;, &quot;oro.dicom&quot;, &quot;oro.nifti&quot;, &quot;WhiteStripe&quot;))
+neuro_install(c(&quot;RNifti&quot;, &quot;divest&quot;, &quot;oro.dicom&quot;, &quot;oro.nifti&quot;, &quot;WhiteStripe&quot;))
 # data for whitestripe
 library(WhiteStripe); download_img_data()
 
 # neurobase package
-devtools::install_github(&quot;muschellij2/neurobase&quot;)
-devtools::install_github(&quot;muschellij2/fslr&quot;)</code></pre>
+neuro_install(&quot;neurobase&quot;)
+neuro_install(&quot;fslr&quot;)</code></pre>
+<!-- source("https://neuroconductor.org/neurocLite.R") -->
+<!-- # DICOM converter -->
+<!-- devtools::install_github("muschellij2/dcm2niir") -->
+<!-- library(dcm2niir); install_dcm2nii() -->
+<!-- # HCP database connector -->
+<!-- devtools::install_github("muschellij2/neurohcp") -->
+<!-- # dcm2nii Rcpp implementation -->
+<!-- install.packages(c("RNifti", "divest", "oro.dicom", "oro.nifti", "WhiteStripe")) -->
+<!-- # data for whitestripe -->
+<!-- library(WhiteStripe); download_img_data() -->
+<!-- # neurobase package -->
+<!-- devtools::install_github("muschellij2/neurobase") -->
+<!-- devtools::install_github("muschellij2/fslr") -->
 </section>
 <section id="antsr" class="level3">
 <h3><span class="header-section-number">2.6.2</span> ANTsR</h3>
@@ -1631,11 +1645,10 @@ devtools::install_github(&quot;muschellij2/fslr&quot;)</code></pre>
 <pre class="r"><code>##########################################
 # ANTs
 ##########################################
-devtools::install_github(&quot;stnava/ITKR&quot;)
-devtools::install_github(&quot;stnava/ANTsRCore&quot;, upgrade_dependencies = FALSE)
-devtools::install_github(&quot;stnava/ANTsR&quot;, upgrade_dependencies = FALSE)
-devtools::install_github(&quot;muschellij2/extrantsr&quot;, 
-                         upgrade_dependencies = FALSE)</code></pre>
+neuro_install(&quot;ITKR&quot;)
+neuro_install(&quot;ANTsRCore&quot;, upgrade_dependencies = FALSE)
+neuro_install(&quot;ANTsR&quot;, upgrade_dependencies = FALSE)
+neuro_install(&quot;extrantsr&quot;, upgrade_dependencies = FALSE)</code></pre>
 </section>
 <section id="knitting-using-rstudio" class="level3">
 <h3><span class="header-section-number">2.6.3</span> Knitting using RStudio</h3>
@@ -1648,10 +1661,10 @@ devtools::install_github(&quot;muschellij2/extrantsr&quot;,
 # Install MS LESION DATA!
 # INSTALL KIRBY21
 ##############################
-devtools::install_github(&quot;muschellij2/papayar&quot;)
-devtools::install_github(&quot;emsweene/oasis&quot;)
-devtools::install_github(&quot;muschellij2/malf.templates&quot;)
-devtools::install_github(&quot;muschellij2/kirby21.t1&quot;)</code></pre>
+neuro_install(&quot;papayar&quot;)
+neuro_install(&quot;oasis&quot;)
+neuro_install(&quot;malf.templates&quot;)
+neuro_install(&quot;kirby21.t1&quot;)</code></pre>
 </section>
 </section>
 </section>

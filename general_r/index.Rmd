@@ -365,7 +365,7 @@ c(nii.stub(x), nii.stub(x, bn = TRUE))
 Data Package we will use
 
 * `ms.lesion` - contains training/testing data of patients with multiple sclerosis (MS)
-    - from the MS lesion challenge 2016 (http://iacl.ece.jhu.edu/index.php/MSChallenge)
+    - from an open MS MRI data set [@lesjak2017novel]
 
 
  

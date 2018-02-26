@@ -162,7 +162,7 @@ double_ortho(t1, sm_img)
 
 <!-- The `ms.lesion` package was made for this course.  It has all the data we will work with and the outputs from the analyses.   -->
 
-<!-- The main function we will use is `get_image_filenames_list_by_subject`.  It returns a `list` of filenames of the images for the 5 training and 3 test subjects from the MS lesion challenge 2016 (http://iacl.ece.jhu.edu/index.php/MSChallenge) -->
+<!-- The main function we will use is `get_image_filenames_list_by_subject`.  It returns a `list` of filenames of the images for the 5 training and 3 test subjects from and open MS data set [@lesjak2017novel] -->
 
 <!-- - The full data is available at https://smart-stats-tools.org.  -->
 
