@@ -14,6 +14,10 @@ t1 = neurobase::readnii("training01_01_t1.nii.gz")
 ## ----ortho2_show---------------------------------------------------------
 ortho2(robust_window(t1))
 
+## ----ortho2_show_flair---------------------------------------------------
+flair = neurobase::readnii("training01_01_flair.nii.gz")
+ortho2(robust_window(flair))
+
 ## ----lightbox------------------------------------------------------------
 image(robust_window(t1), useRaster = TRUE)
 

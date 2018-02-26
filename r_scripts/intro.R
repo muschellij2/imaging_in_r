@@ -20,5 +20,5 @@ mask = applyEmptyImageDimensions(mask, inds = inds)
 zimgs = c(zimgs, Lesion_Mask = list(mask * 10))
 xyz = xyz(mask)
 multi_overlay(zimgs, z = xyz[3], text = names(zimgs), 
-              text.x = 0.5, text.y = 1.25, text.cex = 2)
+              text.x = 0.5, text.y = 2.25, text.cex = 2)
 

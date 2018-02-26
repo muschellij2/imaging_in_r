@@ -51,6 +51,14 @@ It's hard to see subtler bias fields, but sometimes they can be seen visually.
 ortho2(robust_window(t1))
 ```
 
+## Image Data
+
+```{r ortho2_show_flair}
+flair = neurobase::readnii("training01_01_flair.nii.gz")
+ortho2(robust_window(flair))
+```
+
+
 ## Image Data: Lightbox
 
 ```{r lightbox}
