@@ -176,7 +176,12 @@ The output in `reg` would contain the transformed image and paths to the estimat
 
 ## FLAIR comparison
 
-```{r plot_reg, eval = TRUE, cache = TRUE, message=FALSE}
+```{r plot_reg, eval = FALSE, cache = FALSE, message=FALSE}
+double_ortho(rt1, reg$outfile)
+```
+
+```{r plot_reg_show, echo = FALSE, eval = TRUE, cache = TRUE, message=FALSE}
+reg$outfile = robust_window(reg$outfile)
 double_ortho(rt1, reg$outfile)
 ```
 

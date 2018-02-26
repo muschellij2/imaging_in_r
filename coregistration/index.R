@@ -41,7 +41,11 @@ reg = registration(filename = files["FLAIR"],
                    interpolator = "Linear")
 names(reg)
 
-## ----plot_reg, eval = TRUE, cache = TRUE, message=FALSE------------------
+## ----plot_reg, eval = FALSE, cache = FALSE, message=FALSE----------------
+## double_ortho(rt1, reg$outfile)
+
+## ----plot_reg_show, echo = FALSE, eval = TRUE, cache = TRUE, message=FALSE----
+reg$outfile = robust_window(reg$outfile)
 double_ortho(rt1, reg$outfile)
 
 ## ---- eval = FALSE-------------------------------------------------------

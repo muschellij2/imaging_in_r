@@ -157,7 +157,7 @@ ortho2(bc_img, bc_bet > 0, col.y = red0.5)
 <div id="left_col">
 Figure from Multi-Atlas Skull Stripping method paper [@mass]:
 
-<img src="figures/malf_figure.jpg" style="width: 80%; display: block; margin: auto;">
+<img src="malf_figure.jpg" style="width: 80%; display: block; margin: auto;">
 </div>
 <div id="right_col">
 - Register templates to an image using the T1 for that subject

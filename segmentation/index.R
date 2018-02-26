@@ -29,6 +29,14 @@ hist(t1, mask = mask, breaks = 2000); text(x = 800, y = 3000, "outliers!")
 ## ----which_big-----------------------------------------------------------
 ortho2(rt1, t1 > 400, xyz = xyz(t1 > 400)) # xyz - cog of a region
 
+## ----run_window----------------------------------------------------------
+t1[ t1 < 0 ] = 0
+t1 = mask_img(t1, mask)
+rt1 = robust_window(t1)
+
+## ----which_big_after_robust----------------------------------------------
+hist(rt1, mask = mask, breaks = 2000); 
+
 ## ----fast_show, eval = FALSE---------------------------------------------
 ## t1file = files["T1"]
 ## t1fast = fast(t1,
@@ -39,7 +47,7 @@ ortho2(rt1, t1 > 400, xyz = xyz(t1 > 400)) # xyz - cog of a region
 t1file = files["T1"]
 outfile = paste0(nii.stub(t1file, bn = TRUE), "_FAST.nii.gz")
 if (!file.exists(outfile)) {
-  t1fast = fast(t1file, 
+  t1fast = fast(t1, 
                 opts = "--nobias")
   writenii(t1fast, filename = outfile)
 } else {
