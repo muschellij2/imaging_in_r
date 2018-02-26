@@ -14,8 +14,14 @@ t1 = neurobase::readnii("training01_01_t1.nii.gz")
 ## ----ortho2_show---------------------------------------------------------
 ortho2(robust_window(t1))
 
-## ----ortho2_show_flair---------------------------------------------------
+## ----ortho2_show_flair, eval = FALSE-------------------------------------
+## flair = neurobase::readnii("training01_01_flair.nii.gz")
+## ortho2(robust_window(flair))
+
+## ----ortho2_run_flair, echo = FALSE--------------------------------------
 flair = neurobase::readnii("training01_01_flair.nii.gz")
+flair = drop_empty_dim(flair > 50, other.imgs = flair)
+flair = flair$other.imgs
 ortho2(robust_window(flair))
 
 ## ----lightbox------------------------------------------------------------
