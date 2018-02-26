@@ -54,6 +54,11 @@ mask = readnii(files["Brain_Mask"])
 # t1 = window_img(t1, window = c(0, 300))
 ```
 
+```{r reduce}
+run_mask = t1 > 100
+dd_orig = drop_empty_dim(run_mask, keep_ind = TRUE)
+```
+
 ## Tissue Segmentation: Large Outliers
 - Many tissue class segmentations are based on k-means clustering.
 - These methods can be skewed by large outliers.
@@ -64,8 +69,14 @@ hist(t1, mask = mask, breaks = 2000); text(x = 800, y = 3000, "outliers!")
 
 ## Where are the outliers?
 
-```{r which_big}
+```{r which_big, eval = FALSE}
 ortho2(rt1, t1 > 400, xyz = xyz(t1 > 400)) # xyz - cog of a region
+```
+
+```{r which_big_show, echo = FALSE}
+xrt1 = apply_empty_dim(rt1, inds = dd_orig$inds)
+xt1 = apply_empty_dim(t1, inds = dd_orig$inds)
+ortho2(xrt1, xt1 > 400, xyz = xyz(xt1 > 400)) 
 ```
 
 ## Cleaning up values: Masking the image
@@ -120,20 +131,34 @@ FAST assumes three tissue classes and produces an image with the three labels, o
 
 ## FAST: White Matter
 
-```{r fast_wm_nonrobust}
+```{r fast_wm_nonrobust, eval = FALSE}
 ortho2(rt1, t1fast == 3, col.y = alpha("red", 0.5), text = "White Matter")
+```
+
+```{r fast_wm_nonrobust_show, echo = FALSE}
+xrt1 = apply_empty_dim(rt1, inds = dd_orig$inds)
+xt1fast = apply_empty_dim(t1fast, inds = dd_orig$inds)
+ortho2(xrt1, xt1fast == 3, col.y = alpha("red", 0.5), text = "White Matter")
 ```
 
 ## FAST: Gray Matter
 
-```{r fast_gm_nonrobust}
+```{r fast_gm_nonrobust, eval = FALSE}
 ortho2(rt1, t1fast == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
+```
+
+```{r fast_gm_nonrobust_show, echo = FALSE}
+ortho2(xrt1, xt1fast == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 ```
 
 ## FAST: CSF
 
-```{r fast_csf_nonrobust}
+```{r fast_csf_nonrobust, eval = FALSE}
 ortho2(rt1, t1fast == 1, col.y = alpha("red", 0.5), text = "CSF")
+```
+
+```{r fast_csf_nonrobust_show, echo = FALSE}
+ortho2(xrt1, xt1fast == 1, col.y = alpha("red", 0.5), text = "CSF")
 ```
 
 
@@ -222,22 +247,35 @@ if (!file.exists(outfile)) {
 
 ## Atropos: White Matter
 
-```{r otropos_wm}
+```{r otropos_wm, eval = FALSE}
 ortho2(rt1, t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
+```
+
+```{r otropos_wm_show, echo = FALSE}
+xt1seg = apply_empty_dim(t1seg, inds = dd_orig$inds)
+ortho2(xrt1, xt1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
 ```
 
 ## Atropos: Gray Matter
 
-```{r otropos_gm}
+```{r otropos_gm, eval = FALSE}
 ortho2(rt1, t1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
+```
+
+```{r otropos_gm_show, echo = FALSE}
+ortho2(xrt1, xt1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 ```
 
 ## Atropos: CSF
 
-```{r otropos_csf}
+
+```{r otropos_csf, eval = FALSE}
 ortho2(rt1, t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 ```
 
+```{r otropos_csf_show, echo = FALSE}
+ortho2(xrt1, xt1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
+```
 
 ## Default Atropos Results
 
@@ -259,28 +297,48 @@ robust_t1seg = robust_t1_otropos$segmentation
 robust_t1seg = readnii(files["Tissue_Classes"])
 ```
 
-```{r atropos_robust_overall}
+```{r atropos_robust_overall_show, eval = FALSE}
 double_ortho(rt1, robust_t1seg)
+```
+
+```{r atropos_robust_overall, echo = FALSE}
+xrobust_t1seg = apply_empty_dim(
+  robust_t1seg, 
+  inds = dd_orig$inds)
+double_ortho(xrt1, xrobust_t1seg)
 ```
 
 
 ## Atropos with Window: White Matter
 
-```{r otropos_wm_robust}
+```{r otropos_wm_robust_show, eval = FALSE}
 ortho2(rt1, robust_t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
+```
+
+```{r otropos_wm_robust, echo = FALSE}
+ortho2(xrt1, xrobust_t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
 ```
 
 ## Atropos with Window: Gray Matter
 
-```{r otropos_gm_robust}
+```{r otropos_gm_robust_show, eval = FALSE}
 ortho2(rt1, robust_t1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
+```
+
+```{r otropos_gm_robust, echo = FALSE}
+ortho2(xrt1, xrobust_t1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 ```
 
 ## Atropos with Window: CSF
 
-```{r otropos_csf_robust}
+```{r otropos_csf_robust_show, eval = FALSE}
 ortho2(rt1, robust_t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 ```
+
+```{r otropos_csf_robust, echo = FALSE}
+ortho2(xrt1, xrobust_t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
+```
+
 
 ## Atropos with Window Results
 
