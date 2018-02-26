@@ -8,10 +8,7 @@ output:
 bibliography: ../refs.bib       
 ---
 
-```{r setup, include=FALSE}
-library(methods)
-knitr::opts_chunk$set(echo = TRUE, comment = "")
-```
+
 
 # R Basics 
 
@@ -33,14 +30,24 @@ knitr::opts_chunk$set(echo = TRUE, comment = "")
 ## Initializing: vectors 
 
 - Use `c()` to create a vector of numeric values: 
-```{r vec}
+
+```r
 v = c(1, 4, 3, 7, 8)
 print(v)
 ```
+
+```
+[1] 1 4 3 7 8
+```
 - Shortcut for sequential numeric vector:
-```{r vec2}
+
+```r
 w = 1:5
 print(w)
+```
+
+```
+[1] 1 2 3 4 5
 ```
 
 The gray boxes denote code, and the lines after denote the output.  
@@ -51,7 +58,8 @@ In `R`, you can assign using the equals `=` or arrow `<-` (aka assigment operato
 
 The above commands are equivalent to:
 
-```{r, eval = FALSE}
+
+```r
 w = 1:5
 w <- 1:5
 ```
@@ -71,13 +79,15 @@ Variable/object names:
 - To see the documentation for a function, use the `?` symbol before the name of the function.  This is a shortcut for the `help` command:
 - For example, to see documentation for `c`:
 
-```{r help, eval = FALSE}
+
+```r
 ?c
 help(topic = "c")
 ```
 - To search for help files, use a double `??` or `help.search`:
 
-```{r help2, eval = FALSE}
+
+```r
 ??c
 help.search(pattern = "c")
 ```
@@ -90,7 +100,8 @@ help.search(pattern = "c")
 
 You can also be explicit about which package you are using with the `::` operator, where the syntax is `package::function()`:
 
-```{r colon_twice, eval=FALSE}
+
+```r
 utils::help("c")
 ```
 
@@ -98,52 +109,131 @@ utils::help("c")
 
 - Create a 3 x 4 numeric matrix and assign to variable `m`
     - note items are added column-wise 
-```{r mat}
+
+```r
 m = matrix(1:12, nrow = 3)
 print(m)
 ```
+
+```
+     [,1] [,2] [,3] [,4]
+[1,]    1    4    7   10
+[2,]    2    5    8   11
+[3,]    3    6    9   12
+```
 - Create a 3 x 4 x 3 numeric array and assign to variable `a`
-```{r arr}
+
+```r
 a = array(1:36, dim = c(3, 4, 3))
 ```
 - the `dim()` function returns the dimensions of the array
-```{r dim}
+
+```r
 dim(a)
+```
+
+```
+[1] 3 4 3
 ```
 
 ## Subsetting: vectors
 
 - Subsetting a vector (first index is `1`, not zero):
-```{r vecSub}
+
+```r
 print(v)
+```
+
+```
+[1] 1 4 3 7 8
+```
+
+```r
 print(v[4])
+```
+
+```
+[1] 7
+```
+
+```r
 print(v[1:3])
+```
+
+```
+[1] 1 4 3
+```
+
+```r
 print(v[c(1,3,5)])
+```
+
+```
+[1] 1 3 8
 ```
 
 ## Subsetting: matrices
 
 - Subsetting a matrix - `[row,column]` format, 
-```{r matSub}
+
+```r
 print(m[1,3])
+```
+
+```
+[1] 7
+```
+
+```r
 print(m[1:2,3:4])
 ```
+
+```
+     [,1] [,2]
+[1,]    7   10
+[2,]    8   11
+```
 - if `row` or `column` missing then all values printed:
-```{r matsub2}
+
+```r
 print(m[,4])
+```
+
+```
+[1] 10 11 12
+```
+
+```r
 print(m[2,])
+```
+
+```
+[1]  2  5  8 11
 ```
 
 ## Subsetting: arrays
 
 - Subsetting - `[x,y,z]` format:
-```{r arrSub}
+
+```r
 print(a[1,1,1])
+```
+
+```
+[1] 1
+```
+
+```r
 dim(a[,4,])
 ```
 
+```
+[1] 3 3
+```
+
 This will return an error - need to specify all dims:
-```{r arrSub_bad, eval = FALSE}
+
+```r
 a[,4]
 ```
 
@@ -152,11 +242,41 @@ a[,4]
 - Arithmetic: `+`, `-`, `*`, `/`, `^` - exponents
 - Standard math functions: `log`, `abs`, `sqrt`
 
-```{r add_vw}
+
+```r
 print(v); print(w)
+```
+
+```
+[1] 1 4 3 7 8
+```
+
+```
+[1] 1 2 3 4 5
+```
+
+```r
 print(v + 4)
+```
+
+```
+[1]  5  8  7 11 12
+```
+
+```r
 print(v + w)
+```
+
+```
+[1]  2  6  6 11 13
+```
+
+```r
 print(sqrt(w^2))
+```
+
+```
+[1] 1 2 3 4 5
 ```
 
 ## Operators in R: return logical
@@ -165,25 +285,68 @@ print(sqrt(w^2))
 - Logical: `!` - not, `&` - and, `|` - or (a "pipe")
 - `all()`: function to test all values `TRUE` and `any()`: (are any)
 
-```{r true}
+
+```r
 print(!FALSE)
+```
+
+```
+[1] TRUE
+```
+
+```r
 print(TRUE | FALSE)
+```
+
+```
+[1] TRUE
+```
+
+```r
 print(FALSE & FALSE)
+```
+
+```
+[1] FALSE
+```
+
+```r
 c(all(c(TRUE, FALSE)), any(c(TRUE, FALSE)))
+```
+
+```
+[1] FALSE  TRUE
 ```
 
 
 ## Subsetting with logicals 
 
 The `which` command takes a logical and gets the indices of `TRUE`:
-```{r}
+
+```r
 which(v > 5)
+```
+
+```
+[1] 4 5
+```
+
+```r
 v[ which(v > 5) ]
 ```
 
+```
+[1] 7 8
+```
+
 Or directly pass in a vector of logicals to subset:
-```{r}
+
+```r
 v[ v > 5 ]
+```
+
+```
+[1] 7 8
 ```
 
 This method will be useful later when we are working with images.
@@ -202,7 +365,8 @@ All packages we will discuss are loaded on the RStudio Server:
 
 Let's load them:
 
-```{r, message=FALSE}
+
+```r
 library(oro.nifti)
 library(neurobase)
 ```
@@ -212,22 +376,46 @@ library(neurobase)
 We will use the `readnii` function (from `neurobase`) to read in a `nifti` object (this is an `R` object).
 
 Here we read in the "training01_01_t1.nii.gz" file, and assign it to an object called `t1`:
-```{r}
+
+```r
 t1 = readnii("training01_01_t1.nii.gz")
 ```
 
 Now, an object `t1` is in memory/the workspace.
 
-```{r t1class}
+
+```r
 class(t1)
+```
+
+```
+[1] "nifti"
+attr(,"package")
+[1] "oro.nifti"
 ```
 
 
 ## `nifti` images
 
 By default, if you simply pass the object, it is printed, we can also do `print(t1)`:
-```{r}
+
+```r
 t1
+```
+
+```
+NIfTI-1 format
+  Type            : nifti
+  Data Type       : 4 (INT16)
+  Bits per Pixel  : 16
+  Slice Code      : 0 (Unknown)
+  Intent Code     : 0 (None)
+  Qform Code      : 2 (Aligned_Anat)
+  Sform Code      : 1 (Scanner_Anat)
+  Dimension       : 408 x 512 x 152
+  Pixel Dimension : 0.43 x 0.43 x 0.82
+  Voxel Units     : mm
+  Time Units      : Unknown
 ```
 
 ## Operations with `nifti` objects
@@ -239,8 +427,24 @@ These work with an image and a number (`img + 2`) or two images of the same dime
 - Arithmetic: `+`, `-`, `*`, `/`, `^` - exponents
 - Standard math functions: `log`, `abs`, `sqrt`
 
-```{r adding_t1}
+
+```r
 t1 + t1 + 2 # still a nifti
+```
+
+```
+NIfTI-1 format
+  Type            : nifti
+  Data Type       : 4 (INT16)
+  Bits per Pixel  : 16
+  Slice Code      : 0 (Unknown)
+  Intent Code     : 0 (None)
+  Qform Code      : 2 (Aligned_Anat)
+  Sform Code      : 1 (Scanner_Anat)
+  Dimension       : 408 x 512 x 152
+  Pixel Dimension : 0.43 x 0.43 x 0.82
+  Voxel Units     : mm
+  Time Units      : Unknown
 ```
 
 
@@ -248,9 +452,23 @@ t1 + t1 + 2 # still a nifti
 
 Again, we can use a logical operation.  Let's create an image indicating values over $400$: 
 
-```{r}
+
+```r
 class(t1 > 400) # still a nifti
+```
+
+```
+[1] "nifti"
+attr(,"package")
+[1] "oro.nifti"
+```
+
+```r
 head(t1 > 400) # values are now logical vs. numeric
+```
+
+```
+[1] FALSE FALSE FALSE FALSE FALSE FALSE
 ```
 
 We will refer to images such as `t1 > 400` as a "mask", simply binary images with logical values in them (or 0s and 1s)
@@ -259,11 +477,17 @@ We will refer to images such as `t1 > 400` as a "mask", simply binary images wit
 ## Subsetting with `nifti` objects: like `arrays`
 
 The subsetting here is similar to that of arrays. Since `t1` is 3-dimensional the subsetting goes to the 3rd dimension:
-```{r}
+
+```r
 t1[5, 4, 3]
 ```
 
-```{r, eval = FALSE}
+```
+[1] 0
+```
+
+
+```r
 t1[5, 4, ] # returns a vector of numbers (1-d)
 t1[, 4, ] # returns a 2-d matrix
 t1[1, , ] # returns a 2-d matrix
@@ -272,8 +496,13 @@ t1[1, , ] # returns a 2-d matrix
 - You can subset with a logical array of the same dimensions!
 - We can view values of the `t1` greater than 400 (`head` only prints the first 6 values):
 
-```{r}
+
+```r
 head(t1[ t1 > 400 ]) # produces a vector of numbers
+```
+
+```
+[1] 402 412 435 448 453 430
 ```
 
 
@@ -282,24 +511,52 @@ head(t1[ t1 > 400 ]) # produces a vector of numbers
 
 The `which` function works to get indices, but you can pass the `arr.ind = TRUE` argument to get "array" indices:
 
-```{r}
+
+```r
 head(which(t1 > 400, arr.ind = TRUE))
 ```
 
+```
+     dim1 dim2 dim3
+[1,]  180  258    1
+[2,]  175  259    1
+[3,]  176  259    1
+[4,]  177  259    1
+[5,]  178  259    1
+[6,]  179  259    1
+```
+
 But can get the "vector" indices as well:
-```{r}
+
+```r
 head(which(t1 > 400, arr.ind = FALSE))
+```
+
+```
+[1] 105036 105439 105440 105441 105442 105443
 ```
 
 ## Working with `nifti` objects: reassignment 
 
 Subsetting can work on the left hand side of assignment too:
 
-```{r}
+
+```r
 t1_copy = t1
 t1_copy[ t1_copy > 400 ] = 400 # replaced these values!
 max(t1_copy) # should be 400
+```
+
+```
+[1] 400
+```
+
+```r
 max(t1) 
+```
+
+```
+[1] 1691
 ```
 
 Note, although `t1_copy` was copied from `t1`, they are not linked - if you change values in `t1_copy`, values in `t1` are unchanged.
@@ -307,10 +564,15 @@ Note, although `t1_copy` was copied from `t1`, they are not linked - if you chan
 ## Writing Images out
 
 We now can write out this modified `t1_copy` image:
-```{r}
+
+```r
 writenii(nim = t1_copy, 
          filename = "training01_t1_under400.nii.gz")
 file.exists("training01_t1_under400.nii.gz")
+```
+
+```
+[1] TRUE
 ```
 
 We have seen that `file.exists` returns `TRUE` if a file exists 
@@ -322,16 +584,32 @@ We have seen that `file.exists` returns `TRUE` if a file exists
 
 To convert a `nifti` to a `vector`, you can simply use the `c()` function:
 
-```{r vec_nifti, cache=FALSE}
+
+```r
 vals = c(t1)
 class(vals)
+```
+
+```
+[1] "numeric"
 ```
 Essentially "strings out" the array. If you do `array(c(t1), dim = dim(t1))`, this will put things back "in order" of the `t1`.  
 
 Vectorizing is useful for making `data.frame`s (covered later) when you want to do modeling at a voxel level.
 
-```{r df}
+
+```r
 df = data.frame(t1 = c(t1), mask = c(t1 > 400)); head(df)
+```
+
+```
+  t1  mask
+1  0 FALSE
+2  0 FALSE
+3  0 FALSE
+4  0 FALSE
+5  0 FALSE
+6  0 FALSE
 ```
 
 ## File helpers - for constructing filenames
@@ -340,15 +618,32 @@ Use `paste` if you want to put strings together with spaces, `paste0` no spaces 
 
 `file.path(directory, filename)` will paste `directory` and `filename` w/file separators (e.g. `/`)
 
-```{r}
+
+```r
 c(paste("img", ".nii.gz"), paste0("img", ".nii.gz"))
+```
+
+```
+[1] "img .nii.gz" "img.nii.gz" 
+```
+
+```r
 x = file.path("output_directory", paste0("img", ".nii.gz")); print(x)
+```
+
+```
+[1] "output_directory/img.nii.gz"
 ```
 
 `nii.stub` will strip off the nifti extension.  If `bn = TRUE`, it removes the directory as well:
 
-```{r}
+
+```r
 c(nii.stub(x), nii.stub(x, bn = TRUE))
+```
+
+```
+[1] "output_directory/img" "img"                 
 ```
 
 
