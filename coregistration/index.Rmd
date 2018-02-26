@@ -230,7 +230,7 @@ out = c(T1 = list(t1), output_imgs)
 ```
 
 ```{r registration, eval = TRUE, echo = FALSE}
-mods = c("T2", "FLAIR", "PD")
+mods = c("T2", "FLAIR")
 outfiles = file.path("..", "output", basename(files[mods]))
 names(outfiles) = mods
 if (!all(file.exists(outfiles))) {
