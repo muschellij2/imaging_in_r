@@ -13,7 +13,6 @@ library(methods)
 knitr::opts_chunk$set(echo = TRUE, comment = "")
 ```
 
-# Neuroconductor and Imaging Packages in R
 
 ## Some packages we will use
 
@@ -44,6 +43,12 @@ Now, an object `t1` is in memory/the workspace.
 
 ```{r t1class}
 class(t1)
+```
+
+## `nifti` images
+
+```{r, echo = FALSE}
+ortho2(robust_window(t1))
 ```
 
 

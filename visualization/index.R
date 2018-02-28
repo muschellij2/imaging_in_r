@@ -17,22 +17,23 @@ plot(density(t1)) # large spike at 0
 plot(density(t1, mask = t1 > 0))
 
 ## ----histog, echo = FALSE------------------------------------------------
+t1[ t1 < 0 ] = 0
 hist(t1)
 
 ## ----ortho2--------------------------------------------------------------
 neurobase::ortho2(t1)
 
 ## ----ortho2_rob----------------------------------------------------------
-ortho2(robust_window(t1))
+ortho2(robust_window(t1, probs = c(0, 0.975)))
 
 ## ----dens_robust, echo = FALSE, fig.height = 5, fig.width = 10-----------
 par(mfrow = c(1,2))
 plot(density(t1), main = "Density of T1") 
-plot(density(robust_window(t1)), main = "Density of Windowed T1")
+plot(density(robust_window(t1, probs = c(0, 0.975))), main = "Density of Windowed T1")
 par(mfrow = c(1,1))
 
 ## ----robust_final, echo = FALSE------------------------------------------
-t1 = robust_window(t1)
+t1 = robust_window(t1, probs = c(0, 0.975))
 
 ## ----ortho_nona----------------------------------------------------------
 ortho2(t1, y = t1 > 150)

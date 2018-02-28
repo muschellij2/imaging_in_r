@@ -41,12 +41,12 @@ You can also pass in a mask to most standard functions:
 plot(density(t1, mask = t1 > 0))
 ```
 
-
 ## Similarly: a Histogram
 
 Note the high intensities:
 
 ```{r histog, echo = FALSE}
+t1[ t1 < 0 ] = 0
 hist(t1)
 ```
 
@@ -60,10 +60,10 @@ neurobase::ortho2(t1)
 
 ## Brightening up the image
 
-We see a faint outline of the image, but this single large value affects how we view the image.  The function `robust_window` calculates quantiles of an image, by default the 0 (min) and 99.9th quantile, and sets values outside of this range to that quantile.  
+We see a faint outline of the image, but this single large value affects how we view the image.  The function `robust_window` calculates quantiles of an image, by default the 0 (min) and 99.9th quantile, and sets values outside of this range to that quantile (we use 97.5th here).  
 
 ```{r ortho2_rob}
-ortho2(robust_window(t1))
+ortho2(robust_window(t1, probs = c(0, 0.975)))
 ```
 
 ## Robust Density
@@ -73,7 +73,7 @@ Note the x-axis
 ```{r dens_robust, echo = FALSE, fig.height = 5, fig.width = 10}
 par(mfrow = c(1,2))
 plot(density(t1), main = "Density of T1") 
-plot(density(robust_window(t1)), main = "Density of Windowed T1")
+plot(density(robust_window(t1, probs = c(0, 0.975))), main = "Density of Windowed T1")
 par(mfrow = c(1,1))
 ```
 
@@ -83,7 +83,7 @@ par(mfrow = c(1,1))
 
 For the rest of the slides we will use the robust `t1` for plotting
 ```{r robust_final, echo = FALSE}
-t1 = robust_window(t1)
+t1 = robust_window(t1, probs = c(0, 0.975))
 ```
 
 Here we plot the T1 and a mask of values over $150$:
