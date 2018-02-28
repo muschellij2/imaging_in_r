@@ -1,6 +1,7 @@
 LIST = intro
 LIST += visualization
 LIST += general_r
+LIST += imaging_r_packages
 LIST += inhomogeneity_correction_ms
 LIST += brain_extraction_malf
 LIST += segmentation

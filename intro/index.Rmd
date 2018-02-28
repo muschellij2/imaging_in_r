@@ -91,7 +91,7 @@ multi_overlay(zimgs, z = xyz[3], text = names(zimgs),
 
 There are multiple imaging formats.  We will use NIfTI:
 
-* NIfTI - Neuroimaging Informatics Technology Initiative (https://nifti.nimh.nih.gov/nifti-1)
+* Neuroimaging Informatics Technology Initiative (https://nifti.nimh.nih.gov/nifti-1)
     - essentially a header and data (binary format)
     - will have extension .nii (uncompressed) or .nii.gz (compressed)
     - we will use 3-D images (4-D and 5-D are possible)

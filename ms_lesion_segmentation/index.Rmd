@@ -34,7 +34,7 @@ knitr::opts_chunk$set(echo = TRUE, comment = "", cache=TRUE, warning = FALSE)
 
 
 
-```{r loading, echo=FALSE, message=FALSE}
+```{r loading, echo=FALSE, message=FALSE, cache = FALSE}
 library(ms.lesion)
 library(neurobase)
 library(fslr)

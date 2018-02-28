@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>General R</title>
+  <title>Imaging Packages in R</title>
 
   <meta charset="utf-8">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -20,7 +20,7 @@
     var SLIDE_CONFIG = {
       // Slide settings
       settings: {
-                title: 'General R',
+                title: 'Imaging Packages in R',
                         useBuilds: true,
         usePrettify: true,
         enableSlideAreas: true,
@@ -3160,271 +3160,276 @@ width: 1200px;
           </hgroup>
   </slide>
 
-<slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>R Basics</h2></hgroup><article  id="r-basics">
+<slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Neuroconductor and Imaging Packages in R</h2></hgroup><article  id="neuroconductor-and-imaging-packages-in-r">
 
-</article></slide><slide class=""><hgroup><h2>Data Classes</h2></hgroup><article  id="data-classes">
+</article></slide><slide class=""><hgroup><h2>Some packages we will use</h2></hgroup><article  id="some-packages-we-will-use">
 
-<ul>
-<li>Numeric - numbers (e.g. 1, 3.673)</li>
-<li>Character - strings or words (<code>&quot;hey&quot;</code>, <code>&quot;I&#39;m a string&quot;</code>) in either single or double quotes</li>
-<li>Logicals - <code>TRUE</code> or <code>FALSE</code> - all capital letters and are <strong>not</strong> in quotes.</li>
-</ul>
-
-</article></slide><slide class=""><hgroup><h2>Data Types</h2></hgroup><article  id="data-types">
+<p>All packages we will discuss are loaded on the RStudio Server:</p>
 
 <ul>
-<li><code>vector</code> - 1-dimensional object of one class (all numeric or all character)</li>
-<li><code>matrix</code> - 2-dimensional object of one class</li>
-<li><code>data.frame</code> - 2-dimensional object, can be multiple classes (like Excel spreadsheet)</li>
-<li><code>array</code> - object of &gt; 2 dimensions of one class. The data in a <code>nifti</code> object is one of these (usually 3-D)</li>
-</ul>
-
-</article></slide><slide class=""><hgroup><h2>Initializing: vectors</h2></hgroup><article  id="initializing-vectors">
+<li><code>oro.nifti</code> - reading/writing NIfTI images
 
 <ul>
-<li>Use <code>c()</code> to create a vector of numeric values:</li>
-</ul>
-
-<pre class = 'prettyprint lang-r'>v = c(1, 4, 3, 7, 8)
-print(v)</pre>
-
-<pre >[1] 1 4 3 7 8</pre>
+<li>made the <code>nifti</code> object/data class: like an array - but with header information
 
 <ul>
-<li>Shortcut for sequential numeric vector:</li>
-</ul>
-
-<pre class = 'prettyprint lang-r'>w = 1:5
-print(w)</pre>
-
-<pre >[1] 1 2 3 4 5</pre>
-
-<p>The gray boxes denote code, and the lines after denote the output.</p>
-
-</article></slide><slide class=""><hgroup><h2>Assignment</h2></hgroup><article  id="assignment">
-
-<p>In <code>R</code>, you can assign using the equals <code>=</code> or arrow <code>&lt;-</code> (aka assigment operator).</p>
-
-<p>The above commands are equivalent to:</p>
-
-<pre class = 'prettyprint lang-r'>w = 1:5
-w &lt;- 1:5</pre>
-
-<p>There are no differences in these 2 commands, but just preference (we use <code>=</code>).</p>
-
-<p>Variable/object names:</p>
-
-<ul>
-<li>must start with a letter</li>
-<li>cannot contain spaces, <code>$</code>, quotes, or other special characters
-
-<ul>
-<li>generally just alpha-numeric</li>
+<li>the main data class we will use</li>
 </ul></li>
-<li><strong>can</strong> contain periods (<code>.</code>) and underscores <code>_</code></li>
-</ul>
-
-</article></slide><slide class=""><hgroup><h2>Help</h2></hgroup><article  id="help">
-
-<ul>
-<li>To see the documentation for a function, use the <code>?</code> symbol before the name of the function. This is a shortcut for the <code>help</code> command:</li>
-<li>For example, to see documentation for <code>c</code>:</li>
-</ul>
-
-<pre class = 'prettyprint lang-r'>?c
-help(topic = &quot;c&quot;)</pre>
-
-<ul>
-<li>To search for help files, use a double <code>??</code> or <code>help.search</code>:</li>
-</ul>
-
-<pre class = 'prettyprint lang-r'>??c
-help.search(pattern = &quot;c&quot;)</pre>
-
-</article></slide><slide class=""><hgroup><h2>Some Details</h2></hgroup><article  id="some-details">
-
-<ul>
-<li>R is case sensitive (e.g. <code>y</code> and <code>Y</code> are different)</li>
-<li>Commands separated by new line or by a colon (;)</li>
-<li>Use <code>#</code> to comment</li>
-</ul>
-
-<p>You can also be explicit about which package you are using with the <code>::</code> operator, where the syntax is <code>package::function()</code>:</p>
-
-<pre class = 'prettyprint lang-r'>utils::help(&quot;c&quot;)</pre>
-
-</article></slide><slide class=""><hgroup><h2>Initializing: matrices and arrays</h2></hgroup><article  id="initializing-matrices-and-arrays">
-
-<ul>
-<li>Create a 3 x 4 numeric matrix and assign to variable <code>m</code>
-
-<ul>
-<li>note items are added column-wise</li>
 </ul></li>
+<li><code>neurobase</code> - extends <code>oro.nifti</code> and provides helpful imaging functions</li>
 </ul>
 
-<pre class = 'prettyprint lang-r'>m = matrix(1:12, nrow = 3)
-print(m)</pre>
+<p>Let’s load them:</p>
 
-<pre >     [,1] [,2] [,3] [,4]
-[1,]    1    4    7   10
-[2,]    2    5    8   11
-[3,]    3    6    9   12</pre>
+<pre class = 'prettyprint lang-r'>library(oro.nifti)
+library(neurobase)</pre>
 
-<ul>
-<li>Create a 3 x 4 x 3 numeric array and assign to variable <code>a</code></li>
-</ul>
+</article></slide><slide class=""><hgroup><h2>Reading in NIfTI images: assignment</h2></hgroup><article  id="reading-in-nifti-images-assignment">
 
-<pre class = 'prettyprint lang-r'>a = array(1:36, dim = c(3, 4, 3))</pre>
+<p>We will use the <code>readnii</code> function (from <code>neurobase</code>) to read in a <code>nifti</code> object (this is an <code>R</code> object).</p>
 
-<ul>
-<li>the <code>dim()</code> function returns the dimensions of the array</li>
-</ul>
+<p>Here we read in the &ldquo;training01_01_t1.nii.gz&rdquo; file, and assign it to an object called <code>t1</code>:</p>
 
-<pre class = 'prettyprint lang-r'>dim(a)</pre>
+<pre class = 'prettyprint lang-r'>t1 = readnii(&quot;training01_01_t1.nii.gz&quot;)</pre>
 
-<pre >[1] 3 4 3</pre>
+<p>Now, an object <code>t1</code> is in memory/the workspace.</p>
 
-</article></slide><slide class=""><hgroup><h2>Subsetting: vectors</h2></hgroup><article  id="subsetting-vectors">
+<pre class = 'prettyprint lang-r'>class(t1)</pre>
 
-<ul>
-<li>Subsetting a vector (first index is <code>1</code>, not zero):</li>
-</ul>
+<pre >[1] &quot;nifti&quot;
+attr(,&quot;package&quot;)
+[1] &quot;oro.nifti&quot;</pre>
 
-<pre class = 'prettyprint lang-r'>print(v)</pre>
+</article></slide><slide class=""><hgroup><h2><code>nifti</code> images</h2></hgroup><article  id="nifti-images">
 
-<pre >[1] 1 4 3 7 8</pre>
+<p>By default, if you simply pass the object, it is printed, we can also do <code>print(t1)</code>:</p>
 
-<pre class = 'prettyprint lang-r'>print(v[4])</pre>
+<pre class = 'prettyprint lang-r'>t1</pre>
 
-<pre >[1] 7</pre>
+<pre >NIfTI-1 format
+  Type            : nifti
+  Data Type       : 4 (INT16)
+  Bits per Pixel  : 16
+  Slice Code      : 0 (Unknown)
+  Intent Code     : 0 (None)
+  Qform Code      : 2 (Aligned_Anat)
+  Sform Code      : 1 (Scanner_Anat)
+  Dimension       : 408 x 512 x 152
+  Pixel Dimension : 0.43 x 0.43 x 0.82
+  Voxel Units     : mm
+  Time Units      : Unknown</pre>
 
-<pre class = 'prettyprint lang-r'>print(v[1:3])</pre>
+</article></slide><slide class=""><hgroup><h2>Operations with <code>nifti</code> objects</h2></hgroup><article  id="operations-with-nifti-objects">
 
-<pre >[1] 1 4 3</pre>
-
-<pre class = 'prettyprint lang-r'>print(v[c(1,3,5)])</pre>
-
-<pre >[1] 1 3 8</pre>
-
-</article></slide><slide class=""><hgroup><h2>Subsetting: matrices</h2></hgroup><article  id="subsetting-matrices">
-
-<ul>
-<li>Subsetting a matrix - <code>[row,column]</code> format,</li>
-</ul>
-
-<pre class = 'prettyprint lang-r'>print(m[1,3])</pre>
-
-<pre >[1] 7</pre>
-
-<pre class = 'prettyprint lang-r'>print(m[1:2,3:4])</pre>
-
-<pre >     [,1] [,2]
-[1,]    7   10
-[2,]    8   11</pre>
-
-<ul>
-<li>if <code>row</code> or <code>column</code> missing then all values printed:</li>
-</ul>
-
-<pre class = 'prettyprint lang-r'>print(m[,4])</pre>
-
-<pre >[1] 10 11 12</pre>
-
-<pre class = 'prettyprint lang-r'>print(m[2,])</pre>
-
-<pre >[1]  2  5  8 11</pre>
-
-</article></slide><slide class=""><hgroup><h2>Subsetting: arrays</h2></hgroup><article  id="subsetting-arrays">
-
-<ul>
-<li>Subsetting - <code>[x,y,z]</code> format:</li>
-</ul>
-
-<pre class = 'prettyprint lang-r'>print(a[1,1,1])</pre>
-
-<pre >[1] 1</pre>
-
-<pre class = 'prettyprint lang-r'>dim(a[,4,])</pre>
-
-<pre >[1] 3 3</pre>
-
-<p>This will return an error - need to specify all dims:</p>
-
-<pre class = 'prettyprint lang-r'>a[,4]</pre>
-
-</article></slide><slide class=""><hgroup><h2>Operators in R: return numeric</h2></hgroup><article  id="operators-in-r-return-numeric">
-
-<ul>
-<li>Arithmetic: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>^</code> - exponents</li>
-<li>Standard math functions: <code>log</code>, <code>abs</code>, <code>sqrt</code></li>
-</ul>
-
-<pre class = 'prettyprint lang-r'>print(v); print(w)</pre>
-
-<pre >[1] 1 4 3 7 8</pre>
-
-<pre >[1] 1 2 3 4 5</pre>
-
-<pre class = 'prettyprint lang-r'>print(v + 4)</pre>
-
-<pre >[1]  5  8  7 11 12</pre>
-
-<pre class = 'prettyprint lang-r'>print(v + w)</pre>
-
-<pre >[1]  2  6  6 11 13</pre>
-
-<pre class = 'prettyprint lang-r'>print(sqrt(w^2))</pre>
-
-<pre >[1] 1 2 3 4 5</pre>
-
-</article></slide><slide class=""><hgroup><h2>Operators in R: return logical</h2></hgroup><article  id="operators-in-r-return-logical">
+<p>These work with an image and a number (<code>img + 2</code>) or two images of the same dimensions <code>img1 + img2</code>.</p>
 
 <ul>
 <li>Comparison: <code>&gt;</code>, <code>&gt;=</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>==</code> (equals), <code>!=</code> (not equal)</li>
 <li>Logical: <code>!</code> - not, <code>&amp;</code> - and, <code>|</code> - or (a &ldquo;pipe&rdquo;)</li>
-<li><code>all()</code>: function to test all values <code>TRUE</code> and <code>any()</code>: (are any)</li>
+<li>Arithmetic: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>^</code> - exponents</li>
+<li>Standard math functions: <code>log</code>, <code>abs</code>, <code>sqrt</code></li>
 </ul>
 
-<pre class = 'prettyprint lang-r'>print(!FALSE)</pre>
+<pre class = 'prettyprint lang-r'>t1 + t1 + 2 # still a nifti</pre>
+
+<pre >NIfTI-1 format
+  Type            : nifti
+  Data Type       : 4 (INT16)
+  Bits per Pixel  : 16
+  Slice Code      : 0 (Unknown)
+  Intent Code     : 0 (None)
+  Qform Code      : 2 (Aligned_Anat)
+  Sform Code      : 1 (Scanner_Anat)
+  Dimension       : 408 x 512 x 152
+  Pixel Dimension : 0.43 x 0.43 x 0.82
+  Voxel Units     : mm
+  Time Units      : Unknown</pre>
+
+</article></slide><slide class=""><hgroup><h2>Working with <code>nifti</code> objects</h2></hgroup><article  id="working-with-nifti-objects">
+
+<p>Again, we can use a logical operation. Let’s create an image indicating values over \(400\):</p>
+
+<pre class = 'prettyprint lang-r'>class(t1 &gt; 400) # still a nifti</pre>
+
+<pre >[1] &quot;nifti&quot;
+attr(,&quot;package&quot;)
+[1] &quot;oro.nifti&quot;</pre>
+
+<pre class = 'prettyprint lang-r'>head(t1 &gt; 400) # values are now logical vs. numeric</pre>
+
+<pre >[1] FALSE FALSE FALSE FALSE FALSE FALSE</pre>
+
+<p>We will refer to images such as <code>t1 &gt; 400</code> as a &ldquo;mask&rdquo;, simply binary images with logical values in them (or 0s and 1s)</p>
+
+</article></slide><slide class=""><hgroup><h2>Subsetting with <code>nifti</code> objects: like <code>arrays</code></h2></hgroup><article  id="subsetting-with-nifti-objects-like-arrays">
+
+<p>The subsetting here is similar to that of arrays. Since <code>t1</code> is 3-dimensional the subsetting goes to the 3rd dimension:</p>
+
+<pre class = 'prettyprint lang-r'>t1[5, 4, 3]</pre>
+
+<pre >[1] 0</pre>
+
+<pre class = 'prettyprint lang-r'>t1[5, 4, ] # returns a vector of numbers (1-d)
+t1[, 4, ] # returns a 2-d matrix
+t1[1, , ] # returns a 2-d matrix</pre>
+
+<ul>
+<li>You can subset with a logical array of the same dimensions!</li>
+<li>We can view values of the <code>t1</code> greater than 400 (<code>head</code> only prints the first 6 values):</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>head(t1[ t1 &gt; 400 ]) # produces a vector of numbers</pre>
+
+<pre >[1] 402 412 435 448 453 430</pre>
+
+</article></slide><slide class=""><hgroup><h2><code>which</code> with <code>nifti</code> objects</h2></hgroup><article  id="which-with-nifti-objects">
+
+<p>The <code>which</code> function works to get indices, but you can pass the <code>arr.ind = TRUE</code> argument to get &ldquo;array&rdquo; indices:</p>
+
+<pre class = 'prettyprint lang-r'>head(which(t1 &gt; 400, arr.ind = TRUE))</pre>
+
+<pre >     dim1 dim2 dim3
+[1,]  180  258    1
+[2,]  175  259    1
+[3,]  176  259    1
+[4,]  177  259    1
+[5,]  178  259    1
+[6,]  179  259    1</pre>
+
+<p>But can get the &ldquo;vector&rdquo; indices as well:</p>
+
+<pre class = 'prettyprint lang-r'>head(which(t1 &gt; 400, arr.ind = FALSE))</pre>
+
+<pre >[1] 105036 105439 105440 105441 105442 105443</pre>
+
+</article></slide><slide class=""><hgroup><h2>Working with <code>nifti</code> objects: reassignment</h2></hgroup><article  id="working-with-nifti-objects-reassignment">
+
+<p>Subsetting can work on the left hand side of assignment too:</p>
+
+<pre class = 'prettyprint lang-r'>t1_copy = t1
+t1_copy[ t1_copy &gt; 400 ] = 400 # replaced these values!
+max(t1_copy) # should be 400</pre>
+
+<pre >[1] 400</pre>
+
+<pre class = 'prettyprint lang-r'>max(t1) </pre>
+
+<pre >[1] 1691</pre>
+
+<p>Note, although <code>t1_copy</code> was copied from <code>t1</code>, they are not linked - if you change values in <code>t1_copy</code>, values in <code>t1</code> are unchanged.</p>
+
+</article></slide><slide class=""><hgroup><h2>Writing Images out</h2></hgroup><article  id="writing-images-out">
+
+<p>We now can write out this modified <code>t1_copy</code> image:</p>
+
+<pre class = 'prettyprint lang-r'>writenii(nim = t1_copy, 
+         filename = &quot;training01_t1_under400.nii.gz&quot;)
+file.exists(&quot;training01_t1_under400.nii.gz&quot;)</pre>
 
 <pre >[1] TRUE</pre>
 
-<pre class = 'prettyprint lang-r'>print(TRUE | FALSE)</pre>
+<p>We have seen that <code>file.exists</code> returns <code>TRUE</code> if a file exists</p>
 
-<pre >[1] TRUE</pre>
+<ul>
+<li>useful in conjunction with <code>all</code>: <code>all(file.exists(VECTOR_OF_FILES))</code></li>
+</ul>
 
-<pre class = 'prettyprint lang-r'>print(FALSE &amp; FALSE)</pre>
+</article></slide><slide class=""><hgroup><h2>Vectorizing a <code>nifti</code></h2></hgroup><article  id="vectorizing-a-nifti">
 
-<pre >[1] FALSE</pre>
+<p>To convert a <code>nifti</code> to a <code>vector</code>, you can simply use the <code>c()</code> function:</p>
 
-<pre class = 'prettyprint lang-r'>c(all(c(TRUE, FALSE)), any(c(TRUE, FALSE)))</pre>
+<pre class = 'prettyprint lang-r'>vals = c(t1)
+class(vals)</pre>
 
-<pre >[1] FALSE  TRUE</pre>
+<pre >[1] &quot;numeric&quot;</pre>
 
-</article></slide><slide class=""><hgroup><h2>Subsetting with logicals</h2></hgroup><article  id="subsetting-with-logicals">
+<p>Essentially &ldquo;strings out&rdquo; the array. If you do <code>array(c(t1), dim = dim(t1))</code>, this will put things back &ldquo;in order&rdquo; of the <code>t1</code>.</p>
 
-<p>The <code>which</code> command takes a logical and gets the indices of <code>TRUE</code>:</p>
+<p>Vectorizing is useful for making <code>data.frame</code>s (covered later) when you want to do modeling at a voxel level.</p>
 
-<pre class = 'prettyprint lang-r'>which(v &gt; 5)</pre>
+<pre class = 'prettyprint lang-r'>df = data.frame(t1 = c(t1), mask = c(t1 &gt; 400)); head(df)</pre>
 
-<pre >[1] 4 5</pre>
+<pre >  t1  mask
+1  0 FALSE
+2  0 FALSE
+3  0 FALSE
+4  0 FALSE
+5  0 FALSE
+6  0 FALSE</pre>
 
-<pre class = 'prettyprint lang-r'>v[ which(v &gt; 5) ]</pre>
+</article></slide><slide class=""><hgroup><h2>File helpers - for constructing filenames</h2></hgroup><article  id="file-helpers---for-constructing-filenames">
 
-<pre >[1] 7 8</pre>
+<p>Use <code>paste</code> if you want to put strings together with spaces, <code>paste0</code> no spaces by default.</p>
 
-<p>Or directly pass in a vector of logicals to subset:</p>
+<p><code>file.path(directory, filename)</code> will paste <code>directory</code> and <code>filename</code> w/file separators (e.g. <code>/</code>)</p>
 
-<pre class = 'prettyprint lang-r'>v[ v &gt; 5 ]</pre>
+<pre class = 'prettyprint lang-r'>c(paste(&quot;img&quot;, &quot;.nii.gz&quot;), paste0(&quot;img&quot;, &quot;.nii.gz&quot;))</pre>
 
-<pre >[1] 7 8</pre>
+<pre >[1] &quot;img .nii.gz&quot; &quot;img.nii.gz&quot; </pre>
 
-<p>This method will be useful later when we are working with images.</p>
+<pre class = 'prettyprint lang-r'>x = file.path(&quot;output_directory&quot;, paste0(&quot;img&quot;, &quot;.nii.gz&quot;)); print(x)</pre>
+
+<pre >[1] &quot;output_directory/img.nii.gz&quot;</pre>
+
+<p><code>nii.stub</code> will strip off the nifti extension. If <code>bn = TRUE</code>, it removes the directory as well:</p>
+
+<pre class = 'prettyprint lang-r'>c(nii.stub(x), nii.stub(x, bn = TRUE))</pre>
+
+<pre >[1] &quot;output_directory/img&quot; &quot;img&quot;                 </pre>
+
+</article></slide><slide class=""><hgroup><h2>Main Packages we will use</h2></hgroup><article  id="main-packages-we-will-use">
+
+<ul>
+<li><code>oro.nifti</code> - reading/writing NIfTI images</li>
+<li><code>neurobase</code> - extends <code>oro.nifti</code> and provides helpful imaging functions</li>
+<li><code>fslr</code> - wraps FSL commands to use in R
+
+<ul>
+<li>registration, image manipulation, skull stripping</li>
+</ul></li>
+<li><code>ANTsR</code> - wrapper for Advanced normalization tools (ANTs) code
+
+<ul>
+<li>registration, inhomogeneity correction, lots of tools</li>
+</ul></li>
+<li><code>extrantsr</code> - allows <code>ANTsR</code> to work with objects from <code>oro.nifti</code></li>
+</ul>
+
+<p>Data Package we will use</p>
+
+<ul>
+<li><code>ms.lesion</code> - contains training/testing data of patients with multiple sclerosis (MS)
+
+<ul>
+<li>from an open MS MRI data set <span class="cite">(Lesjak et al. 2017)</span></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Conclusions</h2></hgroup><article  id="conclusions">
+
+<ul>
+<li>We have (briefly) covered some R data classes and types to get you started</li>
+<li>We will be using <code>nifti</code> objects
+
+<ul>
+<li>They are special 3-dimensional arrays</li>
+<li>Contain numbers or logicals</li>
+</ul></li>
+<li><code>readnii</code> and <code>writenii</code> are used for reading/writing <code>nifti</code> objects to NIfTI files</li>
+<li>We have briefly covered subsetting and image manipulation
+
+<ul>
+<li>more on that later</li>
+</ul></li>
+</ul>
 
 </article></slide><slide class=""><hgroup><h2>Website</h2></hgroup><article  id="website">
 
-<p><a href="../index.html" target="_blank">http://johnmuschelli.com/imaging_in_r</a></p></article></slide>
+<p><a href="../index.html" target="_blank">http://johnmuschelli.com/imaging_in_r</a></p>
+
+<div class="references" id="refs">
+<div id="ref-lesjak2017novel">
+<p>Lesjak, Žiga, Alfiia Galimzianova, Aleš Koren, Matej Lukin, Franjo Pernuš, Boštjan Likar, and Žiga Špiclin. 2017. “A Novel Public MR Image Dataset of Multiple Sclerosis Patients with Lesion Segmentations Based on Multi-Rater Consensus.” <em>Neuroinformatics</em>. Springer, 1–13.</p></div></div></article></slide>
 
 
   <slide class="backdrop"></slide>

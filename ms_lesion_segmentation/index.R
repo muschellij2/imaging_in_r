@@ -4,7 +4,7 @@ library(ggplot2)
 library(pander)
 knitr::opts_chunk$set(echo = TRUE, comment = "", cache=TRUE, warning = FALSE)
 
-## ----loading, echo=FALSE, message=FALSE----------------------------------
+## ----loading, echo=FALSE, message=FALSE, cache = FALSE-------------------
 library(ms.lesion)
 library(neurobase)
 library(fslr)
