@@ -10,6 +10,7 @@ library(scales)
 
 ## ----reading_in_image----------------------------------------------------
 t1 = neurobase::readnii("training01_01_t1.nii.gz")
+t1[ t1 < 0 ] = 0
 
 ## ----ortho2_show---------------------------------------------------------
 ortho2(robust_window(t1))
@@ -20,6 +21,7 @@ ortho2(robust_window(t1))
 
 ## ----ortho2_run_flair, echo = FALSE--------------------------------------
 flair = neurobase::readnii("training01_01_flair.nii.gz")
+flair[ flair < 0 ] = 0
 flair = drop_empty_dim(flair > 50, other.imgs = flair)
 flair = flair$other.imgs
 ortho2(robust_window(flair))
@@ -50,16 +52,16 @@ library(scales)
 in_mask = (ratio < 0.999 | ratio > 1.0001) & ratio != 0
 
 # get the quantiles
-quants = quantile(ratio[ in_mask ], na.rm = TRUE,
+quantiles = quantile(ratio[ in_mask ], na.rm = TRUE,
              probs = seq(0, 1, by = 0.1) )
-quants = unique(quants)
+quantiles = unique(quantiles)
 
 # get a diverging gradient palette
 fcol = scales::brewer_pal(type = "div", palette = "Spectral")(10)
  # need one fewer color than breaks/quantiles
-colors = gradient_n_pal(fcol)(seq(0,1, length = length(quants) - 1))
+colors = gradient_n_pal(fcol)(seq(0,1, length = length(quantiles) - 1))
 colors = scales::alpha(colors, 0.5) # colors are created
 
 ## ----better_ratio_plot---------------------------------------------------
-ortho2(t1, ratio, col.y = colors, ybreaks = quants, ycolorbar = TRUE)
+ortho2(t1, ratio, col.y = colors, ybreaks = quantiles, ycolorbar = TRUE)
 

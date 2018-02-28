@@ -16,7 +16,7 @@ plot(density(t1)) # large spike at 0
 ## ----dens_with_mask------------------------------------------------------
 plot(density(t1, mask = t1 > 0))
 
-## ----histog, echo = FALSE------------------------------------------------
+## ----histog, echo = TRUE-------------------------------------------------
 t1[ t1 < 0 ] = 0
 hist(t1)
 
@@ -36,10 +36,10 @@ par(mfrow = c(1,1))
 t1 = robust_window(t1, probs = c(0, 0.975))
 
 ## ----ortho_nona----------------------------------------------------------
-ortho2(t1, y = t1 > 150)
+ortho2(t1, y = t1 > 300)
 
 ## ----double_ortho--------------------------------------------------------
-double_ortho(t1, y = t1 > 150, col.y = "white")
+double_ortho(t1, y = t1 > 300, col.y = "white")
 
 ## ----all_slices----------------------------------------------------------
 image(t1, useRaster = TRUE) # look at average brightness over each slice
@@ -51,7 +51,7 @@ oro.nifti::slice(t1, z = c(60, 80))
 oro.nifti::slice(t1, z = 125, plane = "sagittal")
 
 ## ----one_slice_overlay---------------------------------------------------
-slice_overlay(t1, y = t1 > 150, z = 80)
+slice_overlay(t1, y = t1 > 300, z = 80)
 
 ## ----smoothed------------------------------------------------------------
 library(extrantsr)
