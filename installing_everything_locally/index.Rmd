@@ -18,6 +18,7 @@ library(knitr)
 opts_chunk$set(eval = FALSE)
 ```
 
+
 # System Requirements
 
 The functionality of some of these packages requires Linux, Mac OSX, or a Unix-type system.   This excludes Windows in some cases.  The code was run on Linux and Mac OSX.  Although we do not currently support it, [Windows 10 has a Linux subsystem ](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide), which may allow for a working installation of all the dependencies of Neuroconductor. 

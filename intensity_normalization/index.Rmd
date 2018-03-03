@@ -13,7 +13,6 @@ bibliography: ../refs.bib
 knitr::opts_chunk$set(echo = TRUE, comment = "", fig.height = 5.5, fig.width = 5.5, cache = TRUE)
 ```
 
-
 ## Overall Pipeline
 
 <img src="flow.png" style="width: 75%; display: block; margin: auto;"> 

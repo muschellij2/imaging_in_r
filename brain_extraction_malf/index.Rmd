@@ -14,7 +14,6 @@ knitr::opts_chunk$set(echo = TRUE, comment = "")
 library(extrantsr)
 ```
 
-
 ## Overall Pipeline
 
 <img src="flow.png" style="width: 75%; display: block; margin: auto;"> 

@@ -19,6 +19,7 @@ library(extrantsr)
 library(scales)
 ```
 
+
 ## MS Lesion 
 
 Let's reset and read in the T1 image from a MS lesion data set:

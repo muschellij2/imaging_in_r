@@ -17,7 +17,6 @@ library(pander)
 knitr::opts_chunk$set(echo = TRUE, comment = "", cache=TRUE, warning = FALSE)
 ```
 
-
 ## Overall Pipeline
 
 <img src="flow.png" style="width: 75%; display: block; margin: auto;"> 

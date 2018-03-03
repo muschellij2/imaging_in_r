@@ -20,6 +20,7 @@ knit_hooks$set(inline = function(x) {
 }) 
 ```
 
+
 ## Image formats: DICOM
 
 DICOM (Digital Imaging and Communications in Medicine) format

@@ -13,7 +13,6 @@ library(methods)
 knitr::opts_chunk$set(echo = TRUE, comment = "")
 ```
 
-
 ## Some packages we will use
 
 All packages we will discuss are loaded on the RStudio Server:

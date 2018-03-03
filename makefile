@@ -3,6 +3,7 @@ LIST += visualization
 LIST += general_r
 LIST += imaging_r_packages
 LIST += inhomogeneity_correction_ms
+# malf must be before coreg
 LIST += brain_extraction_malf
 LIST += segmentation
 LIST += coregistration
@@ -17,7 +18,7 @@ all:
 	done
 	for fol in $(LIST) ; do \
 		pwd && echo $$fol && cp $$fol/index.pdf pdfs/$$fol.pdf; \
-	done		
+	done
 	make index.html
 #  
 

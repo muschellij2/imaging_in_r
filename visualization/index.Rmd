@@ -18,6 +18,7 @@ library(extrantsr)
 library(scales)
 ```
 
+
 ## Again we read in the data
 
 ```{r colon_twice}
