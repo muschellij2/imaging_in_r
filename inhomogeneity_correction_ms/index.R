@@ -8,8 +8,12 @@ library(neurobase)
 library(extrantsr)
 library(scales)
 
-## ----reading_in_image----------------------------------------------------
-t1 = neurobase::readnii("training01_01_t1.nii.gz")
+## ----reading_in_image, eval = FALSE--------------------------------------
+## t1 = neurobase::readnii("training01_01_t1.nii.gz")
+## t1[ t1 < 0 ] = 0
+
+## ----reading_in_image_run, echo = FALSE----------------------------------
+t1 = neurobase::readnii("../training01_01_t1.nii.gz")
 t1[ t1 < 0 ] = 0
 
 ## ----ortho2_show---------------------------------------------------------
