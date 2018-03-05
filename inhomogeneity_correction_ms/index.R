@@ -24,7 +24,7 @@ ortho2(robust_window(t1))
 ## ortho2(robust_window(flair))
 
 ## ----ortho2_run_flair, echo = FALSE--------------------------------------
-flair = neurobase::readnii("training01_01_flair.nii.gz")
+flair = neurobase::readnii("../training01_01_flair.nii.gz")
 flair[ flair < 0 ] = 0
 flair = drop_empty_dim(flair > 50, other.imgs = flair)
 flair = flair$other.imgs
