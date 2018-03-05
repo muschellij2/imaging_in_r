@@ -21,8 +21,12 @@ library(scales)
 
 ## Again we read in the data
 
-```{r colon_twice}
+```{r colon_twice, eval = FALSE}
 t1 = neurobase::readnii("training01_01_t1.nii.gz")
+```
+
+```{r colon_twice_run, echo = FALSE}
+t1 = neurobase::readnii("../training01_01_t1.nii.gz")
 ```
 
 ## Density of an Image
