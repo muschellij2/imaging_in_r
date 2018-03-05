@@ -6,8 +6,11 @@ knitr::opts_chunk$set(echo = TRUE, comment = "")
 library(oro.nifti)
 library(neurobase)
 
-## ------------------------------------------------------------------------
-t1 = readnii("training01_01_t1.nii.gz")
+## ---- eval = FALSE-------------------------------------------------------
+## t1 = readnii("training01_01_t1.nii.gz")
+
+## ---- echo = FALSE-------------------------------------------------------
+t1 = readnii("../training01_01_t1.nii.gz")
 
 ## ----t1class-------------------------------------------------------------
 class(t1)

@@ -34,8 +34,12 @@ library(neurobase)
 We will use the `readnii` function (from `neurobase`) to read in a `nifti` object (this is an `R` object).
 
 Here we read in the "training01_01_t1.nii.gz" file, and assign it to an object called `t1`:
-```{r}
+```{r, eval = FALSE}
 t1 = readnii("training01_01_t1.nii.gz")
+```
+
+```{r, echo = FALSE}
+t1 = readnii("../training01_01_t1.nii.gz")
 ```
 
 Now, an object `t1` is in memory/the workspace.
@@ -211,4 +215,5 @@ Data Package we will use
 <a href="../index.html" target="_blank">http://johnmuschelli.com/imaging_in_r</a>
 
 
+## References {.smaller}
 
