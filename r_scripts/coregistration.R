@@ -31,14 +31,13 @@ class(all_files); names(all_files)
 files = all_files$training01; class(files); names(files)
 t1_fname = files["T1"]
 t1 = readnii(t1_fname)
-rt1 = robust_window(t1)
+rt1 = robust_window(t1, probs = c(0, 0.975))
 
 ## ---- eval = TRUE, cache = TRUE, message=FALSE---------------------------
 library(extrantsr)
-reg = registration(filename = files["FLAIR"], 
-                   template.file = files["T1"],
-                   typeofTransform = "Rigid", 
-                   interpolator = "Linear")
+reg = registration(
+  filename = files["FLAIR"], template.file = files["T1"],
+  typeofTransform = "Rigid", interpolator = "Linear", verbose = FALSE)
 names(reg)
 
 ## ----plot_reg, eval = FALSE, cache = FALSE, message=FALSE----------------

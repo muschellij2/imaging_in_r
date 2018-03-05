@@ -256,3 +256,5 @@ RStudio is an Integrated Development Environment (IDE) for R (made by RStudio th
 ## Website
 
 <a href="../index.html" target="_blank">http://johnmuschelli.com/imaging_in_r</a>
+
+## References {.smaller}

@@ -51,7 +51,6 @@ plot(density(t1, mask = t1 > 0))
 Note the high intensities:
 
 ```{r histog, echo = TRUE}
-t1[ t1 < 0 ] = 0
 hist(t1)
 ```
 
@@ -65,7 +64,7 @@ neurobase::ortho2(t1)
 
 ## Brightening up the image
 
-We see a faint outline of the image, but this single large value affects how we view the image.  The function `robust_window` calculates quantiles of an image, by default the 0 (min) and 99.9th quantile, and sets values outside of this range to that quantile (we use 97.5th here).  
+We see a dark image; a this single large value affects how values are mapped.  The function `robust_window` calculates Winsorizes an image, by default the 0 (min) and 99.9th quantile, and sets values outside of this range to that quantile (97.5th below).  
 
 ```{r ortho2_rob}
 ortho2(robust_window(t1, probs = c(0, 0.975)))
@@ -73,7 +72,7 @@ ortho2(robust_window(t1, probs = c(0, 0.975)))
 
 ## Robust Density
 
-Note the x-axis
+Note the x-axis:
 
 ```{r dens_robust, echo = FALSE, fig.height = 5, fig.width = 10}
 par(mfrow = c(1,2))

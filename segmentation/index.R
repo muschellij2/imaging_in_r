@@ -28,15 +28,15 @@ run_mask = t1 > 100
 dd_orig = drop_empty_dim(run_mask, keep_ind = TRUE)
 
 ## ----hist_vals-----------------------------------------------------------
-hist(t1, mask = mask, breaks = 2000); text(x = 800, y = 3000, "outliers!")
+hist(t1, mask = mask, breaks = 2000); text(x = 600, y = 3000, '"outliers"')
 
 ## ----which_big, eval = FALSE---------------------------------------------
-## ortho2(rt1, t1 > 400, xyz = xyz(t1 > 400)) # xyz - cog of a region
+## ortho2(rt1, t1 > 450, xyz = xyz(t1 > 450)) # xyz - cog of a region
 
 ## ----which_big_show, echo = FALSE----------------------------------------
 xrt1 = apply_empty_dim(rt1, inds = dd_orig$inds)
 xt1 = apply_empty_dim(t1, inds = dd_orig$inds)
-ortho2(xrt1, xt1 > 400, xyz = xyz(xt1 > 400)) 
+ortho2(xrt1, xt1 > 450, xyz = xyz(xt1 > 450)) 
 
 ## ----run_window----------------------------------------------------------
 t1[ t1 < 0 ] = 0
@@ -208,6 +208,8 @@ tab_ants = table(robust_t1seg[ robust_t1seg != 0])
 names(tab_fsl) = names(tab_ants) = c("CSF", "GM", "WM")
 tab_fsl
 tab_ants
+out_mask = robust_fast != 0 | robust_t1seg != 0 
+table(robust_fast[ out_mask ], robust_t1seg[ out_mask ])
 
 ## ----volumes-------------------------------------------------------------
 vres = oro.nifti::voxres(t1, units = "cm")
