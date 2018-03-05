@@ -13,7 +13,8 @@ bibliography: ../refs.bib
 ```{r setup, include=FALSE}
 library(methods)
 library(ggplot2)
-library(pander)
+# library(pander)
+library(knitr)
 knitr::opts_chunk$set(echo = TRUE, comment = "", cache=TRUE, warning = FALSE)
 ```
 
@@ -279,10 +280,10 @@ colnames(df) = c("ID", "Dice")
 ```
 ## Improvement
 
-- Percent improvement in dice over the default model:
+- Percent improvement in Dice over the default model:
 
 ```{r, echo = FALSE}
-pander(df)
+knitr::kable(df)
 ```
 
 
@@ -316,19 +317,10 @@ pander(df)
 - Neuroconductor: central repository for image analysis R libraries
 
 
-## Website
-
-<a href="../index.html" target="_blank">http://johnmuschelli.com/imaging_in_r</a>
-
-
-## References {.smaller}
-
-
-
 
 ## Website
 
-http://johnmuschelli.com/imaging_in_r
+[http://johnmuschelli.com/imaging_in_r](../index.html)
 
 ## References {.smaller}
 

@@ -70,6 +70,7 @@ if (!all(file.exists(outfiles))) {
   )
   output_imgs = lapply(res, function(x) x$outfile)
   names(output_imgs) = mods
+  mapply(writenii, output_imgs, outfiles)
 } else {
   output_imgs = check_nifti(outfiles)
 }

@@ -1,7 +1,8 @@
 ## ----setup, include=FALSE------------------------------------------------
 library(methods)
 library(ggplot2)
-library(pander)
+# library(pander)
+library(knitr)
 knitr::opts_chunk$set(echo = TRUE, comment = "", cache=TRUE, warning = FALSE)
 
 ## ----loading, echo=FALSE, message=FALSE, cache = FALSE-------------------
@@ -157,5 +158,5 @@ df = data.frame(df, stringsAsFactors = FALSE)
 colnames(df) = c("ID", "Dice")
 
 ## ---- echo = FALSE-------------------------------------------------------
-pander(df)
+knitr::kable(df)
 
