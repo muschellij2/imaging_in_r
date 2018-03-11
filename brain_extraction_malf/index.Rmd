@@ -11,8 +11,8 @@ bibliography: ../refs.bib
 ```{r setup, include=FALSE}
 library(methods)
 knitr::opts_chunk$set(echo = TRUE, comment = "")
+library(extrantsr)
 ```
-
 
 ## Overall Pipeline
 
@@ -29,15 +29,23 @@ In this tutorial we will discuss performing brain segmentation using:
 - (extra slides) a robust version using a wrapper function in `extrantsr`, `fslbet_robust`
 
 
-## MS Lesion MPRAGE
+## MS Lesion T1
 
 Let's reset and read in the T1 image from a MS lesion data set:
 
-```{r reading_in_image, message = FALSE}
+```{r reading_in_image, message = FALSE, eval = FALSE}
 library(neurobase)
-t1_fname = "training01_01_mprage.nii.gz"
+t1_fname = "training01_01_t1.nii.gz"
 t1 = neurobase::readnii(t1_fname)
-rt1 = robust_window(t1); 
+rt1 = robust_window(t1, probs = c(0, 0.975)); 
+red0.5 = scales::alpha("red", 0.5) # for plotting later
+```
+
+```{r reading_in_image_run, message = FALSE, echo = FALSE}
+library(neurobase)
+t1_fname = "../training01_01_t1.nii.gz"
+t1 = neurobase::readnii(t1_fname)
+rt1 = robust_window(t1, probs = c(0, 0.975)); 
 red0.5 = scales::alpha("red", 0.5) # for plotting later
 ```
 
@@ -47,13 +55,13 @@ red0.5 = scales::alpha("red", 0.5) # for plotting later
 <!-- library(ms.lesion) -->
 <!-- library(neurobase) -->
 <!-- files = get_image_filenames_list_by_subject()$training01 -->
-<!-- t1_fname = files["MPRAGE"] -->
+<!-- t1_fname = files["T1"] -->
 <!-- t1 = readnii(t1_fname) -->
 <!-- rt1 = robust_window(t1); -->
 <!-- red0.5 = scales::alpha("red", 0.5) -->
 <!-- ``` -->
 
-## T1-weighted MPRAGE Image
+## T1-weighted T1 Image
 
 ```{r t1_plot_robust}
 ortho2(rt1)
@@ -117,8 +125,13 @@ bc_img = bias_correct(file = t1, correction = "N4")
 ```
 
 ```{r bc_show_run, echo = FALSE}
-bc_fname = "../output/training01_01_mprage_n4.nii.gz"
-bc_img = readnii(bc_fname)
+bc_fname = "../output/training01_01_t1_n4.nii.gz"
+if (!file.exists(bc_fname)) {
+  bc_img = bias_correct(file = t1, correction = "N4")
+  writenii(bc_img, bc_fname)
+} else {
+  bc_img = readnii(bc_fname)
+}
 bc_img = robust_window(bc_img)
 ```
 
@@ -151,7 +164,7 @@ ortho2(bc_img, bc_bet > 0, col.y = red0.5)
 <div id="left_col">
 Figure from Multi-Atlas Skull Stripping method paper [@mass]:
 
-<img src="figures/malf_figure.jpg" style="width: 80%; display: block; margin: auto;">
+<img src="malf_figure.jpg" style="width: 80%; display: block; margin: auto;">
 </div>
 <div id="right_col">
 - Register templates to an image using the T1 for that subject
@@ -199,7 +212,7 @@ mask = ss > 0
 library(malf.templates)
 library(extrantsr)
 timgs = mass_images(n_templates = 5)
-outfile = "../output/training01_01_mprage_mask.nii.gz"
+outfile = "../output/training01_01_t1_mask.nii.gz"
 if (!file.exists(outfile)) {
   ss = malf(
     infile = bc_fname, 
@@ -220,7 +233,7 @@ mask = ss > 0
 
 
 ```{r show_them, eval = FALSE}
-mask = readnii("training01_01_mprage_mask.nii.gz") # already computed
+mask = readnii("training01_01_t1_mask.nii.gz") # already computed
 ```
 
 ```{r display_malf_result}

@@ -27,6 +27,7 @@ All the PDF slides are located [in a zip file here](http://johnmuschelli.com/ISB
 mat = rbind(
   c("intro", "Introduction and R"),
   c("general_r", "General R"),
+  c("imaging_r_packages", "Imaging Packages in R"),
   c("visualization", "Visualization of Images"),
   c("inhomogeneity_correction_ms", "Inhomogeneity Correction"),
   c("brain_extraction_malf", "Brain Extraction/Segmentation"),

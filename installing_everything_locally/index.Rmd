@@ -18,6 +18,7 @@ library(knitr)
 opts_chunk$set(eval = FALSE)
 ```
 
+
 # System Requirements
 
 The functionality of some of these packages requires Linux, Mac OSX, or a Unix-type system.   This excludes Windows in some cases.  The code was run on Linux and Mac OSX.  Although we do not currently support it, [Windows 10 has a Linux subsystem ](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide), which may allow for a working installation of all the dependencies of Neuroconductor. 
@@ -139,20 +140,38 @@ and re-running the code above.
 
 ### Standard Packages
 ```{r}
+source("https://neuroconductor.org/neurocLite.R")
 # DICOM converter
-devtools::install_github("muschellij2/dcm2niir")
+neuro_install("dcm2niir")
 library(dcm2niir); install_dcm2nii()
 # HCP database connector
-devtools::install_github("muschellij2/neurohcp")
+neuro_install("neurohcp")
 # dcm2nii Rcpp implementation
-install.packages(c("RNifti", "divest", "oro.dicom", "oro.nifti", "WhiteStripe"))
+neuro_install(c("RNifti", "divest", "oro.dicom", "oro.nifti", "WhiteStripe"))
 # data for whitestripe
 library(WhiteStripe); download_img_data()
 
 # neurobase package
-devtools::install_github("muschellij2/neurobase")
-devtools::install_github("muschellij2/fslr")
+neuro_install("neurobase")
+neuro_install("fslr")
 ```
+
+
+<!-- source("https://neuroconductor.org/neurocLite.R") -->
+<!-- # DICOM converter -->
+<!-- devtools::install_github("muschellij2/dcm2niir") -->
+<!-- library(dcm2niir); install_dcm2nii() -->
+<!-- # HCP database connector -->
+<!-- devtools::install_github("muschellij2/neurohcp") -->
+<!-- # dcm2nii Rcpp implementation -->
+<!-- install.packages(c("RNifti", "divest", "oro.dicom", "oro.nifti", "WhiteStripe")) -->
+<!-- # data for whitestripe -->
+<!-- library(WhiteStripe); download_img_data() -->
+
+<!-- # neurobase package -->
+<!-- devtools::install_github("muschellij2/neurobase") -->
+<!-- devtools::install_github("muschellij2/fslr") -->
+
 
 ### ANTsR
 
@@ -162,11 +181,10 @@ Please see the the [Installing ANTsR tutorial ](http://johnmuschelli.com/neuroc/
 ##########################################
 # ANTs
 ##########################################
-devtools::install_github("stnava/ITKR")
-devtools::install_github("stnava/ANTsRCore", upgrade_dependencies = FALSE)
-devtools::install_github("stnava/ANTsR", upgrade_dependencies = FALSE)
-devtools::install_github("muschellij2/extrantsr", 
-                         upgrade_dependencies = FALSE)
+neuro_install("ITKR")
+neuro_install("ANTsRCore", upgrade_dependencies = FALSE)
+neuro_install("ANTsR", upgrade_dependencies = FALSE)
+neuro_install("extrantsr", upgrade_dependencies = FALSE)
 ```
 
 ### Knitting using RStudio
@@ -183,10 +201,10 @@ The only package that isn't directly available is the `ms.lesion` package, which
 # Install MS LESION DATA!
 # INSTALL KIRBY21
 ##############################
-devtools::install_github("muschellij2/papayar")
-devtools::install_github("emsweene/oasis")
-devtools::install_github("muschellij2/malf.templates")
-devtools::install_github("muschellij2/kirby21.t1")
+neuro_install("papayar")
+neuro_install("oasis")
+neuro_install("malf.templates")
+neuro_install("kirby21.t1")
 ```
 
 # Conclusion

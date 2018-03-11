@@ -10,29 +10,29 @@ source("http://bioconductor.org/biocLite.R");
 biocLite(pkgs = c("Biobase"), suppressUpdates = TRUE, suppressAutoUpdate = TRUE, ask = FALSE)
 
 ## ------------------------------------------------------------------------
+source("https://neuroconductor.org/neurocLite.R")
 # DICOM converter
-devtools::install_github("muschellij2/dcm2niir")
+neuro_install("dcm2niir")
 library(dcm2niir); install_dcm2nii()
 # HCP database connector
-devtools::install_github("muschellij2/neurohcp")
+neuro_install("neurohcp")
 # dcm2nii Rcpp implementation
-install.packages(c("RNifti", "divest", "oro.dicom", "oro.nifti", "WhiteStripe"))
+neuro_install(c("RNifti", "divest", "oro.dicom", "oro.nifti", "WhiteStripe"))
 # data for whitestripe
 library(WhiteStripe); download_img_data()
 
 # neurobase package
-devtools::install_github("muschellij2/neurobase")
-devtools::install_github("muschellij2/fslr")
+neuro_install("neurobase")
+neuro_install("fslr")
 
 ## ------------------------------------------------------------------------
 ##########################################
 # ANTs
 ##########################################
-devtools::install_github("stnava/ITKR")
-devtools::install_github("stnava/ANTsRCore", upgrade_dependencies = FALSE)
-devtools::install_github("stnava/ANTsR", upgrade_dependencies = FALSE)
-devtools::install_github("muschellij2/extrantsr", 
-                         upgrade_dependencies = FALSE)
+neuro_install("ITKR")
+neuro_install("ANTsRCore", upgrade_dependencies = FALSE)
+neuro_install("ANTsR", upgrade_dependencies = FALSE)
+neuro_install("extrantsr", upgrade_dependencies = FALSE)
 
 ## ------------------------------------------------------------------------
 install.packages(c("formatR", "caTools", "rprojroot", "rmarkdown"))
@@ -42,10 +42,10 @@ install.packages(c("formatR", "caTools", "rprojroot", "rmarkdown"))
 # Install MS LESION DATA!
 # INSTALL KIRBY21
 ##############################
-devtools::install_github("muschellij2/papayar")
-devtools::install_github("emsweene/oasis")
-devtools::install_github("muschellij2/malf.templates")
-devtools::install_github("muschellij2/kirby21.t1")
+neuro_install("papayar")
+neuro_install("oasis")
+neuro_install("malf.templates")
+neuro_install("kirby21.t1")
 
 ## ------------------------------------------------------------------------
 library(fslr)

@@ -15,6 +15,7 @@ library(knitr)
 opts_chunk$set(comment = "")
 ```
 
+
 ## About Us
 
 **John Muschelli** 
@@ -63,16 +64,16 @@ Email: klinn@mail.med.upenn.edu
 
 ## Imaging Data Used: Multiple Sclerosis
   
-- MRI is well-suited for assessing lesion burden (volume and patterns) because lesions appear as hyperintensities on FLAIR, T2-w, and PD images and as hypointensities on T1-w (MPRAGE) images.
-- Using 5 training and 3 test subjects data from the MS lesion challenge 2016 (http://iacl.ece.jhu.edu/index.php/MSChallenge)
+- MRI is well-suited for assessing lesion burden (volume and patterns) because lesions appear as hyperintensities on FLAIR and T2-w images and as hypointensities on T1-w images.
+- Using 5 training and 3 test subjects data from the an open MS data set (http://lit.fe.uni-lj.si/tools.php?lang=eng) [@lesjak2017novel]
 
 ```{r readin, echo = FALSE, message=FALSE}
 library(ms.lesion)
 library(neurobase)
 files = get_image_filenames_list_by_subject(type = "coregistered")
 files = files$training02
-img_fnames = files[c("MPRAGE", "T2", "FLAIR", "PD")]
-mask_fname = files["mask1"]
+img_fnames = files[c("T1", "T2", "FLAIR")]
+mask_fname = files["mask"]
 brain_mask = readnii(files["Brain_Mask"])
 imgs = check_nifti(img_fnames)
 mask = readnii(mask_fname)
@@ -83,7 +84,7 @@ mask = applyEmptyImageDimensions(mask, inds = inds)
 zimgs = c(zimgs, Lesion_Mask = list(mask * 10))
 xyz = xyz(mask)
 multi_overlay(zimgs, z = xyz[3], text = names(zimgs), 
-              text.x = 0.5, text.y = 1.25, text.cex = 2)
+              text.x = 0.5, text.y = 2.25, text.cex = 2)
 ```
 
 
@@ -91,7 +92,7 @@ multi_overlay(zimgs, z = xyz[3], text = names(zimgs),
 
 There are multiple imaging formats.  We will use NIfTI:
 
-* NIfTI - Neuroimaging Informatics Technology Initiative (https://nifti.nimh.nih.gov/nifti-1)
+* Neuroimaging Informatics Technology Initiative (https://nifti.nimh.nih.gov/nifti-1)
     - essentially a header and data (binary format)
     - will have extension .nii (uncompressed) or .nii.gz (compressed)
     - we will use 3-D images (4-D and 5-D are possible)
@@ -163,6 +164,17 @@ install.packages("oro.nifti")
 ```
 
 `install.packages` is a function, `"oro.nifti"` is a character string.
+
+## Neuroconductor 
+
+* Most packages are in a repository [Comprehensive R Archive Network (CRAN)](https://cran.r-project.org/)
+* Neuroconductor (https://neuroconductor.org/) has packages related to medical imaging
+
+```r
+source("https://neuroconductor.org/neurocLite.R")
+neuro_install("oro.nifti")
+```
+
 
 ## Loading Packages
 
@@ -244,3 +256,5 @@ RStudio is an Integrated Development Environment (IDE) for R (made by RStudio th
 ## Website
 
 <a href="../index.html" target="_blank">http://johnmuschelli.com/imaging_in_r</a>
+
+## References {.smaller}

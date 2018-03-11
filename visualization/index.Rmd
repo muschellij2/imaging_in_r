@@ -18,10 +18,15 @@ library(extrantsr)
 library(scales)
 ```
 
+
 ## Again we read in the data
 
-```{r colon_twice}
-t1 = neurobase::readnii("training01_01_mprage.nii.gz")
+```{r colon_twice, eval = FALSE}
+t1 = neurobase::readnii("training01_01_t1.nii.gz")
+```
+
+```{r colon_twice_run, echo = FALSE}
+t1 = neurobase::readnii("../training01_01_t1.nii.gz")
 ```
 
 ## Density of an Image
@@ -41,12 +46,11 @@ You can also pass in a mask to most standard functions:
 plot(density(t1, mask = t1 > 0))
 ```
 
-
 ## Similarly: a Histogram
 
 Note the high intensities:
 
-```{r histog, echo = FALSE}
+```{r histog, echo = TRUE}
 hist(t1)
 ```
 
@@ -60,20 +64,20 @@ neurobase::ortho2(t1)
 
 ## Brightening up the image
 
-We see a faint outline of the image, but this single large value affects how we view the image.  The function `robust_window` calculates quantiles of an image, by default the 0 (min) and 99.9th quantile, and sets values outside of this range to that quantile.  
+We see a dark image; a this single large value affects how values are mapped.  The function `robust_window` calculates Winsorizes an image, by default the 0 (min) and 99.9th quantile, and sets values outside of this range to that quantile (97.5th below).  
 
 ```{r ortho2_rob}
-ortho2(robust_window(t1))
+ortho2(robust_window(t1, probs = c(0, 0.975)))
 ```
 
 ## Robust Density
 
-Note the x-axis
+Note the x-axis:
 
 ```{r dens_robust, echo = FALSE, fig.height = 5, fig.width = 10}
 par(mfrow = c(1,2))
 plot(density(t1), main = "Density of T1") 
-plot(density(robust_window(t1)), main = "Density of Windowed T1")
+plot(density(robust_window(t1, probs = c(0, 0.975))), main = "Density of Windowed T1")
 par(mfrow = c(1,1))
 ```
 
@@ -83,13 +87,13 @@ par(mfrow = c(1,1))
 
 For the rest of the slides we will use the robust `t1` for plotting
 ```{r robust_final, echo = FALSE}
-t1 = robust_window(t1)
+t1 = robust_window(t1, probs = c(0, 0.975))
 ```
 
-Here we plot the T1 and a mask of values over $150$:
+Here we plot the T1 and a mask of values over $300$:
 
 ```{r ortho_nona}
-ortho2(t1, y = t1 > 150)
+ortho2(t1, y = t1 > 300)
 ```
 
 ## Double orthographic view
@@ -97,7 +101,7 @@ ortho2(t1, y = t1 > 150)
 Sometimes you would like to represent 2 images side by side, of the same dimensions and orientation of course (useful for checking registration), use `double_ortho`
 
 ```{r double_ortho}
-double_ortho(t1, y = t1 > 150, col.y = "white")
+double_ortho(t1, y = t1 > 300, col.y = "white")
 ```
 
 ## Lightbox: view all slices
@@ -128,7 +132,7 @@ oro.nifti::slice(t1, z = 125, plane = "sagittal")
 
 We can also overlay one slice of an image upon another using the `oro.nifti::slice_overlay` function.  
 ```{r one_slice_overlay}
-slice_overlay(t1, y = t1 > 150, z = 80)
+slice_overlay(t1, y = t1 > 300, z = 80)
 ```
 
 ## Smoothing an Image (not extensively covered)
@@ -162,7 +166,7 @@ double_ortho(t1, sm_img)
 
 <!-- The `ms.lesion` package was made for this course.  It has all the data we will work with and the outputs from the analyses.   -->
 
-<!-- The main function we will use is `get_image_filenames_list_by_subject`.  It returns a `list` of filenames of the images for the 5 training and 3 test subjects from the MS lesion challenge 2016 (http://iacl.ece.jhu.edu/index.php/MSChallenge) -->
+<!-- The main function we will use is `get_image_filenames_list_by_subject`.  It returns a `list` of filenames of the images for the 5 training and 3 test subjects from and open MS data set [@lesjak2017novel] -->
 
 <!-- - The full data is available at https://smart-stats-tools.org.  -->
 
@@ -196,7 +200,7 @@ double_ortho(t1, sm_img)
 
 <!-- ```{r} -->
 <!-- files = files$training01 -->
-<!-- t1_fname = files["MPRAGE"] -->
+<!-- t1_fname = files["T1"] -->
 <!-- t1 = readnii(t1_fname) -->
 <!-- t1 -->
 <!-- ``` -->

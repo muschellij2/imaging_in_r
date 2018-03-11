@@ -1,7 +1,9 @@
 LIST = intro
 LIST += visualization
 LIST += general_r
+LIST += imaging_r_packages
 LIST += inhomogeneity_correction_ms
+# malf must be before coreg
 LIST += brain_extraction_malf
 LIST += segmentation
 LIST += coregistration
@@ -14,7 +16,10 @@ all:
 	for fol in $(LIST) ; do \
 		pwd && echo $$fol && cp makefile.copy $$fol/makefile && cd $$fol && make all && cd ../; \
 	done
-	Rscript -e "rmarkdown::render('index.Rmd')"
+	for fol in $(LIST) ; do \
+		pwd && echo $$fol && cp $$fol/index.pdf pdfs/$$fol.pdf; \
+	done
+	make index.html
 #  
 
 index.html: index.Rmd 

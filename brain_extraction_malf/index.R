@@ -1,12 +1,20 @@
 ## ----setup, include=FALSE------------------------------------------------
 library(methods)
 knitr::opts_chunk$set(echo = TRUE, comment = "")
+library(extrantsr)
 
-## ----reading_in_image, message = FALSE-----------------------------------
+## ----reading_in_image, message = FALSE, eval = FALSE---------------------
+## library(neurobase)
+## t1_fname = "training01_01_t1.nii.gz"
+## t1 = neurobase::readnii(t1_fname)
+## rt1 = robust_window(t1, probs = c(0, 0.975));
+## red0.5 = scales::alpha("red", 0.5) # for plotting later
+
+## ----reading_in_image_run, message = FALSE, echo = FALSE-----------------
 library(neurobase)
-t1_fname = "training01_01_mprage.nii.gz"
+t1_fname = "../training01_01_t1.nii.gz"
 t1 = neurobase::readnii(t1_fname)
-rt1 = robust_window(t1); 
+rt1 = robust_window(t1, probs = c(0, 0.975)); 
 red0.5 = scales::alpha("red", 0.5) # for plotting later
 
 ## ----t1_plot_robust------------------------------------------------------
@@ -37,8 +45,13 @@ ortho2(rt1, ss > 0, col.y = red0.5)
 ## bc_img = bias_correct(file = t1, correction = "N4")
 
 ## ----bc_show_run, echo = FALSE-------------------------------------------
-bc_fname = "../output/training01_01_mprage_n4.nii.gz"
-bc_img = readnii(bc_fname)
+bc_fname = "../output/training01_01_t1_n4.nii.gz"
+if (!file.exists(bc_fname)) {
+  bc_img = bias_correct(file = t1, correction = "N4")
+  writenii(bc_img, bc_fname)
+} else {
+  bc_img = readnii(bc_fname)
+}
 bc_img = robust_window(bc_img)
 
 ## ----bc_bet, eval = FALSE, message = FALSE-------------------------------
@@ -70,7 +83,7 @@ ortho2(bc_img, bc_bet > 0, col.y = red0.5)
 library(malf.templates)
 library(extrantsr)
 timgs = mass_images(n_templates = 5)
-outfile = "../output/training01_01_mprage_mask.nii.gz"
+outfile = "../output/training01_01_t1_mask.nii.gz"
 if (!file.exists(outfile)) {
   ss = malf(
     infile = bc_fname, 
@@ -86,7 +99,7 @@ if (!file.exists(outfile)) {
 mask = ss > 0
 
 ## ----show_them, eval = FALSE---------------------------------------------
-## mask = readnii("training01_01_mprage_mask.nii.gz") # already computed
+## mask = readnii("training01_01_t1_mask.nii.gz") # already computed
 
 ## ----display_malf_result-------------------------------------------------
 ortho2(bc_img, mask, col.y = red0.5)

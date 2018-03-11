@@ -4,7 +4,6 @@ output:
   ioslides_presentation:
     widescreen: yes
     css: ../styles.css
-  beamer_presentation: default
 bibliography: ../refs.bib
 ---
 
@@ -19,6 +18,7 @@ knit_hooks$set(inline = function(x) {
   hi_latex(x) 
 }) 
 ```
+
 
 ## Image formats: DICOM
 
@@ -38,7 +38,7 @@ One DICOM file represents one "slice" of the brain.
 
 The `oro.dicom` package is good for reading in this data.
 
-```{r read.dicom}
+```{r read_dicom}
 library(oro.dicom)
 library(divest)
 dcm_file = system.file("extdata", "testdata", 
@@ -53,9 +53,10 @@ class(slice)
 The output is a list with 2 elements: the DICOM header (`hdr`) and image (`img`) information, both of which are lists.
 
 Each element of `hdr` has a `data.frame`, and the elements of `img` are matrices:
-```{r hdr.dicom}
+
+```{r hdr_dicom}
 names(slice)
-class(slice$hdr)
+class(slice[["hdr"]])
 class(slice$hdr[[1]])
 class(slice$img)
 class(slice$img[[1]])
@@ -66,7 +67,7 @@ class(slice$img[[1]])
 
 (We transpose the data using `t()` so the image faces "up" instead of "right".)
 
-```{r display.dicom}
+```{r display_dicom}
 image(t(slice$img[[1]]), col=gray(0:64/64))
 ```
 
@@ -77,7 +78,7 @@ What about the header?
 
 There are many fields, for example pixelSpacing, which is the dimensions (x and y) of a pixel in millimeters (mm):
 
-```{r pixelspacing.dicom}
+```{r pixelspacing_dicom}
 hdr = slice$hdr[[1]]
 hdr[ hdr$name == 'PixelSpacing', "value"]
 ```
@@ -106,7 +107,7 @@ wide[, 1:5]
 
 We have discussed only one slice of the brain.  What about multiple slices?  If you pass a directory into `readDICOM`, it will read in all DICOM files in that directory.
 
-```{r multi.dicom, cache=FALSE}
+```{r multi_dicom, cache=FALSE}
 dcm_fol = system.file("extdata", "testdata", package = "divest")
 all_slices = readDICOM(dcm_fol)
 n = names(all_slices$hdr)
@@ -120,12 +121,12 @@ all_slices$img = all_slices$img[keep]
 
 When you pass in multiple headers, you have a row for each file:
 
-```{r reshape2_echo, echo = TRUE, eval = FALSE}
+```{r reshape_echo, echo = TRUE, eval = FALSE}
 wide = oro.dicom::dicomTable(all_slices$hdr)
 wide[, 1:5]
 ```
 
-```{r reshape2_eval, echo = FALSE, eval = TRUE}
+```{r reshape_eval, echo = FALSE, eval = TRUE}
 wide = oro.dicom::dicomTable(all_slices$hdr)
 rownames(wide) = basename(rownames(wide))
 wide[, 1:5]
@@ -139,23 +140,26 @@ The way we store this 3D array is in the NIfTI (Neuroimaging Informatics Technol
 
 ## DICOM vs. NIfTI
 
-```{r mat, echo = FALSE, results="asis"}
+```{r mat, echo = FALSE, eval = TRUE, results="asis"}
 library(pander)
 m = matrix(c("", "DICOM", "NIfTI",
 "File extension:", ".dcm", ".nii or .nii.gz (compressed)",
 "Each file is a:", "slice of the brain", "3D image of brain",
 "Header information:", " Many fields, protected health information, hospital-related meta-data", "Image meta-data, no patient information",
 "Different Images", "Different Folders", "Different Files (can be same directory)"), ncol = 3, byrow = TRUE)
-pandoc.table(m, split.cells = c(10, 10, 20))
+# pander(m, split.cells = c(10, 10, 20))
+knitr::kable(m, align = rep("c", 3))
 ```
 
 ## NIfTI
 
 We can convert this list of header information and image information to a `nifti` object (an R object) with the `dicom2nifti` command:
-```{r nifti}
+
+```{r nifti, warning=FALSE}
 nii = dicom2nifti(all_slices)
 dim(nii); class(nii)
 ```
+
 We can see that this `nii` object is indeed a `nifti` object and has 3 dimensions. 
 
 
@@ -222,7 +226,6 @@ In this course, we will be using NIfTI images, and will be using `readnii` to re
 * Images will be in gzipped format (extension `.nii.gz`)
 * Additional software (e.g. FSL) will be useful to reorient the data to a specified orientation before reading
 * DICOM images can be converted robustly using `divest` or `dcm2niix`
-
 
 
 ## Website
