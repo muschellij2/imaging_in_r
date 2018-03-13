@@ -33,6 +33,7 @@ knitr::opts_chunk$set(echo = TRUE, comment = "", fig.height = 5.5, fig.width = 5
     - Simply including scanner as a confounding variable may not work well (Rao et al. 2017)
 - Several methods for estimating and removing unwanted sources of variation due to site/scanner have been adapted to neuroimaging data.
 - In this tutorial we will use ComBat [@johnson2007adjusting; @fortin2018harmonization] to harmonize cortical thicknesses from the ADNI data.
+  - ComBat has been shown to effectively reduce scanner-to-scanner variability while preserving biological associations.
 
 ## Cortical Thickness
 <div class="container">
@@ -114,23 +115,23 @@ regions[1:15,]
 <img src="ageBySite.jpg" style="width: 100%; display: block; margin: auto;">
 
 ## ComBat Model
-- ComBat [@johnson2007adjusting] has been shown to remove unwanted variation due to scanner while preserving biological associations [@fortin2018harmonization].
-- ComBat assumes expected values of the imaging feature measurements can be modeled as a linear combination of the biological variables and the site effects with an error term that includes a multiplicative scanner-specific scaling factor:
-  $$y_{i,j,v} = \alpha_v + X_{i,j}^{T}\beta_v + Z_{i,j}^{T}\theta_v + \delta_{i,j}\epsilon_{i,j,v}$$ 
-    - $y_{i,j,v}$ is average cortical thickness in the $v^{th}$ ROI from subject $i$, scanner $j$
+- ComBat [@johnson2007adjusting; @fortin2018harmonization] assumes the imaging feature measurements can be modeled as a linear combination of the biological variables and the scanner effects with an error term that includes a multiplicative scanner-specific scaling factor:
+  $$y_{i,j,v} = \alpha_v + X_{i,j}^{T}\beta_v + Z_{i,j}^{T}\theta_v + \delta_{j,v}\epsilon_{i,j,v}$$ 
+    - $y_{i,j,v}$ is average cortical thickness in ROI $v$ from subject $i$, scanner $j$
     - $X_{i,j}^{T}$ is a vector of fixed covariates for subject $i$ scanned on scanner $j$
-    - $\alpha_v$, $\beta_v$ are the intercept and slope vector of covariates for the $v^{th}$ imaging measurement
+    - $\alpha_v$, $\beta_v$ are the intercept and slope vector of covariates for measurement $v$
     - $Z_{i,j}^{T}$ is a vector that indicates which scanner subject $i$ was imaged on
     - $\theta_v$ is the vector of additive scanner effects
+    - $\delta_{j,v}$ is the multiplicative effect of scanner $j$ on measurement $v$
     - $E(\epsilon_{i,j,v}) = 0$   
 
 ## ComBat Harmonization
-- Substituting $\gamma_{i,v}$ for $Z_{i,j}^{T}\theta_v$ we have:
-  $$y_{i,j,v} = \alpha_v + X_{i,j}^{T}\beta_v + \gamma_{i,v} + \delta_{i,j}\epsilon_{i,j,v}$$ 
+- Substituting $\gamma_{j,v}$ for $Z_{i,j}^{T}\theta_v$ we have:
+  $$y_{i,j,v} = \alpha_v + X_{i,j}^{T}\beta_v + \gamma_{j,v} + \delta_{j,v}\epsilon_{i,j,v}$$ 
 - ComBat uses empirical Bayes estimation to improve quality of scanner-specific parameter estimates when sample sizes are small 
-    - Let $\gamma_{i,v}^{*}$ and $\delta_{i,v}^{*}$ denote the EB estimates of $\gamma_{i,v}$ and $\delta_{i,v}$, respectively.
+    - Let $\gamma_{j,v}^{*}$ and $\delta_{j,v}^{*}$ denote the EB estimates of $\gamma_{j,v}$ and $\delta_{j,v}$, respectively.
 - Then, the ComBat-harmonized cortical thicknesses are defined as 
-$$y_{i,j,v}^{ComBat} = \frac{y_{i,j,v} - \hat{\alpha}_v - X_{i,j}^{T}\hat{\beta}_v - \gamma_{i,v}^{*}}{\delta_{i,v}^{*}}  + \hat{\alpha}_v + X_{i,j}^{T}\hat{\beta}_v$$
+$$y_{i,j,v}^{ComBat} = \frac{y_{i,j,v} - \hat{\alpha}_v - X_{i,j}^{T}\hat{\beta}_v - \gamma_{j,v}^{*}}{\delta_{j,v}^{*}}  + \hat{\alpha}_v + X_{i,j}^{T}\hat{\beta}_v$$
 
 ## Applying ComBat
 
