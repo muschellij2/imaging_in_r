@@ -35,6 +35,23 @@ knitr::opts_chunk$set(echo = TRUE, comment = "", fig.height = 5.5, fig.width = 5
 - In this tutorial we will use ComBat [@johnson2007adjusting; @fortin2018harmonization] to harmonize cortical thicknesses from the ADNI data.
   - ComBat has been shown to effectively reduce scanner-to-scanner variability while preserving biological associations.
 
+## ADNI Cortical Thickness Data
+
+- The Alzheimer's Disease Neuroimaging Initiative (ADNI) is a multi-million dollar study funded by public and private sources. 
+    - National Institute on Aging, the National Institute of Biomedical Imaging and Bioengineering, the Food and Drug Administration, private pharmaceutical companies, and non-profit organizations. 
+- The goals of the ADNI are to better understand progression from normal aging to mild cognitive
+impairment (MCI) and early Alzheimer's disease (AD) and determine effective biomarkers for disease diagnosis, monitoring, and treatment development.
+- We estimated cortical thicknesses from a subset of initial subject visits (N=156)
+    - Mix of male/female and healthy controls, MCI, and AD diagnoses at baseline
+- Our subset consists of images aquired from scanners at 14 different sites
+    - Mix of field strength, manufacturer, and model
+
+## ADNI Data Access
+
+<a href="http://adni.loni.usc.edu/data-samples/access-data/" target="_blank">http://adni.loni.usc.edu/data-samples/access-data/</a>
+
+<img src="adni.jpg" style="width: 70%; display: block; margin: auto;">
+
 ## Cortical Thickness
 <div class="container">
 <div id="left_col">
@@ -63,17 +80,6 @@ Image taken from [http://www.martinos.org/neurorecovery/technology.htm](http://w
 <img src="antsCT.jpg" style="width: 90%; display: block; margin: auto;">
 
 - With tissue priors and N4 corrected T1 from atropos, can use ``cort_thickness`` in ``extrantsr`` package
-
-## ADNI Cortical Thickness Data
-
-- The Alzheimer's Disease Neuroimaging Initiative (ADNI) is a multi-million dollar study funded by public and private sources. 
-    - National Institute on Aging, the National Institute of Biomedical Imaging and Bioengineering, the Food and Drug Administration, private pharmaceutical companies, and non-profit organizations. 
-- The goals of the ADNI are to better understand progression from normal aging to mild cognitive
-impairment (MCI) and early Alzheimer's disease (AD) and determine effective biomarkers for disease diagnosis, monitoring, and treatment development.
-- We estimated cortical thicknesses from a subset of initial subject visits (N=156)
-    - Mix of male/female and healthy controls, MCI, and AD diagnoses at baseline
-- Our subset consists of images aquired from scanners at 14 different sites
-    - Mix of field strength, manufacturer, and model
 
 ## Cortical Thickness Regions
 
