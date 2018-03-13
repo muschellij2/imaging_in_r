@@ -105,6 +105,10 @@ regions[1:15,]
 
 ## ADNI Cortical Thickness Data
 
+<img src="averageByAge.jpg" style="width: 100%; display: block; margin: auto;">
+
+## ADNI Cortical Thickness Data
+
 - Scanner is often confounded with biological covariates of interest.
 
 <img src="ageBySite.jpg" style="width: 100%; display: block; margin: auto;">
@@ -221,6 +225,18 @@ head(harmonized$dat.combat)[,1:10]
 - After ComBat
 
 <img src="averageByMedian_combat.jpg" style="width: 100%; display: block; margin: auto;">
+
+## ADNI Cortical Thickness Data
+
+- Before ComBat
+
+<img src="averageByAge.jpg" style="width: 100%; display: block; margin: auto;">
+
+## ADNI Cortical Thickness Data
+
+- After ComBat
+
+<img src="averageByAge_combat.jpg" style="width: 100%; display: block; margin: auto;">
 
 ## Example: Test for Site Effects Before ComBat
 
