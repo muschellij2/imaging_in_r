@@ -32,7 +32,7 @@ knitr::opts_chunk$set(echo = TRUE, comment = "", fig.height = 5.5, fig.width = 5
     - Most critical if sites or scanners are imbalanced with respect to other variables such as age, sex, race, clinical status
     - Simply including scanner as a confounding variable may not work well (Rao et al. 2017)
 - Several methods for estimating and removing unwanted sources of variation due to site/scanner have been adapted to neuroimaging data.
-- In this tutorial we will use ComBat [@fortin2018harmonization] to harmonize cortical thicknesses from the ADNI data.
+- In this tutorial we will use ComBat [@johnson2007adjusting; @fortin2018harmonization] to harmonize cortical thicknesses from the ADNI data.
 
 ## Cortical Thickness
 <div class="container">
@@ -65,12 +65,12 @@ Image taken from [http://www.martinos.org/neurorecovery/technology.htm](http://w
 
 ## ADNI Cortical Thickness Data
 
-- The Alzheimer's Disease Neuroimaging Initiative (ADNI) is a multi-million dollar study funded by public and private resources. 
+- The Alzheimer's Disease Neuroimaging Initiative (ADNI) is a multi-million dollar study funded by public and private sources. 
     - National Institute on Aging, the National Institute of Biomedical Imaging and Bioengineering, the Food and Drug Administration, private pharmaceutical companies, and non-profit organizations. 
 - The goals of the ADNI are to better understand progression from normal aging to mild cognitive
 impairment (MCI) and early Alzheimer's disease (AD) and determine effective biomarkers for disease diagnosis, monitoring, and treatment development.
-- We estimated cortical thicknesses from a subset of initial subject visits (N=215)
-    - Mix of healthy controls, MCI, and AD diagnoses at baseline
+- We estimated cortical thicknesses from a subset of initial subject visits (N=156)
+    - Mix of male/female and healthy controls, MCI, and AD diagnoses at baseline
 - Our subset consists of images aquired from scanners at 14 different sites
     - Mix of field strength, manufacturer, and model
 
@@ -81,7 +81,7 @@ impairment (MCI) and early Alzheimer's disease (AD) and determine effective biom
 <div class="container">
 <div id="left_col">
 
-```{r, echo=FALSE, warning=FALSE}
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(dplyr)
 labels = data.frame('label'=names(read.csv('imageData.csv'))[-1])
 rois = read.csv('labels.csv', header=FALSE, stringsAsFactors=FALSE)

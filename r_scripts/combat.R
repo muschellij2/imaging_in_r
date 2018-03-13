@@ -1,7 +1,7 @@
 ## ----setup, include=FALSE------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE, comment = "", fig.height = 5.5, fig.width = 5.5, cache = TRUE)
 
-## ---- echo=FALSE, warning=FALSE------------------------------------------
+## ---- echo=FALSE, warning=FALSE, message=FALSE---------------------------
 library(dplyr)
 labels = data.frame('label'=names(read.csv('imageData.csv'))[-1])
 rois = read.csv('labels.csv', header=FALSE, stringsAsFactors=FALSE)
