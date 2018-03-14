@@ -84,6 +84,45 @@ https://github.com/muschellij2/rneuro/blob/master/ms_rstudio_droplet.sh
 We have provided a set of instructions to install all the requirements on your local system after the tutorial at:
 [http://johnmuschelli.com/imaging_in_r/installing_everything_locally/](http://johnmuschelli.com/imaging_in_r/installing_everything_locally/). 
 
+#### Installation 
+
+This script should install the packages locally for  Mac OSX/Linux/Windows:
+
+```{r, eval = FALSE}
+if (!"devtools" %in% installed.packages()) {
+  install.packages("devtools")
+}
+if (!"ms.lesion" %in% installed.packages()) {
+  devtools::install_github("muschellij2/ms.lesion")
+}
+source("https://neuroconductor.org/neurocLite.R")
+pkgs = c("neurobase", "fslr", "dcm2niir","divest", 
+         "RNifti", "oro.dicom", 
+         "oro.nifti", "WhiteStripe", "neurohcp", "papayar",
+         "papayaWidget", "oasis", "kirby21.t1")
+neuro_install(pkgs)
+  # data for whitestripe
+library(dcm2niir); install_dcm2nii()
+library(WhiteStripe); download_img_data()
+```
+
+In order to use `fslr` with FSL (availabel for Mac OSX and Linux only), you must [install FSL](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FslInstallation).  
+
+These packages only work for Mac OSX and Linux:
+
+```{r, eval = FALSE}
+neuro_install(c("ITKR", "ANTsRCore", "ANTsR", "extrantsr"),
+              upgrade_dependencies = FALSE)
+```
+
+This is a package for MALF (multi-atlas label fusion), but is a very large package, so only download it if you are going to do MALF:
+
+```{r, eval = FALSE}
+neuro_install("malf.templates")
+```
+
+
+
 # Course Description 
 In this tutorial, we will provide tutorials on how to use R for structural magnetic resonance imaging (MRI) analysis. We will show how to perform entire image analysis in R, from the scans in raw image format to the statistical analysis after image preprocessing, with an emphasis on reproducibility by using a single programming language. This course will use a real multiple sclerosis dataset and will show the steps of going from the raw image files to performing multiple sclerosis lesion classification with a number of classifiers entirely in R. In this hands-on tutorial, attendees will be given instructions for setup and data before the course, so that they are able to follow along and perform the analysis during the tutorial. The topics to be cover in the course are as follows:
 

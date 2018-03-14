@@ -1624,6 +1624,31 @@ div.tocify {
 <section id="local-r-setup" class="level3">
 <h3><span class="header-section-number">2.2.1</span> Local R Setup</h3>
 <p>We have provided a set of instructions to install all the requirements on your local system after the tutorial at: <a href="http://johnmuschelli.com/imaging_in_r/installing_everything_locally/" class="uri">http://johnmuschelli.com/imaging_in_r/installing_everything_locally/</a>.</p>
+<section id="installation" class="level4">
+<h4><span class="header-section-number">2.2.1.1</span> Installation</h4>
+<p>This script should install the packages locally for Mac OSX/Linux/Windows:</p>
+<pre class="r"><code>if (!&quot;devtools&quot; %in% installed.packages()) {
+  install.packages(&quot;devtools&quot;)
+}
+if (!&quot;ms.lesion&quot; %in% installed.packages()) {
+  devtools::install_github(&quot;muschellij2/ms.lesion&quot;)
+}
+source(&quot;https://neuroconductor.org/neurocLite.R&quot;)
+pkgs = c(&quot;neurobase&quot;, &quot;fslr&quot;, &quot;dcm2niir&quot;,&quot;divest&quot;, 
+         &quot;RNifti&quot;, &quot;oro.dicom&quot;, 
+         &quot;oro.nifti&quot;, &quot;WhiteStripe&quot;, &quot;neurohcp&quot;, &quot;papayar&quot;,
+         &quot;papayaWidget&quot;, &quot;oasis&quot;, &quot;kirby21.t1&quot;)
+neuro_install(pkgs)
+  # data for whitestripe
+library(dcm2niir); install_dcm2nii()
+library(WhiteStripe); download_img_data()</code></pre>
+<p>In order to use <code>fslr</code> with FSL (availabel for Mac OSX and Linux only), you must <a href="https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FslInstallation">install FSL</a>.</p>
+<p>These packages only work for Mac OSX and Linux:</p>
+<pre class="r"><code>neuro_install(c(&quot;ITKR&quot;, &quot;ANTsRCore&quot;, &quot;ANTsR&quot;, &quot;extrantsr&quot;),
+              upgrade_dependencies = FALSE)</code></pre>
+<p>This is a package for MALF (multi-atlas label fusion), but is a very large package, so only download it if you are going to do MALF:</p>
+<pre class="r"><code>neuro_install(&quot;malf.templates&quot;)</code></pre>
+</section>
 </section>
 </section>
 </section>
@@ -1640,7 +1665,7 @@ div.tocify {
 <li>Coregistration Within and Between MRI Studies</li>
 <li>Intensity Normalization</li>
 </ul>
-<p>This page was last updated on 2018-03-14 16:15:32 Eastern Time.</p>
+<p>This page was last updated on 2018-03-14 19:35:20 Eastern Time.</p>
 </section>
 
 
