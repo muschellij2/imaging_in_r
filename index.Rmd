@@ -34,6 +34,7 @@ mat = rbind(
   c("coregistration", "Image Registration"),
   c("segmentation", "Tissue-Class Segmentation"),
   c("intensity_normalization", "Intensity Normalization"),
+  c("combat", "Image Harmonization"),
   c("ms_lesion_segmentation", "Segmentation of MS Lesions"),
   c("starting_with_raw_data", "Starting with Raw (DICOM) Data (not covered)")
   )
