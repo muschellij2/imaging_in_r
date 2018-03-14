@@ -26,7 +26,7 @@ All the PDF slides are located [in a zip file here](http://johnmuschelli.com/ISB
 # library(DT)
 mat = rbind(
   c("intro", "Introduction and R"),
-  c("general_r", "General R"),
+  c("general_r", "General R (not covered at ENAR)"),
   c("imaging_r_packages", "Imaging Packages in R"),
   c("visualization", "Visualization of Images"),
   c("inhomogeneity_correction_ms", "Inhomogeneity Correction"),
@@ -34,8 +34,8 @@ mat = rbind(
   c("coregistration", "Image Registration"),
   c("segmentation", "Tissue-Class Segmentation"),
   c("intensity_normalization", "Intensity Normalization"),
-  c("combat", "Image Harmonization"),
   c("ms_lesion_segmentation", "Segmentation of MS Lesions"),
+  c("combat", "Image Harmonization"),
   c("starting_with_raw_data", "Starting with Raw (DICOM) Data (not covered)")
   )
 mat = data.frame(mat, stringsAsFactors = FALSE)
