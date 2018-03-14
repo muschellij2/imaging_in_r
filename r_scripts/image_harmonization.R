@@ -4,6 +4,7 @@ library(tidyr)
 library(dplyr)
 library(tibble)
 library(ggplot2)
+library(RColorBrewer)
 
 ## ---- echo=FALSE, warning=FALSE, message=FALSE---------------------------
 library(dplyr)
@@ -61,7 +62,10 @@ df$combat = "after"
 all_df = bind_rows(df, pre_df) %>% 
   arrange(subject, roi, combat, thickness)
 
-no_xlabs = theme(axis.text.x=element_blank())
+no_xlabs = theme(axis.text.x=element_blank()) +
+  theme(text = element_text(size = 20))
+labber = labs(x = "Subjects", y = "Cortical Thickness")
+
 pre_medians = pre_df %>% 
   group_by(subject) %>% 
   summarize(med = median(thickness)) %>% 
@@ -79,15 +83,23 @@ df = df %>%
                                    levels = post_medians$subject)
   )
 
+marker1 = list(color = brewer.pal(9, "BuGn"))
+marker2 = list(color = brewer.pal(9, "RdPu"))
+marker = c(marker1$color[1:5], marker2$color[3:7], marker1$color[5:9], marker2$color[8:9])
+names(marker) = sort(unique(df$scanner))
+
 pre_df = pre_df %>% 
   mutate(sorted_subj = as.character(subject),
          sorted_subj = factor(sorted_subj, 
                               levels = pre_medians$subject))
-
+range_pre = c(0, 5)
 g = df %>% 
-  ggplot(aes(x = sorted_subj, y = thickness, colour = scanner)) + 
+  ggplot(aes(x = sorted_subj, y = thickness, fill = scanner)) + 
   geom_boxplot() + 
-  no_xlabs
+  no_xlabs + labber + 
+  ylim(range_pre) + 
+  scale_fill_manual(values = marker,
+                    guide = guide_legend(title = NULL))
 pre_g = g %+% pre_df
 png("avg_med_pre.png",
     height = 7, width = 14, res = 600, units = "in")
@@ -98,9 +110,12 @@ png("avg_med_post_sortedByPre.png",
   g
 dev.off()
 gpost = df %>% 
-  ggplot(aes(x = post_sorted_subj, y = thickness, colour = scanner)) + 
+  ggplot(aes(x = post_sorted_subj, y = thickness, fill = scanner)) + 
   geom_boxplot() + 
-  no_xlabs
+  no_xlabs + labber + 
+  ylim(range_pre) + 
+  scale_fill_manual(values = marker, 
+                    guide = guide_legend(title = NULL))
 png("avg_med_post.png", height = 7, width = 14, res = 600, units = "in")
 gpost
 dev.off()
