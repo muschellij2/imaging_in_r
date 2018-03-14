@@ -1,0 +1,62 @@
+X1002, “left caudal anterior cingulate”
+X1003, “left caudal middle frontal”
+X1005, “left cuneus”
+X1006, “left entorhinal”
+X1007, “left fusiform”
+X1008, “left inferior parietal”
+X1009, “left inferior temporal”
+X1010, “left isthmus cingulate”
+X1011, “left lateral occipital”
+X1012, “left lateral orbitofrontal”
+X1013, “left lingual”
+X1014, “left medial orbitofrontal”
+X1015, “left middle temporal”
+X1016, “left parahippocampal”
+X1017, “left paracentral”
+X1018, “left pars opercularis”
+X1019, “left pars orbitalis”
+X1020, “left pars triangularis”
+X1021, “left pericalcarine”
+X1022, “left postcentral”
+X1023, “left posterior cingulate”
+X1024, “left precentral”
+X1025, “left precuneus”
+X1026, “left rostral anterior cingulate”
+X1027, “left rostral middle frontal”
+X1028, “left superior frontal”
+X1029, “left superior parietal”
+X1030, “left superior temporal”
+X1031, “left supramarginal”
+X1034, “left transverse temporal”
+X1035, “left insula”
+X2002, “right caudal anterior cingulate”
+X2003, “right caudal middle frontal”
+X2005, “right cuneus”
+X2006, “right entorhinal”
+X2007, “right fusiform”
+X2008, “right inferior parietal”
+X2009, “right inferior temporal”
+X2010, “right isthmus cingulate”
+X2011, “right lateral occipital”
+X2012, “right lateral orbitofrontal”
+X2013, “right lingual”
+X2014, “right medial orbitofrontal”
+X2015, “right middle temporal”
+X2016, “right parahippocampal”
+X2017, “right paracentral”
+X2018, “right pars opercularis”
+X2019, “right pars orbitalis”
+X2020, “right pars triangularis”
+X2021, “right pericalcarine”
+X2022, “right postcentral”
+X2023, “right posterior cingulate”
+X2024, “right precentral”
+X2025, “right precuneus”
+X2026, “right rostral anterior cingulate”
+X2027, “right rostral middle frontal”
+X2028, “right superior frontal”
+X2029, “right superior parietal”
+X2030, “right superior temporal”
+X2031, “right supramarginal”
+X2034, “right transverse temporal”
+X2035, “right insula”

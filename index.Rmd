@@ -35,7 +35,7 @@ mat = rbind(
   c("segmentation", "Tissue-Class Segmentation"),
   c("intensity_normalization", "Intensity Normalization"),
   c("ms_lesion_segmentation", "Segmentation of MS Lesions"),
-  c("combat", "Image Harmonization"),
+  c("image_harmonization", "Image Harmonization"),
   c("starting_with_raw_data", "Starting with Raw (DICOM) Data (not covered)")
   )
 mat = data.frame(mat, stringsAsFactors = FALSE)
