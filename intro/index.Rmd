@@ -115,6 +115,10 @@ For this course, we will use an RStudio Server because installing all the packag
 
 http://johnmuschelli.com/rstudio_server.html
 
+**Virtual Machine**
+
+If you want to run things locally, we have a Virtual Machine you can download and install: https://neuroconductor.org/neuroc-vm
+
 
 # Introduction to R
 
