@@ -11,6 +11,7 @@ LIST += intensity_normalization
 LIST += starting_with_raw_data
 LIST += installing_everything_locally
 LIST += ms_lesion_segmentation
+LIST += combat
 
 all:
 	for fol in $(LIST) ; do \
