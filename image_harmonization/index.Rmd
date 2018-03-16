@@ -47,9 +47,10 @@ library(RColorBrewer)
     - National Institute on Aging, the National Institute of Biomedical Imaging and Bioengineering, the Food and Drug Administration, private pharmaceutical companies, and non-profit organizations. 
 - The goals of the ADNI are to better understand progression from normal aging to mild cognitive
 impairment (MCI) and early Alzheimer's disease (AD) and determine effective biomarkers for disease diagnosis, monitoring, and treatment development.
-- We estimated cortical thicknesses from a subset of initial subject visits (N=156)
-    - Mix of male/female and healthy controls, MCI, and AD diagnoses at baseline
-- Our subset consists of images aquired from scanners at 14 different sites
+- We estimated cortical thicknesses from a subset of initial subject visits (N=187)
+    - Mix of male/female aged 56-91
+    - Mix of healthy controls (46), MCI (93), and AD (48) diagnoses at baseline
+- Our subset consists of images aquired from scanners at 17 different sites
     - Mix of field strength, manufacturer, and model
 
 ## ADNI Data Access
@@ -78,14 +79,8 @@ Image taken from [http://www.martinos.org/neurorecovery/technology.htm](http://w
 
 <img src="antsCT.jpg" style="width: 90%; display: block; margin: auto;">
 
-- Template: publicly available vs. "cooking" one based on your data
 - DiReCT: Diffeomorphic Registration based CT measurement [@das2009registration]
-
-## ANTS Cortical Thickness Pipeline (antsCorticalThickness.sh)
-
-<img src="antsCT.jpg" style="width: 90%; display: block; margin: auto;">
-
-- With tissue priors and N4 corrected T1 from atropos, can use ``cort_thickness`` in ``extrantsr`` package
+- With results from Atropos, can use ``cort_thickness`` in ``extrantsr`` package
 
 ## Cortical Thickness Regions
 
@@ -128,18 +123,15 @@ regions[1:15,]
 
 ## ComBat Model
 - ComBat [@johnson2007adjusting; @fortin2018harmonization] assumes the imaging feature measurements can be modeled as a linear combination of the biological variables and the scanner effects with an error term that includes a multiplicative scanner-specific scaling factor:
-  $$y_{i,j,v} = \alpha_v + X_{i,j}^{T}\beta_v + Z_{i,j}^{T}\theta_v + \delta_{j,v}\epsilon_{i,j,v}$$ 
+  $$y_{i,j,v} = \alpha_v + X_{i,j}^{T}\beta_v + \gamma_{j,v} + \delta_{j,v}\epsilon_{i,j,v}$$ 
     - $y_{i,j,v}$ is average cortical thickness in ROI $v$ from subject $i$, scanner $j$
     - $X_{i,j}^{T}$ is a vector of fixed covariates for subject $i$ scanned on scanner $j$
     - $\alpha_v$, $\beta_v$ are the intercept and slope vector of covariates for measurement $v$
-    - $Z_{i,j}^{T}$ is a vector that indicates which scanner subject $i$ was imaged on
-    - $\theta_v$ is the vector of additive scanner effects
+    - $\gamma_{j, v}$ is the location shift of scanner $j$ on measurement $v$
     - $\delta_{j,v}$ is the multiplicative effect of scanner $j$ on measurement $v$
     - $E(\epsilon_{i,j,v}) = 0$   
 
 ## ComBat Harmonization
-- Substituting $\gamma_{j,v}$ for $Z_{i,j}^{T}\theta_v$ we have:
-  $$y_{i,j,v} = \alpha_v + X_{i,j}^{T}\beta_v + \gamma_{j,v} + \delta_{j,v}\epsilon_{i,j,v}$$ 
 - ComBat uses empirical Bayes estimation to improve quality of scanner-specific parameter estimates when sample sizes are small 
     - Let $\gamma_{j,v}^{*}$ and $\delta_{j,v}^{*}$ denote the EB estimates of $\gamma_{j,v}$ and $\delta_{j,v}$, respectively.
 - Then, the ComBat-harmonized cortical thicknesses are defined as 
@@ -196,7 +188,6 @@ harmonized = combat(dat=img, batch=modelData$scanner, mod=mod)
 ```
 
 - 4 covariates: age, sex (2-level factor), and diagnosis (3-level factor).
-- The combat() function returns a list. 
 
 ## ComBat Harmonized Data
 
@@ -208,94 +199,92 @@ head(harmonized$dat.combat)[,1:10]
 ```
 
 ```{r, echo = FALSE}
-pre_df = inner_join(ctData, modelData, by = "subject")
-pre_df = pre_df %>% 
-  gather(key = "roi", value = "thickness", starts_with("X"))
-pre_df = pre_df %>% 
-  mutate(roi = sub("^X", "", roi)) %>% 
-  arrange(subject, roi, thickness) %>% 
-  as_data_frame()
-pre_df$combat = "before"
+#pre_df = inner_join(ctData, modelData, by = "subject")
+#pre_df = pre_df %>% 
+#  gather(key = "roi", value = "thickness", starts_with("X"))
+#pre_df = pre_df %>% 
+#  mutate(roi = sub("^X", "", roi)) %>% 
+#  arrange(subject, roi, thickness) %>% 
+#  as_data_frame()
+#pre_df$combat = "before"
 
-df = as_data_frame(t(harmonized$dat.combat))
-df = bind_cols(df, modelData)
+#df = as_data_frame(t(harmonized$dat.combat))
+#df = bind_cols(df, modelData)
 
-df = df %>% 
-  gather(key = "roi", value = "thickness", starts_with("X"))
-df = df %>% 
-  mutate(roi = sub("^X", "", roi)) %>% 
-  arrange(subject, roi, thickness)
-df$combat = "after"
+#df = df %>% 
+#  gather(key = "roi", value = "thickness", starts_with("X"))
+#df = df %>% 
+#  mutate(roi = sub("^X", "", roi)) %>% 
+#  arrange(subject, roi, thickness)
+#df$combat = "after"
 
-all_df = bind_rows(df, pre_df) %>% 
-  arrange(subject, roi, combat, thickness)
+#all_df = bind_rows(df, pre_df) %>% 
+#  arrange(subject, roi, combat, thickness)
 
-no_xlabs = theme(axis.text.x=element_blank()) +
-  theme(text = element_text(size = 20))
-labber = labs(x = "Subjects", y = "Cortical Thickness")
+#no_xlabs = theme(axis.text.x=element_blank()) +
+#  theme(text = element_text(size = 20))
+#labber = labs(x = "Subjects", y = "Cortical Thickness")
 
-pre_medians = pre_df %>% 
-  group_by(subject) %>% 
-  summarize(med = median(thickness)) %>% 
-  arrange(med)
-post_medians = df %>% 
-  group_by(subject) %>% 
-  summarize(med = median(thickness)) %>% 
-  arrange(med)
-df = df %>% 
-  mutate(sorted_subj = as.character(subject),
-         sorted_subj = factor(sorted_subj, 
-                              levels = pre_medians$subject),
-         post_sorted_subj = as.character(subject),
-         post_sorted_subj = factor(post_sorted_subj, 
-                                   levels = post_medians$subject)
-  )
+#pre_medians = pre_df %>% 
+#  group_by(subject) %>% 
+#  summarize(med = median(thickness)) %>% 
+#  arrange(med)
+#post_medians = df %>% 
+#  group_by(subject) %>% 
+#  summarize(med = median(thickness)) %>% 
+#  arrange(med)
+#df = df %>% 
+#  mutate(sorted_subj = as.character(subject),
+#         sorted_subj = factor(sorted_subj, 
+#                              levels = pre_medians$subject),
+#         post_sorted_subj = as.character(subject),
+#         post_sorted_subj = factor(post_sorted_subj, 
+#                                   levels = post_medians$subject)
+#  )
 
-marker1 = list(color = brewer.pal(9, "BuGn"))
-marker2 = list(color = brewer.pal(9, "RdPu"))
-marker = c(marker1$color[1:5], marker2$color[3:7], marker1$color[5:9], marker2$color[8:9])
-names(marker) = sort(unique(df$scanner))
+#marker1 = list(color = brewer.pal(9, "BuGn"))
+#marker2 = list(color = brewer.pal(9, "RdPu"))
+#marker = c(marker1$color[1:5], marker2$color[3:7], marker1$color[5:9], marker2$color[8:9])
+#names(marker) = sort(unique(df$scanner))
 
-pre_df = pre_df %>% 
-  mutate(sorted_subj = as.character(subject),
-         sorted_subj = factor(sorted_subj, 
-                              levels = pre_medians$subject))
-range_pre = c(0, 5)
-g = df %>% 
-  ggplot(aes(x = sorted_subj, y = thickness, fill = scanner)) + 
-  geom_boxplot() + 
-  no_xlabs + labber + 
-  ylim(range_pre) + 
-  scale_fill_manual(values = marker,
-                    guide = guide_legend(title = NULL))
-pre_g = g %+% pre_df
-png("avg_med_pre.png",
-    height = 7, width = 14, res = 600, units = "in")
-  pre_g
-dev.off()
-png("avg_med_post_sortedByPre.png", 
-    height = 7, width = 14, res = 600, units = "in")
-  g
-dev.off()
-gpost = df %>% 
-  ggplot(aes(x = post_sorted_subj, y = thickness, fill = scanner)) + 
-  geom_boxplot() + 
-  no_xlabs + labber + 
-  ylim(range_pre) + 
-  scale_fill_manual(values = marker, 
-                    guide = guide_legend(title = NULL))
-png("avg_med_post.png", height = 7, width = 14, res = 600, units = "in")
-gpost
-dev.off()
+#pre_df = pre_df %>% 
+#  mutate(sorted_subj = as.character(subject),
+#         sorted_subj = factor(sorted_subj, 
+#                              levels = pre_medians$subject))
+#range_pre = c(0, 5)
+#g = df %>% 
+#  ggplot(aes(x = sorted_subj, y = thickness, fill = scanner)) + 
+#  geom_boxplot() + 
+#  no_xlabs + labber + 
+#  ylim(range_pre) + 
+#  scale_fill_manual(values = marker,
+#                    guide = guide_legend(title = NULL))
+#pre_g = g %+% pre_df
+#png("avg_med_pre.png",
+#    height = 7, width = 14, res = 600, units = "in")
+#  pre_g
+#dev.off()
+#png("avg_med_post_sortedByPre.png", 
+#    height = 7, width = 14, res = 600, units = "in")
+#  g
+#dev.off()
+#gpost = df %>% 
+#  ggplot(aes(x = post_sorted_subj, y = thickness, fill = scanner)) + 
+#  geom_boxplot() + 
+#  no_xlabs + labber + 
+#  ylim(range_pre) + 
+#  scale_fill_manual(values = marker, 
+#                    guide = guide_legend(title = NULL))
+#png("avg_med_post.png", height = 7, width = 14, res = 600, units = "in")
+#gpost
+#dev.off()
 ```
 
-## ComBat Priors
-
-- Compare prior distributions to EB estimated parameter distributions
-    - Location: `harmonized$gamma.hat` versus `harmonized$gamma.star`
-    - Scale: `harmonized$delta.hat` versus `harmonized$delta.star`
-
-<img src="priors.jpg" style="width: 70%; display: block; margin: auto;">
+## Compare prior distributions to EB estimated parameter distributions
+- **Location:** `harmonized$gamma.hat` versus `harmonized$gamma.star`
+- **Scale:** `harmonized$delta.hat` versus `harmonized$delta.star`
+$$y_{i,j,v} = \alpha_v + X_{i,j}^{T}\beta_v + \gamma_{j,v} + \delta_{j,v}\epsilon_{i,j,v}$$
+<img src="priors.jpg" style="width: 65%; display: block; margin: auto;">
 
 ## ADNI Cortical Thickness Data
 
@@ -346,6 +335,9 @@ preComBat = left_join(modelData, ctData, by='subject')
 preRInsula = lm(X2035 ~ age + sex + dx + scanner, data=preComBat)
 summary(aov(preRInsula))
 ```
+```{r}
+coef(preRInsula)[2:4]
+```
 
 ## Example: Test for Site Effects After ComBat
 
@@ -358,6 +350,9 @@ harmonizedData$subject = ctData$subject
 postComBat = left_join(modelData, harmonizedData, by='subject')
 postRInsula = lm(X2035 ~ age + sex + dx + scanner, data=postComBat)
 summary(aov(postRInsula))
+```
+```{r}
+coef(postRInsula)[2:4]
 ```
 
 

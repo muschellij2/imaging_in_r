@@ -40,85 +40,85 @@ harmonized = combat(dat=img, batch=modelData$scanner, mod=mod)
 head(harmonized$dat.combat)[,1:10]
 
 ## ---- echo = FALSE-------------------------------------------------------
-pre_df = inner_join(ctData, modelData, by = "subject")
-pre_df = pre_df %>% 
-  gather(key = "roi", value = "thickness", starts_with("X"))
-pre_df = pre_df %>% 
-  mutate(roi = sub("^X", "", roi)) %>% 
-  arrange(subject, roi, thickness) %>% 
-  as_data_frame()
-pre_df$combat = "before"
+#pre_df = inner_join(ctData, modelData, by = "subject")
+#pre_df = pre_df %>% 
+#  gather(key = "roi", value = "thickness", starts_with("X"))
+#pre_df = pre_df %>% 
+#  mutate(roi = sub("^X", "", roi)) %>% 
+#  arrange(subject, roi, thickness) %>% 
+#  as_data_frame()
+#pre_df$combat = "before"
 
-df = as_data_frame(t(harmonized$dat.combat))
-df = bind_cols(df, modelData)
+#df = as_data_frame(t(harmonized$dat.combat))
+#df = bind_cols(df, modelData)
 
-df = df %>% 
-  gather(key = "roi", value = "thickness", starts_with("X"))
-df = df %>% 
-  mutate(roi = sub("^X", "", roi)) %>% 
-  arrange(subject, roi, thickness)
-df$combat = "after"
+#df = df %>% 
+#  gather(key = "roi", value = "thickness", starts_with("X"))
+#df = df %>% 
+#  mutate(roi = sub("^X", "", roi)) %>% 
+#  arrange(subject, roi, thickness)
+#df$combat = "after"
 
-all_df = bind_rows(df, pre_df) %>% 
-  arrange(subject, roi, combat, thickness)
+#all_df = bind_rows(df, pre_df) %>% 
+#  arrange(subject, roi, combat, thickness)
 
-no_xlabs = theme(axis.text.x=element_blank()) +
-  theme(text = element_text(size = 20))
-labber = labs(x = "Subjects", y = "Cortical Thickness")
+#no_xlabs = theme(axis.text.x=element_blank()) +
+#  theme(text = element_text(size = 20))
+#labber = labs(x = "Subjects", y = "Cortical Thickness")
 
-pre_medians = pre_df %>% 
-  group_by(subject) %>% 
-  summarize(med = median(thickness)) %>% 
-  arrange(med)
-post_medians = df %>% 
-  group_by(subject) %>% 
-  summarize(med = median(thickness)) %>% 
-  arrange(med)
-df = df %>% 
-  mutate(sorted_subj = as.character(subject),
-         sorted_subj = factor(sorted_subj, 
-                              levels = pre_medians$subject),
-         post_sorted_subj = as.character(subject),
-         post_sorted_subj = factor(post_sorted_subj, 
-                                   levels = post_medians$subject)
-  )
+#pre_medians = pre_df %>% 
+#  group_by(subject) %>% 
+#  summarize(med = median(thickness)) %>% 
+#  arrange(med)
+#post_medians = df %>% 
+#  group_by(subject) %>% 
+#  summarize(med = median(thickness)) %>% 
+#  arrange(med)
+#df = df %>% 
+#  mutate(sorted_subj = as.character(subject),
+#         sorted_subj = factor(sorted_subj, 
+#                              levels = pre_medians$subject),
+#         post_sorted_subj = as.character(subject),
+#         post_sorted_subj = factor(post_sorted_subj, 
+#                                   levels = post_medians$subject)
+#  )
 
-marker1 = list(color = brewer.pal(9, "BuGn"))
-marker2 = list(color = brewer.pal(9, "RdPu"))
-marker = c(marker1$color[1:5], marker2$color[3:7], marker1$color[5:9], marker2$color[8:9])
-names(marker) = sort(unique(df$scanner))
+#marker1 = list(color = brewer.pal(9, "BuGn"))
+#marker2 = list(color = brewer.pal(9, "RdPu"))
+#marker = c(marker1$color[1:5], marker2$color[3:7], marker1$color[5:9], marker2$color[8:9])
+#names(marker) = sort(unique(df$scanner))
 
-pre_df = pre_df %>% 
-  mutate(sorted_subj = as.character(subject),
-         sorted_subj = factor(sorted_subj, 
-                              levels = pre_medians$subject))
-range_pre = c(0, 5)
-g = df %>% 
-  ggplot(aes(x = sorted_subj, y = thickness, fill = scanner)) + 
-  geom_boxplot() + 
-  no_xlabs + labber + 
-  ylim(range_pre) + 
-  scale_fill_manual(values = marker,
-                    guide = guide_legend(title = NULL))
-pre_g = g %+% pre_df
-png("avg_med_pre.png",
-    height = 7, width = 14, res = 600, units = "in")
-  pre_g
-dev.off()
-png("avg_med_post_sortedByPre.png", 
-    height = 7, width = 14, res = 600, units = "in")
-  g
-dev.off()
-gpost = df %>% 
-  ggplot(aes(x = post_sorted_subj, y = thickness, fill = scanner)) + 
-  geom_boxplot() + 
-  no_xlabs + labber + 
-  ylim(range_pre) + 
-  scale_fill_manual(values = marker, 
-                    guide = guide_legend(title = NULL))
-png("avg_med_post.png", height = 7, width = 14, res = 600, units = "in")
-gpost
-dev.off()
+#pre_df = pre_df %>% 
+#  mutate(sorted_subj = as.character(subject),
+#         sorted_subj = factor(sorted_subj, 
+#                              levels = pre_medians$subject))
+#range_pre = c(0, 5)
+#g = df %>% 
+#  ggplot(aes(x = sorted_subj, y = thickness, fill = scanner)) + 
+#  geom_boxplot() + 
+#  no_xlabs + labber + 
+#  ylim(range_pre) + 
+#  scale_fill_manual(values = marker,
+#                    guide = guide_legend(title = NULL))
+#pre_g = g %+% pre_df
+#png("avg_med_pre.png",
+#    height = 7, width = 14, res = 600, units = "in")
+#  pre_g
+#dev.off()
+#png("avg_med_post_sortedByPre.png", 
+#    height = 7, width = 14, res = 600, units = "in")
+#  g
+#dev.off()
+#gpost = df %>% 
+#  ggplot(aes(x = post_sorted_subj, y = thickness, fill = scanner)) + 
+#  geom_boxplot() + 
+#  no_xlabs + labber + 
+#  ylim(range_pre) + 
+#  scale_fill_manual(values = marker, 
+#                    guide = guide_legend(title = NULL))
+#png("avg_med_post.png", height = 7, width = 14, res = 600, units = "in")
+#gpost
+#dev.off()
 
 ## ------------------------------------------------------------------------
 modelData$sex = factor(modelData$sex)
@@ -131,6 +131,9 @@ preRInsula = lm(X2035 ~ age + sex + dx + scanner, data=preComBat)
 summary(aov(preRInsula))
 
 ## ------------------------------------------------------------------------
+coef(preRInsula)[2:4]
+
+## ------------------------------------------------------------------------
 harmonizedData = as.data.frame(t(harmonized$dat.combat))
 harmonizedData$subject = ctData$subject
 
@@ -138,4 +141,7 @@ harmonizedData$subject = ctData$subject
 postComBat = left_join(modelData, harmonizedData, by='subject')
 postRInsula = lm(X2035 ~ age + sex + dx + scanner, data=postComBat)
 summary(aov(postRInsula))
+
+## ------------------------------------------------------------------------
+coef(postRInsula)[2:4]
 
