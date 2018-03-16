@@ -44,7 +44,7 @@ library(neurobase)
 all_files = get_image_filenames_list_by_subject(
   group = "training", 
   type = "coregistered")
-files = all_files$training05 # NOT training subject 1!
+files = all_files$training01 
 t1 = readnii(files["T1"])
 rt1 = robust_window(t1)
 mask = readnii(files["Brain_Mask"])
@@ -65,7 +65,7 @@ dd_orig = drop_empty_dim(run_mask, keep_ind = TRUE)
 - These methods can be skewed by large outliers.
 
 ```{r hist_vals}
-hist(t1, mask = mask, breaks = 2000); text(x = 600, y = 3000, '"outliers"')
+hist(t1, mask = mask, breaks = 2000); text(x = 600, y = 40000, '"outliers"')
 ```
 
 ## Where are the outliers?
@@ -133,33 +133,34 @@ FAST assumes three tissue classes and produces an image with the three labels, o
 ## FAST: White Matter
 
 ```{r fast_wm_nonrobust, eval = FALSE}
-ortho2(rt1, t1fast == 3, col.y = alpha("red", 0.5), text = "White Matter")
+xyz=c(121,278,312)
+ortho2(rt1, t1fast == 3, xyz=xyz, col.y = alpha("red", 0.5), text = "White Matter")
 ```
 
 ```{r fast_wm_nonrobust_show, echo = FALSE}
 xrt1 = apply_empty_dim(rt1, inds = dd_orig$inds)
 xt1fast = apply_empty_dim(t1fast, inds = dd_orig$inds)
-ortho2(xrt1, xt1fast == 3, col.y = alpha("red", 0.5), text = "White Matter")
+ortho2(xrt1, xt1fast == 3, xyz=xyz, col.y = alpha("red", 0.5), text = "White Matter")
 ```
 
 ## FAST: Gray Matter
 
 ```{r fast_gm_nonrobust, eval = FALSE}
-ortho2(rt1, t1fast == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
+ortho2(rt1, t1fast == 2, xyz=xyz, col.y = alpha("red", 0.5), text = "Gray Matter")
 ```
 
 ```{r fast_gm_nonrobust_show, echo = FALSE}
-ortho2(xrt1, xt1fast == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
+ortho2(xrt1, xt1fast == 2, xyz=xyz, col.y = alpha("red", 0.5), text = "Gray Matter")
 ```
 
 ## FAST: CSF
 
 ```{r fast_csf_nonrobust, eval = FALSE}
-ortho2(rt1, t1fast == 1, col.y = alpha("red", 0.5), text = "CSF")
+ortho2(rt1, t1fast == 1, xyz=xyz, col.y = alpha("red", 0.5), text = "CSF")
 ```
 
 ```{r fast_csf_nonrobust_show, echo = FALSE}
-ortho2(xrt1, xt1fast == 1, col.y = alpha("red", 0.5), text = "CSF")
+ortho2(xrt1, xt1fast == 1, xyz=xyz, col.y = alpha("red", 0.5), text = "CSF")
 ```
 
 
