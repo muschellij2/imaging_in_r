@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 ## Image segmentation 
 
 - We are often interested in subdividing or segmenting the brain into meaningful biological regions of interest (ROIs) for an analysis.
-- Examples: tissue segmentation, segmentation of gray matter structures, segmentation of pathology (MS lesions, tumors, ...)
+- Examples: tissue segmentation, segmentation of deep gray matter structures, segmentation of pathology (MS lesions, tumors, ...)
 - We will perform 3-class tissue segmentation in R using `fslr` and `ANTsR`:
     * Cerebrospinal fluid (CSF)
     * Gray Matter (GM)
@@ -36,7 +36,7 @@ knitr::opts_chunk$set(
 
 ## Loading Data
 
-- Let's read in the training T1 and brain mask for subject 05 (not 01!).
+- Let's read in the training T1 and brain mask for training subject 02.
 
 ```{r loading}
 library(ms.lesion)
@@ -44,9 +44,8 @@ library(neurobase)
 all_files = get_image_filenames_list_by_subject(
   group = "training", 
   type = "coregistered")
-files = all_files$training01 
+files = all_files$training02 
 t1 = readnii(files["T1"])
-rt1 = robust_window(t1)
 mask = readnii(files["Brain_Mask"])
 ```
 
@@ -55,9 +54,10 @@ mask = readnii(files["Brain_Mask"])
 # t1 = window_img(t1, window = c(0, 300))
 ```
 
-```{r reduce}
+```{r reduce, echo = FALSE}
 run_mask = t1 > 100
 dd_orig = drop_empty_dim(run_mask, keep_ind = TRUE)
+rt1 = robust_window(t1)
 ```
 
 ## Tissue Segmentation: Large Outliers
@@ -71,26 +71,25 @@ hist(t1, mask = mask, breaks = 2000); text(x = 600, y = 40000, '"outliers"')
 ## Where are the outliers?
 
 ```{r which_big, eval = FALSE}
-ortho2(rt1, t1 > 450, xyz = xyz(t1 > 450)) # xyz - cog of a region
+ortho2(rt1, t1 > 400, col.y = alpha("red", 0.5)) # xyz - cog of a region
 ```
 
 ```{r which_big_show, echo = FALSE}
 xrt1 = apply_empty_dim(rt1, inds = dd_orig$inds)
 xt1 = apply_empty_dim(t1, inds = dd_orig$inds)
-ortho2(xrt1, xt1 > 450, xyz = xyz(xt1 > 450)) 
+ortho2(xrt1, xt1 > 400, xyz = xyz(xt1 > 400), col.y = alpha("red", 0.5)) 
 ```
 
-## Cleaning up values: Masking the image
-
-```{r run_window}
+```{r run_window, echo=FALSE}
 t1[ t1 < 0 ] = 0
 t1 = mask_img(t1, mask)
 rt1 = robust_window(t1)
 ```
 
-## What does the histogram look like now?
+## What does the histogram look like after truncating outliers?
 
 ```{r which_big_after_robust}
+rt1 = robust_window(t1)
 hist(rt1, mask = mask, breaks = 2000); 
 ```
 
@@ -104,7 +103,6 @@ hist(rt1, mask = mask, breaks = 2000);
 The `fslr` function `fast` calls fast from FSL.  The `--nobias` option tells FSL to not perform inhomogeneity correction (N4 already performed in `ANTsR`). 
 
 ```{r fast_show, eval = FALSE}
-t1file = files["T1"] 
 t1fast = fast(t1, 
               outfile = paste0(nii.stub(t1file), "_FAST"), 
               opts = "--nobias")
@@ -133,34 +131,33 @@ FAST assumes three tissue classes and produces an image with the three labels, o
 ## FAST: White Matter
 
 ```{r fast_wm_nonrobust, eval = FALSE}
-xyz=c(121,278,312)
-ortho2(rt1, t1fast == 3, xyz=xyz, col.y = alpha("red", 0.5), text = "White Matter")
+ortho2(rt1, t1fast == 3, col.y = alpha("red", 0.5), text = "White Matter")
 ```
 
 ```{r fast_wm_nonrobust_show, echo = FALSE}
 xrt1 = apply_empty_dim(rt1, inds = dd_orig$inds)
 xt1fast = apply_empty_dim(t1fast, inds = dd_orig$inds)
-ortho2(xrt1, xt1fast == 3, xyz=xyz, col.y = alpha("red", 0.5), text = "White Matter")
+ortho2(xrt1, xt1fast == 3, xyz=xyz(xt1 > 400), col.y = alpha("red", 0.5), text = "White Matter")
 ```
 
 ## FAST: Gray Matter
 
 ```{r fast_gm_nonrobust, eval = FALSE}
-ortho2(rt1, t1fast == 2, xyz=xyz, col.y = alpha("red", 0.5), text = "Gray Matter")
+ortho2(rt1, t1fast == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 ```
 
 ```{r fast_gm_nonrobust_show, echo = FALSE}
-ortho2(xrt1, xt1fast == 2, xyz=xyz, col.y = alpha("red", 0.5), text = "Gray Matter")
+ortho2(xrt1, xt1fast == 2, xyz=xyz(xt1 > 400), col.y = alpha("red", 0.5), text = "Gray Matter")
 ```
 
 ## FAST: CSF
 
 ```{r fast_csf_nonrobust, eval = FALSE}
-ortho2(rt1, t1fast == 1, xyz=xyz, col.y = alpha("red", 0.5), text = "CSF")
+ortho2(rt1, t1fast == 1, col.y = alpha("red", 0.5), text = "CSF")
 ```
 
 ```{r fast_csf_nonrobust_show, echo = FALSE}
-ortho2(xrt1, xt1fast == 1, xyz=xyz, col.y = alpha("red", 0.5), text = "CSF")
+ortho2(xrt1, xt1fast == 1, xyz=xyz(xt1 > 400), col.y = alpha("red", 0.5), text = "CSF")
 ```
 
 
@@ -255,7 +252,7 @@ ortho2(rt1, t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
 
 ```{r otropos_wm_show, echo = FALSE}
 xt1seg = apply_empty_dim(t1seg, inds = dd_orig$inds)
-ortho2(xrt1, xt1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
+ortho2(xrt1, xt1seg == 3, xyz=xyz(xt1 > 400), col.y = alpha("red", 0.5), text = "White Matter")
 ```
 
 ## Atropos: Gray Matter
@@ -265,7 +262,7 @@ ortho2(rt1, t1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 ```
 
 ```{r otropos_gm_show, echo = FALSE}
-ortho2(xrt1, xt1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
+ortho2(xrt1, xt1seg == 2, xyz=xyz(xt1 > 400), col.y = alpha("red", 0.5), text = "Gray Matter")
 ```
 
 ## Atropos: CSF
@@ -276,15 +273,14 @@ ortho2(rt1, t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 ```
 
 ```{r otropos_csf_show, echo = FALSE}
-ortho2(xrt1, xt1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
+ortho2(xrt1, xt1seg == 1, xyz=xyz(xt1 > 400), col.y = alpha("red", 0.5), text = "CSF")
 ```
 
 ## Default Atropos Results
 
-- Overall the results do not look good
-	- The k-means clustering is affected by large outliers
-- We will try using `robust_window`
-
+- Overall the results look good
+	- The k-means clustering is not affected by outliers in this case
+- We will still try using `robust_window`
 
 
 ## Atropos using Windowing
@@ -318,7 +314,7 @@ ortho2(rt1, robust_t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
 ```
 
 ```{r otropos_wm_robust, echo = FALSE}
-ortho2(xrt1, xrobust_t1seg == 3, col.y = alpha("red", 0.5), text = "White Matter")
+ortho2(xrt1, xrobust_t1seg == 3, xyz=xyz(xt1 > 400), col.y = alpha("red", 0.5), text = "White Matter")
 ```
 
 ## Atropos with Window: Gray Matter
@@ -328,7 +324,7 @@ ortho2(rt1, robust_t1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
 ```
 
 ```{r otropos_gm_robust, echo = FALSE}
-ortho2(xrt1, xrobust_t1seg == 2, col.y = alpha("red", 0.5), text = "Gray Matter")
+ortho2(xrt1, xrobust_t1seg == 2, xyz=xyz(xt1 > 400), col.y = alpha("red", 0.5), text = "Gray Matter")
 ```
 
 ## Atropos with Window: CSF
@@ -338,7 +334,7 @@ ortho2(rt1, robust_t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 ```
 
 ```{r otropos_csf_robust, echo = FALSE}
-ortho2(xrt1, xrobust_t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
+ortho2(xrt1, xrobust_t1seg == 1, xyz=xyz(xt1 > 400), col.y = alpha("red", 0.5), text = "CSF")
 ```
 
 
@@ -346,8 +342,7 @@ ortho2(xrt1, xrobust_t1seg == 1, col.y = alpha("red", 0.5), text = "CSF")
 
 - Overall the results look like they reasonably separate the classes
     - No ground truth
-- Winsorizing large outliers aided the k-means clustering
-    - Results much better than running Atropos on the raw data
+- Winsorizing large outliers did not make a difference for this image
 
 ```{r prep_wm_atropos, echo = FALSE}
 m_list = list(t1seg == 3, robust_t1seg==3)
