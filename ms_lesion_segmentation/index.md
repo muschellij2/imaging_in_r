@@ -73,7 +73,6 @@ default_probs_ts = lapply(1:3, default_predict_ts)
 
 
 - Sorensen–Dice coefficient
-
   - Similarity measure between two samples 
   - Ranges from 0 to 1
   - (TP) - true positive, (FP) - false positive, (FN) - false negative
@@ -93,6 +92,7 @@ Dice coeffients for the test subjects
 
 
 
+
 ```
                                                 
 Threshold    0.050 0.100 0.150 0.200 0.250 0.300
@@ -101,6 +101,8 @@ Average Dice 0.242 0.272 0.273 0.261 0.231 0.194
 
 ## Improving Results
 - Turns out a coarse grid search chose a threshold of 0.15, so results are nearly identical.
+
+
 
 ![](index_files/figure-html/seq_run_15-1.png)<!-- -->
 
@@ -166,7 +168,7 @@ Residual Deviance: 1842000 	AIC: 1842000
 
 ## Trained OASIS Model Results
 
-- Using the same threshold of 0.16.
+- Using a threshold of 0.5.
 - Dice coeffients for default vs. re-trained OASIS model
 
 ![](index_files/figure-html/table3-1.png)<!-- -->
@@ -181,9 +183,9 @@ Residual Deviance: 1842000 	AIC: 1842000
 
 ID   Dice  
 ---  ------
-01   15.7  
-02   -19.3 
-03   -5.8  
+01   -31.7 
+02   -85.7 
+03   -47.7 
 
 
 

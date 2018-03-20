@@ -94,17 +94,9 @@ default_probs_ts = lapply(1:3, default_predict_ts)
 ```{r viz_01, echo=FALSE}
 tsflair = readnii(ts_files$test01["FLAIR"])
 les_mask = readnii(ts_files$test01["Default_OASIS"])
-w = which(les_mask > 0, arr.ind = TRUE)
-w = as.data.frame(w, stringsAsFactors = FALSE)
-keep_dim = w %>% group_by(dim3) %>% 
-  tally() %>% 
-  arrange(desc(n)) %>% 
-  ungroup %>% slice(1) 
-keep_dim = keep_dim$dim3
-w = w[ w$dim3 %in% keep_dim, ]
-vx = floor(colMeans(w))
-les_mask[les_mask<.05] = 0
-ortho2(tsflair, les_mask, xyz=vx)
+les_mask[les_mask < .05] = 0
+vx = c(122,257,341)
+ortho2(tsflair, les_mask, xyz = vx)
 ```
 
 ## Thresholding: Getting a binary map 
@@ -127,7 +119,7 @@ ortho2(tsflair, les_mask, xyz=vx, col.y=alpha("red", 0.5))
 ## Default OASIS Model
 - To evaluate how the default model with default threshold performs, we'll compare the predictions to our manual segmentations.
 
-```{r default_predict_tr_run, eval=TRUE, echo=FALSE}
+```{r default_predict_tr_run, eval=FALSE, echo=FALSE}
 ts_oasis = lapply(ts_files, function(x) readnii(x["Default_OASIS"]))
 default_ts = lapply(ts_oasis, 
 	function(x){
@@ -137,7 +129,6 @@ default_ts = lapply(ts_oasis,
 ```
 
 - Sorensen–Dice coefficient
-
   - Similarity measure between two samples 
   - Ranges from 0 to 1
   - (TP) - true positive, (FP) - false positive, (FN) - false negative
@@ -189,6 +180,7 @@ dice_tr = lapply(1:5,
 avgDice = Reduce('+', dice_tr)/length(dice_tr[[1]])
 write.csv(rbind(th, avgDice), file='avgDice.csv', row.names=FALSE)
 ```
+
 ```{r seq_run, echo=FALSE}
 diceDf = read.csv('avgDice.csv')
 colnames(diceDf) = NULL
@@ -199,19 +191,21 @@ print(round(diceDf, 3))
 ## Improving Results
 - Turns out a coarse grid search chose a threshold of 0.15, so results are nearly identical.
 
-```{r seq_run_15, echo=FALSE}
-#default_ts15 = lapply(ts_oasis, 
-#	function(x){
-#		x = x > 0.15
-#		return(x)
-#	})
-#tbls_df15 = lapply(1:3, function(x) table(
-#  c(round(ts_golds[[x]], 0)), c(round(default_ts15[[x]], 0))))
-#dfDice15 = sapply(tbls_df15, dice)
+```{r seq_show_15, echo=FALSE, eval=FALSE}
+default_ts15 = lapply(ts_oasis, 
+	function(x){
+		x = x > 0.15
+		return(x)
+	})
+tbls_df15 = lapply(1:3, function(x) table(
+  c(round(ts_golds[[x]], 0)), c(round(default_ts15[[x]], 0))))
+dfDice15 = sapply(tbls_df15, dice)
+diceDF15 = data.frame(Subject=factor(rep(1:3)), 
+                    Dice=c(dfDice15))
+write.csv(diceDF15, file='testDice15.csv', row.names=FALSE)
+```
 
-#diceDF15 = data.frame(Subject=factor(rep(1:3)), 
-#                    Dice=c(dfDice15))
-#write.csv(diceDF15, file='testDice15.csv', row.names=FALSE)
+```{r seq_run_15, echo=FALSE}
 diceDF15 = read.csv('testDice15.csv')
 g = ggplot(diceDF15, aes(x=Subject, y=Dice)) + 
        geom_histogram(position="dodge", stat="identity")
@@ -261,11 +255,11 @@ print(ms.lesion::ms_model)
 trained_ts = lapply(ts_files, 
   function(x){
     img = readnii(x["Trained_OASIS"])
-    img = img > 0.16
+    img = img > 0.5
     return(img)
   })
 ```
-- Using the same threshold of 0.16.
+- Using a threshold of 0.5.
 - Dice coeffients for default vs. re-trained OASIS model
 
 ```{r table3, echo=FALSE}
