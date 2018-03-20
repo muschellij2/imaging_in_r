@@ -45,17 +45,25 @@ tr_files = get_image_filenames_list_by_subject(
   group = "training", type = "coregistered")
 ts_files = get_image_filenames_list_by_subject(
   group = "test", type = "coregistered")
-tr_t1s = lapply(tr_files, function(x) readnii(x["T1"]))
-tr_t2s = lapply(tr_files, function(x) readnii(x["T2"]))
+# tr_t1s = lapply(tr_files, function(x) readnii(x["T1"]))
+# tr_t2s = lapply(tr_files, function(x) readnii(x["T2"]))
 tr_flairs = lapply(tr_files, function(x) readnii(x["FLAIR"]))
-tr_masks = lapply(tr_files, function(x) readnii(x["Brain_Mask"]))
+# tr_masks = lapply(tr_files, function(x) readnii(x["Brain_Mask"]))
 tr_golds = lapply(tr_files, function(x) readnii(x["mask"]))
-ts_t1s = lapply(ts_files, function(x) readnii(x["T1"]))
-ts_t2s = lapply(ts_files, function(x) readnii(x["T2"]))
+tr_golds = lapply(tr_golds, function(x) {
+  check_mask_fail(x)
+  x > 0
+})
+# ts_t1s = lapply(ts_files, function(x) readnii(x["T1"]))
+# ts_t2s = lapply(ts_files, function(x) readnii(x["T2"]))
 tr_pds = ts_pds = NULL
 ts_flairs = lapply(ts_files, function(x) readnii(x["FLAIR"]))
-ts_masks = lapply(ts_files, function(x) readnii(x["Brain_Mask"]))
+# ts_masks = lapply(ts_files, function(x) readnii(x["Brain_Mask"]))
 ts_golds = lapply(ts_files, function(x) readnii(x["mask"]))
+ts_golds = lapply(ts_golds, function(x) {
+  check_mask_fail(x)
+  x > 0
+})
 # John added for code to work
 ```
 
@@ -81,7 +89,7 @@ ortho2(robust_window(tr_flairs$training01), xyz = xyz)
 ## Visualization
 - And here's the manual lesion segmentation overlayed.
 
-```{r over_show_run, echo=FALSE}
+```{r over_show_run2, echo=FALSE}
 # john code for choosing z-slice with highest # of voxels
 w = which(les_mask > 0, arr.ind = TRUE)
 w = as.data.frame(w, stringsAsFactors = FALSE)
@@ -134,7 +142,7 @@ default_ts = lapply(ts_files,
 
 ```{r viz_01, echo=FALSE}
 les_mask = default_ts[[1]]
-les_mask[les_mask<.05] = 0
+les_mask[les_mask < .05] = 0
 ortho2(ts_flairs$test01, les_mask, xyz = xyz)
 ```
 
@@ -223,7 +231,7 @@ print(g)
 - We might improve the results by adjusting the threshold.
 - Let's optimize the threshold on the training data using a grid search (in practice, we might do cross-validation)
 
-```{r table1, echo=FALSE}
+```{r table1_run, echo=FALSE}
 dice_tr = lapply(1:5, 
 	function(x){
 		img = readnii(tr_files[[x]]["Default_OASIS"])
