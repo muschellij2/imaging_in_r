@@ -1,22 +1,6 @@
----
-title: "MS Lesion Segmentation"
-output:
-  ioslides_presentation:
-    widescreen: yes
-    css: ../styles.css
-    keep_md: true
-  beamer_presentation: 
-    keep_md: true
-bibliography: ../refs.bib       
----
+# MS Lesion Segmentation
 
-```{r setup, include=FALSE}
-library(methods)
-library(ggplot2)
-# library(pander)
-library(knitr)
-knitr::opts_chunk$set(echo = TRUE, comment = "", cache=TRUE, warning = FALSE)
-```
+
 
 ## Overall Pipeline
 
@@ -34,31 +18,7 @@ knitr::opts_chunk$set(echo = TRUE, comment = "", cache=TRUE, warning = FALSE)
 
 
 
-```{r loading, echo=FALSE, message=FALSE, cache = FALSE}
-library(ms.lesion)
-library(neurobase)
-library(fslr)
-library(scales)
-library(oasis)
-library(dplyr)
-tr_files = get_image_filenames_list_by_subject(
-  group = "training", type = "coregistered")
-ts_files = get_image_filenames_list_by_subject(
-  group = "test", type = "coregistered")
-#tr_t1s = lapply(tr_files, function(x) readnii(x["T1"]))
-#tr_t2s = lapply(tr_files, function(x) readnii(x["T2"]))
-tr_flairs = lapply(tr_files, function(x) readnii(x["FLAIR"]))
-tr_masks = lapply(tr_files, function(x) readnii(x["Brain_Mask"]))
-tr_golds = lapply(tr_files, function(x) readnii(x["mask"]))
-tr_oasis = lapply(tr_files, function(x) readnii(x["Default_OASIS"]))
-#ts_t1s = lapply(ts_files, function(x) readnii(x["T1"]))
-#ts_t2s = lapply(ts_files, function(x) readnii(x["T2"]))
-#tr_pds = ts_pds = NULL
-ts_flairs = lapply(ts_files, function(x) readnii(x["FLAIR"]))
-ts_masks = lapply(ts_files, function(x) readnii(x["Brain_Mask"]))
-ts_golds = lapply(ts_files, function(x) readnii(x["mask"]))
-ts_oasis = lapply(ts_files, function(x) readnii(x["Default_OASIS"]))
-```
+
 
 ## MS Lesion Segmentation with OASIS
 - **O**ASIS is **A**utomated **S**tatistical **I**nference for **S**egmentation [@sweeney2013oasis].
@@ -74,7 +34,8 @@ ts_oasis = lapply(ts_files, function(x) readnii(x["Default_OASIS"]))
   - The default model was trained on approximately 100 MS subjects and 30 healthy subjects with manual segmentations.
 - Here we apply `oasis_predict` with the default model to obtain OASIS probability maps for the test subjects.
 
-```{r default_predict_ts_show, eval=FALSE}
+
+```r
 library(oasis)
 default_predict_ts = function(x){
   res = oasis_predict(
@@ -91,20 +52,7 @@ default_probs_ts = lapply(1:3, default_predict_ts)
 ## Vizualization of probability map
 - Here's the probability map for test subject 01.
 
-```{r viz_01, echo=FALSE}
-les_mask = ts_oasis[[1]]
-w = which(les_mask > 0, arr.ind = TRUE)
-w = as.data.frame(w, stringsAsFactors = FALSE)
-keep_dim = w %>% group_by(dim3) %>% 
-  tally() %>% 
-  arrange(desc(n)) %>% 
-  ungroup %>% slice(1) 
-keep_dim = keep_dim$dim3
-w = w[ w$dim3 %in% keep_dim, ]
-vx = floor(colMeans(w))
-les_mask[les_mask<.05] = 0
-ortho2(ts_flairs$test01, les_mask, xyz=vx)
-```
+![](index_files/figure-html/viz_01-1.png)<!-- -->
 
 ## Thresholding: Getting a binary map 
 
@@ -117,16 +65,13 @@ ortho2(ts_flairs$test01, les_mask, xyz=vx)
 ## Vizualization of binary map
 - Here's the binary mask for test subject 01, using the default 0.16 threshold:
 
-```{r viz_02, echo=FALSE}
-les_mask[les_mask > 0.16] = 1
-les_mask[les_mask < 1] = 0
-ortho2(ts_flairs$test01, les_mask, xyz=vx, col.y=alpha("red", 0.5))
-```
+![](index_files/figure-html/viz_02-1.png)<!-- -->
 
 ## Default OASIS Model
 - To evaluate how the default model with default threshold performs, we'll compare the predictions to our manual segmentations.
 
-```{r default_predict_tr_show, eval=FALSE}
+
+```r
 default_predict_ts = function(x){
   res = oasis_predict(
       flair=ts_flairs[[x]], t1=ts_t1s[[x]], 
@@ -139,13 +84,7 @@ default_predict_ts = function(x){
 default_probs_ts = lapply(1:3, default_predict_ts)
 ```
 
-```{r default_predict_tr_run, eval=TRUE, echo=FALSE}
-default_ts = lapply(ts_oasis, 
-	function(x){
-		x = x > 0.16
-		return(x)
-	})
-```
+
 
 ## Default OASIS Model Results
 
@@ -162,43 +101,18 @@ $$D = \frac{2TP}{2TP + FP + FN}$$
 ## Default OASIS Model Results
 Dice coeffients for the test subjects  
 
-```{r table1, echo=FALSE}
-dice = function(x){
-  return((2*x[2,2])/(2*x[2,2] + x[1,2] + x[2,1]))
-}
-tbls_df = lapply(1:3, function(x) table(
-  c(ts_golds[[x]]), c(ts_oasis[[x]]))
-  )
-dfDice = sapply(tbls_df, dice)
-
-diceDF = data.frame(Subject=factor(rep(1:3)), 
-                    Dice=c(dfDice))
-g = ggplot(diceDF, aes(x=Subject, y=Dice)) + 
-       geom_histogram(position="dodge", stat="identity")
-print(g)
-```
+![](index_files/figure-html/table1-1.png)<!-- -->
 
 ## Improving Results
 - The default model is picking up some false positives in the lower part of the brain. 
 - We might improve the results by adjusting the threshold.
 - Let's optimize the threshold on the training data using a grid search (in practice, we might do cross-validation)
 
-```{r seq_show, echo=FALSE}
-th = seq(0.05, 0.3, by=0.05)
-dice_tr = lapply(1:5, 
-	function(x){
-		img = tr_oasis[[x]]
-	  gold = tr_golds[[x]]
-		diceTh = unlist(lapply(th, function(y){
-  		binimg = img > y
-		  tbl = table(c(binimg), c(gold))
-		  return(dice(tbl))
-		}))
-		return(diceTh)
-	})
-avgDice = Reduce('+', dice_tr)/length(dice_tr[[1]])
-write.csv(rbind(th, avgDice), file='avgDice.csv', row.names=FALSE)
-print(rbind(th, avgDice))
+
+```
+             [,1]      [,2]     [,3]     [,4]      [,5]      [,6]
+th      0.0500000 0.1000000 0.150000 0.200000 0.2500000 0.3000000
+avgDice 0.2423411 0.2720016 0.273321 0.260522 0.2312383 0.1943725
 ```
 
 ## Improving Results
@@ -214,7 +128,8 @@ and (2) rigid coregistration using `flirt` to the T1 space.
 - Includes an option to whole-brain intensity normalize (`normalize`).
 - `make_df()` below is a helper function.
 
-```{r oasis_df_show, eval=FALSE}
+
+```r
 make_df = function(x){
   res = oasis_train_dataframe(
       flair=tr_flairs[[x]], t1=tr_t1s[[x]], t2=tr_t2s[[x]],
@@ -230,60 +145,58 @@ oasis_dfs = lapply(1:5, make_df)
 - The function `oasis_training` takes the data frames we made and fits a logistic regression using labels and features from a subset of voxels in each subject's brain mask (top 15\% in FLAIR intensity).
 - The function `do.call` is a useful R function that applies the function named in the first argument to all elements of the list specified in the second argument. 
 
-```{r oasis_model_show, eval=FALSE}
+
+```r
 ms_model = do.call("oasis_training", oasis_dfs)
 ```
 
 ## OASIS model object
 
-```{r oasis_model_show2}
+
+```r
 print(ms.lesion::ms_model)
 ```
 
-## Trained OASIS Model Results
-```{r trained_predict_tr_run, eval=TRUE, echo=FALSE}
-trained_tr = lapply(tr_files, 
-  function(x){
-    img = readnii(x["Trained_OASIS"])
-    img = img > 0.16
-    return(img)
-  })
 ```
+
+Call:  glm(formula = form, family = binomial, data = df)
+
+Coefficients:
+   (Intercept)        FLAIR_10           FLAIR        FLAIR_20  
+      -4.79369        13.10386         1.14120       -18.77010  
+         T2_10              T2           T2_20           T1_10  
+       4.85370         1.09444        -7.06750        13.63554  
+            T1           T1_20  FLAIR_10:FLAIR  FLAIR:FLAIR_20  
+       1.04771       -21.09848        -1.28891         1.03121  
+      T2_10:T2        T2:T2_20        T1_10:T1        T1:T1_20  
+       0.09151         3.18903        -1.04701         3.14265  
+
+Degrees of Freedom: 3930444 Total (i.e. Null);  3930429 Residual
+Null Deviance:	    2691000 
+Residual Deviance: 1842000 	AIC: 1842000
+```
+
+## Trained OASIS Model Results
+
 - Using the same threshold of 0.16.
 - Dice coeffients for default vs. re-trained OASIS model
 
-```{r table3, echo=FALSE}
-tbls_tr = lapply(1:5, function(x) 
-  table(c(tr_golds[[x]]), c(trained_tr[[x]])))
-trDice = sapply(tbls_tr, dice)
-
-diceTR = data.frame('Subject'=factor(1:5),
-                    'Dice'=c(trDice))
-diceDF$Model = "Default"
-diceTR$Model = "Trained"
-diceAll = rbind(diceDF, diceTR)
-diceAll$Model = factor(diceAll$Model)
-
-g = ggplot(diceAll, aes(x=Subject, y=Dice)) + 
-  geom_histogram(position="dodge", stat="identity") + 
-  facet_wrap(~Model)
-print(g)
-```
+![](index_files/figure-html/table3-1.png)<!-- -->
 
 
-```{r dice_mat, echo = FALSE}
-df = cbind(id = sprintf("%02.0f", 1:5),
-           r1 = round((trDice - dfDice) / dfDice * 100, 1))
-df = data.frame(df, stringsAsFactors = FALSE)
-colnames(df) = c("ID", "Dice")
-```
+
 ## Improvement
 
 - Percent improvement in Dice over the default model:
 
-```{r, echo = FALSE}
-knitr::kable(df)
-```
+
+ID   Dice 
+---  -----
+01   Inf  
+02   Inf  
+03   Inf  
+04   Inf  
+05   Inf  
 
 
 
