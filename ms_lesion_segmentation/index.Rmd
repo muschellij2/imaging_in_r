@@ -192,7 +192,7 @@ default_ts = lapply(ts_files,
 
 ```{r over_05_run, echo=FALSE}
 les_mask = default_ts[[1]]
-ortho2(ts_flairs$training01, les_mask, col.y = alpha("red", 0.5))
+ortho2(ts_flairs$test01, les_mask, col.y = alpha("red", 0.5))
 ```
 
 ## Default OASIS Model Results
