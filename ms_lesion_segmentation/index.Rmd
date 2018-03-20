@@ -47,17 +47,17 @@ ts_files = get_image_filenames_list_by_subject(
   group = "test", type = "coregistered")
 #tr_t1s = lapply(tr_files, function(x) readnii(x["T1"]))
 #tr_t2s = lapply(tr_files, function(x) readnii(x["T2"]))
-tr_flairs = lapply(tr_files, function(x) readnii(x["FLAIR"]))
-tr_masks = lapply(tr_files, function(x) readnii(x["Brain_Mask"]))
-tr_golds = lapply(tr_files, function(x) readnii(x["mask"]))
-tr_oasis = lapply(tr_files, function(x) readnii(x["Default_OASIS"]))
+#tr_flairs = lapply(tr_files, function(x) readnii(x["FLAIR"]))
+#tr_masks = lapply(tr_files, function(x) readnii(x["Brain_Mask"]))
+#tr_golds = lapply(tr_files, function(x) readnii(x["mask"]))
+#tr_oasis = lapply(tr_files, function(x) readnii(x["Default_OASIS"]))
 #ts_t1s = lapply(ts_files, function(x) readnii(x["T1"]))
 #ts_t2s = lapply(ts_files, function(x) readnii(x["T2"]))
 #tr_pds = ts_pds = NULL
-ts_flairs = lapply(ts_files, function(x) readnii(x["FLAIR"]))
-ts_masks = lapply(ts_files, function(x) readnii(x["Brain_Mask"]))
-ts_golds = lapply(ts_files, function(x) readnii(x["mask"]))
-ts_oasis = lapply(ts_files, function(x) readnii(x["Default_OASIS"]))
+#ts_flairs = lapply(ts_files, function(x) readnii(x["FLAIR"]))
+#ts_masks = lapply(ts_files, function(x) readnii(x["Brain_Mask"]))
+#ts_golds = lapply(ts_files, function(x) readnii(x["mask"]))
+#ts_oasis = lapply(ts_files, function(x) readnii(x["Default_OASIS"]))
 ```
 
 ## MS Lesion Segmentation with OASIS
@@ -92,7 +92,8 @@ default_probs_ts = lapply(1:3, default_predict_ts)
 - Here's the probability map for test subject 01.
 
 ```{r viz_01, echo=FALSE}
-les_mask = ts_oasis[[1]]
+tsflair = readnii(ts_files$test01["FLAIR"])
+les_mask = readnii(ts_files$test01["Default_OASIS"])
 w = which(les_mask > 0, arr.ind = TRUE)
 w = as.data.frame(w, stringsAsFactors = FALSE)
 keep_dim = w %>% group_by(dim3) %>% 
@@ -103,7 +104,7 @@ keep_dim = keep_dim$dim3
 w = w[ w$dim3 %in% keep_dim, ]
 vx = floor(colMeans(w))
 les_mask[les_mask<.05] = 0
-ortho2(ts_flairs$test01, les_mask, xyz=vx)
+ortho2(tsflair, les_mask, xyz=vx)
 ```
 
 ## Thresholding: Getting a binary map 
@@ -120,26 +121,14 @@ ortho2(ts_flairs$test01, les_mask, xyz=vx)
 ```{r viz_02, echo=FALSE}
 les_mask[les_mask > 0.16] = 1
 les_mask[les_mask < 1] = 0
-ortho2(ts_flairs$test01, les_mask, xyz=vx, col.y=alpha("red", 0.5))
+ortho2(tsflair, les_mask, xyz=vx, col.y=alpha("red", 0.5))
 ```
 
 ## Default OASIS Model
 - To evaluate how the default model with default threshold performs, we'll compare the predictions to our manual segmentations.
 
-```{r default_predict_tr_show, eval=FALSE}
-default_predict_ts = function(x){
-  res = oasis_predict(
-      flair=ts_flairs[[x]], t1=ts_t1s[[x]], 
-      t2=ts_t2s[[x]], pd=ts_pds[[x]], 
-      brain_mask=ts_masks[[x]], 
-      preproc=FALSE, normalize=TRUE, 
-      model=oasis::oasis_model, binary=TRUE)
-  return(res)
-}
-default_probs_ts = lapply(1:3, default_predict_ts)
-```
-
 ```{r default_predict_tr_run, eval=TRUE, echo=FALSE}
+ts_oasis = lapply(ts_files, function(x) readnii(x["Default_OASIS"]))
 default_ts = lapply(ts_oasis, 
 	function(x){
 		x = x > 0.16
@@ -147,9 +136,7 @@ default_ts = lapply(ts_oasis,
 	})
 ```
 
-## Default OASIS Model Results
-
-Sorensen–Dice coefficient
+- Sorensen–Dice coefficient
 
   - Similarity measure between two samples 
   - Ranges from 0 to 1
@@ -166,24 +153,27 @@ Dice coeffients for the test subjects
 dice = function(x){
   return((2*x[2,2])/(2*x[2,2] + x[1,2] + x[2,1]))
 }
-tbls_df = lapply(1:3, function(x) table(
-  c(ts_golds[[x]]), c(ts_oasis[[x]]))
-  )
-dfDice = sapply(tbls_df, dice)
+#tbls_df = lapply(1:3, function(x) table(
+#  c(round(ts_golds[[x]], 0)), c(round(default_ts[[x]], 0))
+#  ))
+#dfDice = sapply(tbls_df, dice)
 
-diceDF = data.frame(Subject=factor(rep(1:3)), 
-                    Dice=c(dfDice))
+#diceDF = data.frame(Subject=factor(rep(1:3)), 
+#                    Dice=c(dfDice))
+#write.csv(diceDF, file='testDice.csv', row.names=FALSE)
+diceDF = read.csv('testDice.csv')
 g = ggplot(diceDF, aes(x=Subject, y=Dice)) + 
        geom_histogram(position="dodge", stat="identity")
 print(g)
 ```
 
 ## Improving Results
-- The default model is picking up some false positives in the lower part of the brain. 
-- We might improve the results by adjusting the threshold.
+- We might be able to improve the results by adjusting the threshold.
 - Let's optimize the threshold on the training data using a grid search (in practice, we might do cross-validation)
 
-```{r seq_show, echo=FALSE}
+```{r seq_show, echo=FALSE, eval=FALSE}
+tr_golds = lapply(tr_files, function(x) readnii(x["mask"]))
+tr_oasis = lapply(tr_files, function(x) readnii(x["Default_OASIS"]))
 th = seq(0.05, 0.3, by=0.05)
 dice_tr = lapply(1:5, 
 	function(x){
@@ -198,12 +188,38 @@ dice_tr = lapply(1:5,
 	})
 avgDice = Reduce('+', dice_tr)/length(dice_tr[[1]])
 write.csv(rbind(th, avgDice), file='avgDice.csv', row.names=FALSE)
-print(rbind(th, avgDice))
+```
+```{r seq_run, echo=FALSE}
+diceDf = read.csv('avgDice.csv')
+colnames(diceDf) = NULL
+rownames(diceDf) = c("Threshold", "Average Dice")
+print(round(diceDf, 3))
 ```
 
 ## Improving Results
-- The default model is picking up a lot of false positives in the spinal cord. 
-- We might improve the results by re-training the OASIS model using our five training subjects.
+- Turns out a coarse grid search chose a threshold of 0.15, so results are nearly identical.
+
+```{r seq_run_15, echo=FALSE}
+#default_ts15 = lapply(ts_oasis, 
+#	function(x){
+#		x = x > 0.15
+#		return(x)
+#	})
+#tbls_df15 = lapply(1:3, function(x) table(
+#  c(round(ts_golds[[x]], 0)), c(round(default_ts15[[x]], 0))))
+#dfDice15 = sapply(tbls_df15, dice)
+
+#diceDF15 = data.frame(Subject=factor(rep(1:3)), 
+#                    Dice=c(dfDice15))
+#write.csv(diceDF15, file='testDice15.csv', row.names=FALSE)
+diceDF15 = read.csv('testDice15.csv')
+g = ggplot(diceDF15, aes(x=Subject, y=Dice)) + 
+       geom_histogram(position="dodge", stat="identity")
+print(g)
+```
+
+## Improving Results
+- We might be able to further improve the results by re-training the OASIS model using our five training subjects.
 - To re-train using new data, binary masks of gold standard lesion segmentations are needed and should be in T1 space.
 
 
@@ -242,7 +258,7 @@ print(ms.lesion::ms_model)
 
 ## Trained OASIS Model Results
 ```{r trained_predict_tr_run, eval=TRUE, echo=FALSE}
-trained_tr = lapply(tr_files, 
+trained_ts = lapply(ts_files, 
   function(x){
     img = readnii(x["Trained_OASIS"])
     img = img > 0.16
@@ -253,15 +269,16 @@ trained_tr = lapply(tr_files,
 - Dice coeffients for default vs. re-trained OASIS model
 
 ```{r table3, echo=FALSE}
-tbls_tr = lapply(1:5, function(x) 
-  table(c(tr_golds[[x]]), c(trained_tr[[x]])))
-trDice = sapply(tbls_tr, dice)
+ts_golds = lapply(ts_files, function(x) readnii(x["mask"]))
+tbls_ts = lapply(1:3, function(x) 
+  table(c(ts_golds[[x]]), c(trained_ts[[x]])))
+tsDice = sapply(tbls_ts, dice)
 
-diceTR = data.frame('Subject'=factor(1:5),
-                    'Dice'=c(trDice))
+diceTS = data.frame('Subject'=factor(1:3),
+                    'Dice'=c(tsDice))
 diceDF$Model = "Default"
-diceTR$Model = "Trained"
-diceAll = rbind(diceDF, diceTR)
+diceTS$Model = "Trained"
+diceAll = rbind(diceDF, diceTS)
 diceAll$Model = factor(diceAll$Model)
 
 g = ggplot(diceAll, aes(x=Subject, y=Dice)) + 
@@ -272,11 +289,12 @@ print(g)
 
 
 ```{r dice_mat, echo = FALSE}
-df = cbind(id = sprintf("%02.0f", 1:5),
-           r1 = round((trDice - dfDice) / dfDice * 100, 1))
+df = cbind(id = sprintf("%02.0f", 1:3),
+           r1 = round((tsDice - diceDF$Dice) / diceDF$Dice * 100, 1))
 df = data.frame(df, stringsAsFactors = FALSE)
 colnames(df) = c("ID", "Dice")
 ```
+
 ## Improvement
 
 - Percent improvement in Dice over the default model:
@@ -284,36 +302,6 @@ colnames(df) = c("ID", "Dice")
 ```{r, echo = FALSE}
 knitr::kable(df)
 ```
-
-
-
-## Wrap-up
-- We've covered all (or most) image pre-procssing steps in a typical image pre-processing pipeline, starting with raw nifti images. 
-- Everything was done in R!
-
-<img src="flow.png" style="width: 50%; display: block; margin: auto;"> 
-
-## What we didn't cover
-- fMRI: see `fmri` library 
-- Other imaging modalities, e.g., CT, PET
-	- MALF segmentation is robust
-- Voxel-wise testing: see `voxel` library 
-- Other population-level statistical inference: 
-- Statistical/machine learning: see `caret` library
-
-
-## What can you do next?
-- Further modeling and statistical analysis.
-- Register images to a template to do population inference.
-- General R 
-	- Build your own R libraries for image analysis.
-	- Rmarkdown for reproducible reports
-	- R shiny apps
-
-**Resources**  
-
-- Neurohacking tutorial on Coursera
-- Neuroconductor: central repository for image analysis R libraries
 
 
 

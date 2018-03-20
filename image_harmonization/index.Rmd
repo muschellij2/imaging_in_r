@@ -363,6 +363,36 @@ coef(postRInsula)[2:4]
     - Available in R and MATLAB
 - To obtain valid statistical inference in downstream analyses, uncertainty in ComBat harmonization should be considered
 
+
+## Wrap-up
+- We've covered all (or most) image pre-procssing steps in a typical image pre-processing pipeline, starting with raw nifti images. 
+- Everything was done in R!
+
+<img src="flow.png" style="width: 50%; display: block; margin: auto;"> 
+
+## What we didn't cover
+- fMRI: see `fmri` library 
+- Other imaging modalities, e.g., CT, PET
+	- MALF segmentation is robust
+- Voxel-wise testing: see `voxel` library 
+- Other population-level statistical inference: 
+- Statistical/machine learning: see `caret` library
+
+
+## What can you do next?
+- Further modeling and statistical analysis.
+- Register images to a template to do population inference.
+- General R 
+	- Build your own R libraries for image analysis.
+	- Rmarkdown for reproducible reports
+	- R shiny apps
+
+**Resources**  
+
+- Neurohacking tutorial on Coursera
+- Neuroconductor: central repository for image analysis R libraries
+
+
 ## Website
 
 <a href="../index.html" target="_blank">http://johnmuschelli.com/imaging_in_r</a>

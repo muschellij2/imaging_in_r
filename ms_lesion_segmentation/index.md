@@ -71,24 +71,8 @@ default_probs_ts = lapply(1:3, default_predict_ts)
 - To evaluate how the default model with default threshold performs, we'll compare the predictions to our manual segmentations.
 
 
-```r
-default_predict_ts = function(x){
-  res = oasis_predict(
-      flair=ts_flairs[[x]], t1=ts_t1s[[x]], 
-      t2=ts_t2s[[x]], pd=ts_pds[[x]], 
-      brain_mask=ts_masks[[x]], 
-      preproc=FALSE, normalize=TRUE, 
-      model=oasis::oasis_model, binary=TRUE)
-  return(res)
-}
-default_probs_ts = lapply(1:3, default_predict_ts)
-```
 
-
-
-## Default OASIS Model Results
-
-Sorensen–Dice coefficient
+- Sorensen–Dice coefficient
 
   - Similarity measure between two samples 
   - Ranges from 0 to 1
@@ -104,20 +88,24 @@ Dice coeffients for the test subjects
 ![](index_files/figure-html/table1-1.png)<!-- -->
 
 ## Improving Results
-- The default model is picking up some false positives in the lower part of the brain. 
-- We might improve the results by adjusting the threshold.
+- We might be able to improve the results by adjusting the threshold.
 - Let's optimize the threshold on the training data using a grid search (in practice, we might do cross-validation)
 
 
+
 ```
-             [,1]      [,2]     [,3]     [,4]      [,5]      [,6]
-th      0.0500000 0.1000000 0.150000 0.200000 0.2500000 0.3000000
-avgDice 0.2423411 0.2720016 0.273321 0.260522 0.2312383 0.1943725
+                                                
+Threshold    0.050 0.100 0.150 0.200 0.250 0.300
+Average Dice 0.242 0.272 0.273 0.261 0.231 0.194
 ```
 
 ## Improving Results
-- The default model is picking up a lot of false positives in the spinal cord. 
-- We might improve the results by re-training the OASIS model using our five training subjects.
+- Turns out a coarse grid search chose a threshold of 0.15, so results are nearly identical.
+
+![](index_files/figure-html/seq_run_15-1.png)<!-- -->
+
+## Improving Results
+- We might be able to further improve the results by re-training the OASIS model using our five training subjects.
 - To re-train using new data, binary masks of gold standard lesion segmentations are needed and should be in T1 space.
 
 
@@ -185,48 +173,17 @@ Residual Deviance: 1842000 	AIC: 1842000
 
 
 
+
 ## Improvement
 
 - Percent improvement in Dice over the default model:
 
 
-ID   Dice 
----  -----
-01   Inf  
-02   Inf  
-03   Inf  
-04   Inf  
-05   Inf  
-
-
-
-## Wrap-up
-- We've covered all (or most) image pre-procssing steps in a typical image pre-processing pipeline, starting with raw nifti images. 
-- Everything was done in R!
-
-<img src="flow.png" style="width: 50%; display: block; margin: auto;"> 
-
-## What we didn't cover
-- fMRI: see `fmri` library 
-- Other imaging modalities, e.g., CT, PET
-	- MALF segmentation is robust
-- Voxel-wise testing: see `voxel` library 
-- Other population-level statistical inference: 
-- Statistical/machine learning: see `caret` library
-
-
-## What can you do next?
-- Further modeling and statistical analysis.
-- Register images to a template to do population inference.
-- General R 
-	- Build your own R libraries for image analysis.
-	- Rmarkdown for reproducible reports
-	- R shiny apps
-
-**Resources**  
-
-- Neurohacking tutorial on Coursera
-- Neuroconductor: central repository for image analysis R libraries
+ID   Dice  
+---  ------
+01   15.7  
+02   -19.3 
+03   -5.8  
 
 
 
