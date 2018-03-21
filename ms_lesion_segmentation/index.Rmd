@@ -252,6 +252,27 @@ print(ms.lesion::ms_model)
 
 ## Trained OASIS Model Results
 ```{r trained_predict_tr_run, eval=TRUE, echo=FALSE}
+tr_golds = lapply(tr_files, function(x) readnii(x["mask"]))
+tr_oasis = lapply(tr_files, function(x) readnii(x["Trained_OASIS"]))
+th = seq(0.05, 0.3, by=0.05)
+dice_tr = lapply(1:5, 
+	function(x){
+		img = tr_oasis[[x]]
+	  gold = tr_golds[[x]]
+		diceTh = unlist(lapply(th, function(y){
+  		binimg = img > y
+		  tbl = table(c(binimg), c(gold))
+		  return(dice(tbl))
+		}))
+		return(diceTh)
+	})
+avgDice = Reduce('+', dice_tr)/length(dice_tr[[1]])
+write.csv(rbind(th, avgDice), file='avgDiceReTrain.csv', row.names=FALSE)
+diceDf = read.csv('avgDiceReTrain.csv')
+colnames(diceDf) = NULL
+rownames(diceDf) = c("Threshold", "Average Dice")
+print(round(diceDf, 3))
+
 trained_ts = lapply(ts_files, 
   function(x){
     img = readnii(x["Trained_OASIS"])

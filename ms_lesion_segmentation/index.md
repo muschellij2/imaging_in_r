@@ -168,6 +168,11 @@ Residual Deviance: 1842000 	AIC: 1842000
 
 ## Trained OASIS Model Results
 
+```
+                                               
+Threshold    0.050 0.100 0.150 0.200 0.25 0.300
+Average Dice 0.253 0.324 0.346 0.346 0.33 0.294
+```
 - Using a threshold of 0.5.
 - Dice coeffients for default vs. re-trained OASIS model
 
