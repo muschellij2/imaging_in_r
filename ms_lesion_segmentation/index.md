@@ -11,10 +11,10 @@
 ## Background
 
 - Obtaining manual lesion segmentations is often resource intensive.
-- "Gold standard": Inter- and Intra-rater variability
+    - "Gold standard": Inter- and Intra-rater variability.
 - Accurate and efficient methods for automatic segmentation are necessary for scalability and research progress.
 - In this tutorial, we will learn how to train and apply OASIS [@sweeney2013oasis], an automatic lesion segmentation model, to obtain predicted lesion probability maps.
-    - relies on intensity-normalized data
+    - Relies on intensity-normalized data.
 
 
 
@@ -26,12 +26,12 @@
     - Produces OASIS probability maps of MS lesion presence.
     - These can be thresholded into a binary lesion segmentation.
 - The OASIS model is based on a logistic regression. 
-  - Regress binary manual segmentation labels on the images, smoothed versions of the images, and some interaction terms (e.g., supervised learning).
-  - Performed well compared to common machine learning models [@sweeney2014comparison]
+    - Regress binary manual segmentation labels on the images, smoothed versions of the images, and some interaction terms (e.g., supervised learning).
+- Performs well compared to common machine learning models [@sweeney2014comparison]
 
 ## Default OASIS Model
 - The OASIS library comes with default parameters that can be used to generate probability maps for new test subjects.
-  - The default model was trained on approximately 100 MS subjects and 30 healthy subjects with manual segmentations.
+    - The default model was trained on approximately 100 MS subjects and 30 healthy subjects with manual segmentations.
 - Here we apply `oasis_predict` with the default model to obtain OASIS probability maps for the test subjects.
 
 
@@ -72,23 +72,24 @@ default_probs_ts = lapply(1:3, default_predict_ts)
 
 
 
-- Sorensen–Dice coefficient
-  - Similarity measure between two samples 
-  - Ranges from 0 to 1
-  - (TP) - true positive, (FP) - false positive, (FN) - false negative
+- Sorensen–Dice coefficient:
+    - Similarity measure between two samples.
+    - Ranges from 0 to 1.
+    - (TP) - true positive, (FP) - false positive, (FN) - false negative.
 
 $$D = \frac{2TP}{2TP + FP + FN}$$
-
 
 
 ## Default OASIS Model Results
 Dice coeffients for the test subjects  
 
-![](index_files/figure-html/table1-1.png)<!-- -->
+
+
+![](index_files/figure-html/table1_run-1.png)<!-- -->
 
 ## Improving Results
 - We might be able to improve the results by adjusting the threshold.
-- Let's optimize the threshold on the training data using a grid search (in practice, we might do cross-validation)
+- Let's optimize the threshold on the training data using a grid search (in practice, we might do cross-validation).
 
 
 
@@ -100,7 +101,7 @@ Average Dice 0.242 0.272 0.273 0.261 0.231 0.194
 ```
 
 ## Improving Results
-- Turns out a coarse grid search chose a threshold of 0.15, so results are nearly identical.
+- Turns out a coarse grid search chose a threshold of 0.15, so the results are nearly identical.
 
 
 
@@ -113,8 +114,7 @@ Average Dice 0.242 0.272 0.273 0.261 0.231 0.194
 
 ## Making OASIS data frames
 - OASIS requires a particular data frame format, which we create using the function `oasis_train_dataframe`.
-- Includes an option to preprocess your data (`preproc`), which does (1) inhomogeneity correction using `fsl_biascorrect`
-and (2) rigid coregistration using `flirt` to the T1 space.
+- Includes an option to preprocess your data (`preproc`), which does (1) inhomogeneity correction using `fsl_biascorrect` and (2) rigid coregistration using `flirt` to the T1 space.
 - Includes an option to whole-brain intensity normalize (`normalize`).
 - `make_df()` below is a helper function.
 
@@ -168,20 +168,24 @@ Residual Deviance: 1842000 	AIC: 1842000
 
 ## Trained OASIS Model Results
 
+
+
 ```
                                                
 Threshold    0.050 0.100 0.150 0.200 0.25 0.300
 Average Dice 0.253 0.324 0.346 0.346 0.33 0.294
 ```
-- Using a threshold of 0.5.
-- Dice coeffients for default vs. re-trained OASIS model
+
+
+
+- Using a threshold of 0.15.
+- Dice coeffients for default vs. re-trained OASIS model.
 
 ![](index_files/figure-html/table3-1.png)<!-- -->
 
-
-
-
 ## Improvement
+
+
 
 - Percent improvement in Dice over the default model:
 

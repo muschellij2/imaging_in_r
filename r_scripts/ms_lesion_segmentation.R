@@ -63,18 +63,19 @@ ortho2(tsflair, les_mask, xyz=vx, col.y=alpha("red", 0.5))
 ## 		return(x)
 ## 	})
 
-## ----table1, echo=FALSE--------------------------------------------------
-dice = function(x){
-  return((2*x[2,2])/(2*x[2,2] + x[1,2] + x[2,1]))
-}
-#tbls_df = lapply(1:3, function(x) table(
-#  c(round(ts_golds[[x]], 0)), c(round(default_ts[[x]], 0))
-#  ))
-#dfDice = sapply(tbls_df, dice)
+## ----table1, echo=FALSE, eval=FALSE--------------------------------------
+## dice = function(x){
+##   return((2*x[2,2])/(2*x[2,2] + x[1,2] + x[2,1]))
+## }
+## tbls_df = lapply(1:3, function(x) table(
+##   c(round(ts_golds[[x]], 0)), c(round(default_ts[[x]], 0))
+##   ))
+## dfDice = sapply(tbls_df, dice)
+## diceDF = data.frame(Subject=factor(rep(1:3)),
+##                     Dice=c(dfDice))
+## write.csv(diceDF, file='testDice.csv', row.names=FALSE)
 
-#diceDF = data.frame(Subject=factor(rep(1:3)), 
-#                    Dice=c(dfDice))
-#write.csv(diceDF, file='testDice.csv', row.names=FALSE)
+## ----table1_run, echo=FALSE----------------------------------------------
 diceDF = read.csv('testDice.csv')
 g = ggplot(diceDF, aes(x=Subject, y=Dice)) + 
        geom_histogram(position="dodge", stat="identity")
@@ -140,11 +141,35 @@ print(g)
 ## ----oasis_model_show2---------------------------------------------------
 print(ms.lesion::ms_model)
 
+## ----trained_predict_tr_show, eval=FALSE, echo=FALSE---------------------
+## tr_golds = lapply(tr_files, function(x) readnii(x["mask"]))
+## tr_oasis = lapply(tr_files, function(x) readnii(x["Trained_OASIS"]))
+## th = seq(0.05, 0.3, by=0.05)
+## dice_tr = lapply(1:5,
+## 	function(x){
+## 		img = tr_oasis[[x]]
+## 	  gold = tr_golds[[x]]
+## 		diceTh = unlist(lapply(th, function(y){
+##   		binimg = img > y
+## 		  tbl = table(c(binimg), c(gold))
+## 		  return(dice(tbl))
+## 		}))
+## 		return(diceTh)
+## 	})
+## avgDice = Reduce('+', dice_tr)/length(dice_tr[[1]])
+## write.csv(rbind(th, avgDice), file='avgDiceReTrain.csv', row.names=FALSE)
+
+## ----trained_predict_tr_dice, eval=TRUE, echo=FALSE----------------------
+diceDf = read.csv('avgDiceReTrain.csv')
+colnames(diceDf) = NULL
+rownames(diceDf) = c("Threshold", "Average Dice")
+print(round(diceDf, 3))
+
 ## ----trained_predict_tr_run, eval=TRUE, echo=FALSE-----------------------
 trained_ts = lapply(ts_files, 
   function(x){
     img = readnii(x["Trained_OASIS"])
-    img = img > 0.5
+    img = img > 0.15
     return(img)
   })
 
