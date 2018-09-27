@@ -68,7 +68,7 @@ We have created a [function cheatsheet](https://github.com/muschellij2/neuro_bac
 
 ## Additional Tutorials
 
-* [Neuroconductor](https://neuroconductor.org/neuroc-help)
+* [Neuroconductor](https://neuroconductor.org/tutorials)
 * [Neurohacking](https://www.coursera.org/learn/neurohacking)
 
 ## RStudio Server
@@ -89,10 +89,10 @@ We have provided a set of instructions to install all the requirements on your l
 This script should install the packages locally for  Mac OSX/Linux/Windows:
 
 ```{r, eval = FALSE}
-if (!"devtools" %in% installed.packages()) {
+if (!"devtools" %in% installed.packages()[, "Package"]) {
   install.packages("devtools")
 }
-if (!"ms.lesion" %in% installed.packages()) {
+if (!"ms.lesion" %in% installed.packages()[, "Package"]) {
   devtools::install_github("muschellij2/ms.lesion")
 }
 source("https://neuroconductor.org/neurocLite.R")
