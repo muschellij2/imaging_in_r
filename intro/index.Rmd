@@ -226,7 +226,7 @@ RStudio is an Integrated Development Environment (IDE) for R (made by RStudio th
 
 * Where files open to
 * Have R code and comments in them
-    * Static copy of what you did (reproducability)
+    * Static copy of what you did (reproducibility)
     * Try things out interactively, then add to your script
 * Can highlight and press (CMD+Enter (Mac) or Ctrl+Enter (Windows)) to run the code
 * Code is saved to disk
