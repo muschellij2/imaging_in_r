@@ -10,6 +10,8 @@ output:
     theme: cosmo
 ---
 
+# Neuroconductor
+The Neuroconductor Project (https://neuroconductor.org/) is a large repository of R packages for imaging.  All the packages we use in this course should be represented there.  One of the instructors (John) is a main developer on the project.
 
 # Instructors
 
