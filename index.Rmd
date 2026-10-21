@@ -21,7 +21,7 @@ The Neuroconductor Project (https://neuroconductor.org/) is a large repository o
 
 ## Schedule
 
-All the PDF slides are located [in a zip file here](http://johnmuschelli.com/ISBI_2017.zip). 
+All the PDF slides are located at <https://github.com/muschellij2/imaging_in_r>.
 
 ```{r, echo = FALSE}
 # library(pander)
